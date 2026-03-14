@@ -23,7 +23,6 @@
 
 虚拟机内需要使用KAE设备并且有热迁移需求的场景。
 
-本文主要介绍如何在使用openEuler操作系统的鲲鹏服务器上部署和使能虚拟化场景vKAE直通热迁移特性，以及如何进行功能与性能测试的操作指导。
 ## 安装和使用特性<a name="ZH-CN_TOPIC_0000002518686506"></a>
 
 ### 环境要求<a name="ZH-CN_TOPIC_0000002518686504"></a>
@@ -52,7 +51,7 @@
 |OS|openEuler 22.03 LTS SP4|[获取链接](https://mirrors.huaweicloud.com/openeuler/openEuler-22.03-LTS-SP4/ISO/aarch64/openEuler-22.03-LTS-SP4-everything-aarch64-dvd.iso)|
 |QEMU|6.2.0|代码仓：[获取链接](https://gitee.com/src-openeuler/qemu/tree/openEuler-22.03-LTS-SP4/)|
 |libvirt|6.2.0|代码仓：[获取链接](https://gitee.com/src-openeuler/libvirt/tree/openEuler-22.03-LTS-SP4/)|
-|KAE|2.0|代码仓：获取链接|
+|KAE|2.0|代码仓：[获取链接](https://gitcode.com/boostkit/KAE)|
 
 
 **表 3** 已验证操作系统与软件要求<a id="已验证操作系统与软件要求_1"></a>
@@ -62,7 +61,7 @@
 |OS|openEuler 24.03 LTS SP3|[获取链接](https://mirrors.huaweicloud.com/openeuler/openEuler-24.03-LTS-SP3/ISO/aarch64/openEuler-24.03-LTS-SP3-everything-aarch64-dvd.iso)|
 |QEMU|8.2.0|通过配置Yum源的方式安装|
 |libvirt|9.10.0|通过配置Yum源的方式安装|
-|KAE|2.0|代码仓：获取链接|
+|KAE|2.0|代码仓：[获取链接](https://gitcode.com/boostkit/KAE)|
 
 
 
