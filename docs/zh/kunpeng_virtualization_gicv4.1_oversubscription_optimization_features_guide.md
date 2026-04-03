@@ -51,7 +51,7 @@ GICv4.1超分优化特性仅支持kernel 6.6版本。openEuler社区提供了6.6
 
 |项目|说明|
 |--|--|
-|处理器|鲲鹏920系列处理器|
+|处理器|鲲鹏920新型号处理器|
 
 
 **操作系统和软件要求<a name="section153345522323"></a>**
@@ -91,6 +91,7 @@ GICv4.1超分优化特性仅支持kernel 6.6版本。openEuler社区提供了6.6
 3. 切换到6.6分支。
 
     ```
+    cd kernel
     git checkout -b 6.6 origin/OLK-6.6
     ```
 
@@ -99,6 +100,7 @@ GICv4.1超分优化特性仅支持kernel 6.6版本。openEuler社区提供了6.6
 4. 下载GICv4.1超分优化补丁。
 
     ```
+    cd ..
     git clone https://gitcode.com/boostkit/cloud-virtual.git
     ```
 
@@ -125,6 +127,21 @@ GICv4.1超分优化特性仅支持kernel 6.6版本。openEuler社区提供了6.6
     ```
 
     >![](public_sys-resources/icon-caution.gif) **注意：** 
-    >kernel\_salt：是编译内核时生成的随机盐值，可以在make menuconfig中设置，如未设置可以根据回显的内容找到对应的rpm包
-    >安装时可能会提示dracut-install: Failed to find module 'virtio\_gpu'，其实已经装上了内核
+    >kernel\_salt：是编译内核时生成的随机盐值，可以在make menuconfig中设置，如未设置可以根据回显的内容找到对应的rpm包。  
+    >安装时可能会提示dracut-install: Failed to find module 'virtio\_gpu'，其实已经装上了内核。  
+    >如提示“package kernel-$(uname -r) (which is newer than kernel-....aarch64) is already installed”，则执行rpm -ivh rpmbuild/RPMS/aarch64/kernel-6.6.0_[kernel_salt].aarch64.rpm --force强制安装。
+
+## 开启GICv4.1
+该超分优化特性仅针对开启GICv4.1时，对虚拟机进行超分有效。GICv4.1如引入诸如直通设备vLPI中断透传、vSGI中断直通等中断直接注入特性，能够显著减少虚拟机组高负载环境中的VM-exit与VM-entry，提升虚拟机的性能。
+1. 修改BIOS。  
+   进入“BIOS->Advanced->Processor Configuration->GIC Version”，设置“GIC Version”为“4.1”。
+   ![](figures/zh-cn_image_gicv4.1_bios.png)
+
+2. 修改cmdline启动参数。  
+在cmdline中增加"kvm-arm.vgic_v4_enable=1"。修改完cmdline后，需要重启服务器。
+![](figures/zh-cn_image_gicv4.1_cmdline.png)
+
+3. 确认GICv4.1成功开启。  
+![](figures/zh-cn_image_gicv4.1_dmesg.png)
+
 
