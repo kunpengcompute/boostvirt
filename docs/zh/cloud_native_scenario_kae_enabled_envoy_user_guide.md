@@ -1,4 +1,4 @@
-# 云原生场景Envoy使能KAE 用户指南<a name="ZH-CN_TOPIC_0000002552168791"></a>
+# 云原生场景Envoy使能KAE 用户指南
 
 ## 简介<a name="ZH-CN_TOPIC_0000002511547578"></a>
 
