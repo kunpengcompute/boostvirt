@@ -1,4 +1,4 @@
-# libvirt使能MPAM 用户指南<a name="ZH-CN_TOPIC_0000002521088818"></a>
+# libvirt使能MPAM 用户指南
 
 ## 特性描述<a name="ZH-CN_TOPIC_0000002518685864"></a>
 

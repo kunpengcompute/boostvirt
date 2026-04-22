@@ -1,4 +1,4 @@
-# K8s SR-IOV直通插件 用户指南<a name="ZH-CN_TOPIC_0000002552285773"></a>
+# K8s SR-IOV直通插件 用户指南
 
 ## 介绍<a name="ZH-CN_TOPIC_0000002549765655"></a>
 
