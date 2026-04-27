@@ -72,7 +72,6 @@ chmod +x envoy-contrib
     ```
     git clone https://github.com/envoyproxy/envoy.git 
     cd envoy
-    git checkout v1.38.0
     ```
 
 2. 编译Envoy获取软件二进制。
