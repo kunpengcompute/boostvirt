@@ -135,7 +135,7 @@ vKAE可以应用于虚拟化和云原生场景。
 |Nginx|1.21.5|通过配置Yum源的方式安装|
 |OpenSSL|1.1.1|通过配置Yum源的方式安装|
 |HTTPress|1.1.0|通过配置Yum源的方式安装|
-|KAE|2.0|下载命令：git clone https://gitee.com/kunpengcompute/KAE.git -b kae2|
+|KAE|2.0|下载命令：`git clone https://gitee.com/kunpengcompute/KAE.git -b kae2 `|
 
 
 
@@ -476,8 +476,8 @@ vKAE可以应用于虚拟化和云原生场景。
         >    ```
         >    sh irq.sh check eth1
         >    ```
-        >    **eth1**为网卡名称，请根据实际情况修改。
-        >3.  将**eth1**队列深度修改为**24**，并循环绑定到**'0 1 2 3'**四个核上。支持连续绑核，例如连续绑核至**'1-3,6,7-9'**。
+        >    **eth1**为网卡名称，请根据实际情况修改。<br>
+        >3.  将**eth1**队列深度修改为**24**，并循环绑定到**'0 1 2 3'** 四个核上。支持连续绑核，例如连续绑核至 **'1-3,6,7-9'**。
         >    ```
         >    sh irq.sh bind eth1 24 '0 1 2 3'
         >    ```
@@ -548,7 +548,7 @@ vKAE可以应用于虚拟化和云原生场景。
         ![](figures/zh-cn_image_0000002051623329.png)
 
 5. 验证KAE是否安装成功。
-    1. 检查“/sys/bus/pci/drivers“目录下是否有相关的PCI驱动。
+    1. 检查“/sys/bus/pci/drivers”目录下是否有相关的PCI驱动。
 
         ```
         ls /sys/bus/pci/drivers
@@ -782,7 +782,7 @@ vKAE可以应用于虚拟化和云原生场景。
             vim vm01.xml
             ```
 
-        2. 按“i“键进入编辑模式，将以下内容复制到虚拟机配置文件的**<devices\>**标签中。
+        2. 按“i”键进入编辑模式，将以下内容复制到虚拟机配置文件的 **<devices\>** 标签中。
 
             ```
             <hostdev mode='subsystem' type='pci' managed='yes'><source><address domain='0x0000' bus='0x79' slot='0x00' function='0x1'/></source><address type='pci' domain='0x0000' bus='0x07' slot='0x00' function='0x0'/>
@@ -793,7 +793,7 @@ vKAE可以应用于虚拟化和云原生场景。
             >-   相当于把VF地址**0000:79:00.1**进行拆分，domain域使用**0000**部分，bus域使用**79**部分，slot域使用**00**部分，function使用末位的**1**。
             >-   如果当前虚拟机已存在该address，为避免address冲突导致虚拟机启动失败，需要删除</source\>之后的address一行。重启虚拟机后，系统会自动生成新的address。
 
-        3. 按“Esc“键，输入**:wq!**，按“Enter“保存并退出编辑。
+        3. 按“Esc”键，输入 **:wq!**，按“Enter”保存并退出编辑。
         4. 重启虚拟机，使KAE设备VF直通虚拟机生效。
 
             ```
@@ -811,7 +811,7 @@ vKAE可以应用于虚拟化和云原生场景。
             vim vm01.xml
             ```
 
-        2. 按“i“键进入编辑模式，将以下内容复制到虚拟机配置文件的**<devices\>**标签中。
+        2. 按“i”键进入编辑模式，将以下内容复制到虚拟机配置文件的 **<devices\>** 标签中。
 
             ```
             <hostdev mode='subsystem' type='pci' managed='yes'><source><address domain='0x0000' bus='0x79' slot='0x00' function='0x1'/></source><address type='pci' domain='0x0000' bus='0x07' slot='0x00' function='0x0'/>
@@ -830,7 +830,7 @@ vKAE可以应用于虚拟化和云原生场景。
 
         以8C16G规格的虚拟机配置文件为例，虚拟机名为nginx1，对虚拟机进行了顺序绑核和内存绑核。修改完配置文件后重启虚拟机，使VF直通虚拟机生效。
 
-        1. 打开虚拟机配置文件，例如“vm01.xml”。
+        1. 打开虚拟机配置文件，例如”vm01.xml”。
 
             ```
             vim vm01.xml
@@ -1021,7 +1021,7 @@ vKAE可以应用于虚拟化和云原生场景。
 
         ![](figures/zh-cn_image_0000002041328398.png)
 
-    3. 验证KAE性能。
+    3.验证KAE性能。
 
         配置OpenSSL以使用KAE，并通过执行**openssl speed**命令来比较开启和未开启KAE时RSA加密解密的性能差异。
 
@@ -1063,7 +1063,7 @@ vKAE可以应用于虚拟化和云原生场景。
     yum install -y openssl openssl-devel pcre pcre-devel zlib zlib-devel gcc make
     ```
 
-2. 若服务器可以访问网络，可以通过**wget**命令直接下载Nginx源码，再将Nginx源码上传到虚拟机的“/home“目录。
+2. 若服务器可以访问网络，可以通过**wget**命令直接下载Nginx源码，再将Nginx源码上传到虚拟机的“/home”目录。
 
     ```
     wget https://nginx.org/download/nginx-1.21.5.tar.gz --no-check-certificate
@@ -1088,7 +1088,7 @@ vKAE可以应用于虚拟化和云原生场景。
     请参见《Nginx 移植指南》的[生成OpenSSL证书](https://www.hikunpeng.com/document/detail/zh/kunpengwebs/ecosystemEnable/Nginx/kunpengnginx_02_0013.html)章节。
 
     >![](public_sys-resources/icon-note.gif) **说明：** 
-    >若生成OpenSSL证书时，提示“unable to find 'distinguished\_name' in config”，说明与[7.c](在虚拟机部署vKAE.md#li694314337110)中验证KAE性能时执行的**export OPENSSL\_CONF=/home/openssl.cnf**命令冲突，请参见[部署vKAE特性时，在虚拟机部署Nginx过程中生成OpenSSL证书时报错](部署vKAE特性时-在虚拟机部署Nginx过程中生成OpenSSL证书时报错.md)解决该问题。
+    >若生成OpenSSL证书时，提示“unable to find 'distinguished\_name' in config”，说明与[在虚拟机部署vKAE](#在虚拟机部署vkae)的“验证KAE的安装与配置是否完成”步骤中验证KAE性能时执行的**export OPENSSL\_CONF=/home/openssl.cnf**命令冲突，请参见[部署vKAE特性时，在虚拟机部署Nginx过程中生成OpenSSL证书时报错](#ZH-CN_TOPIC_0000002054536396)解决该问题。
 
 5. 查看Nginx安装目录。
 
@@ -1110,7 +1110,7 @@ vKAE可以应用于虚拟化和云原生场景。
         vim nginx.conf
         ```
 
-    2. 按“i“键进入编辑模式，将以下内容复制到Nginx配置文件中。
+    2. 按“i”键进入编辑模式，将以下内容复制到Nginx配置文件中。
 
         以下为Nginx开源版本的配置文件nginx.conf的内容，此配置未进行任何调优，也未启用KAE。
 
@@ -1344,7 +1344,7 @@ vKAE可以应用于虚拟化和云原生场景。
         }
         ```
 
-    3. 按“Esc“键，输入**:wq!**，按“Enter“保存并退出编辑。
+    3. 按“Esc”键，输入**:wq!**，按“Enter”保存并退出编辑。
     4. 运行使能KAE+参数调优过的Nginx同步模式的配置文件。
 
         >![](public_sys-resources/icon-notice.gif) **须知：** 
@@ -1944,7 +1944,7 @@ vKAE可以应用于虚拟化和云原生场景。
 
 ## 故障排除<a name="ZH-CN_TOPIC_0000002054694708"></a>
 
-### 部署vKAE特性时，在虚拟机部署Nginx过程中生成OpenSSL证书时报错<a name="ZH-CN_TOPIC_0000002054536396"></a>
+### 部署vKAE特性时，在虚拟机部署Nginx过程中生成OpenSSL证书时报错<a id="ZH-CN_TOPIC_0000002054536396"></a>
 
 **问题现象描述<a name="section158961545395"></a>**
 
