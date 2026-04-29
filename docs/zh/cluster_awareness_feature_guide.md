@@ -6,9 +6,9 @@
 
 本文主要介绍如何在使用openEuler操作系统的鲲鹏服务器上部署和使能Cluster感知特性。
 
-如[**图 1** Cluster与L3 cache结构图](#Cluster与L3 cache结构图)所示，Cluster是CPU的一个硬件单元，每个Cluster包含数个core。同一个Cluster内的core会共享同一块L3 cache Tag，一个core访问对应Cluster的共享L3 cache Tag的时间，比访问其他L3 cache或内存的时间更短。因此，当某个线程被调度到相同Cluster（而不是另一个Cluster，即跨Cluster调度）上的core执行时，便能复用该Cluster对应的L3 cache Tag，减少数据访问需要的时间。通过新增OS内核的Cluster任务调度优化选项，可以避免线程跨Cluster调度，复用L3 cache Tag资源，以提升多线程应用的CPU调度效率和内存带宽的利用效率。
+如[**图 1** Cluster与L3 cache结构图](#Cluster与L3-cache结构图)所示，Cluster是CPU的一个硬件单元，每个Cluster包含数个core。同一个Cluster内的core会共享同一块L3 cache Tag，一个core访问对应Cluster的共享L3 cache Tag的时间，比访问其他L3 cache或内存的时间更短。因此，当某个线程被调度到相同Cluster（而不是另一个Cluster，即跨Cluster调度）上的core执行时，便能复用该Cluster对应的L3 cache Tag，减少数据访问需要的时间。通过新增OS内核的Cluster任务调度优化选项，可以避免线程跨Cluster调度，复用L3 cache Tag资源，以提升多线程应用的CPU调度效率和内存带宽的利用效率。
 
-**图 1** Cluster与L3 cache结构图<a name="fig356644616414"></a><a id="Cluster与L3 cache结构图"></a>
+**图 1** Cluster与L3 cache结构图<a name="fig356644616414"></a><a id="Cluster与L3-cache结构图"></a>
 ![](figures/Cluster与L3-cache结构图.png "Cluster与L3-cache结构图")
 
 通过这项优化，可以更好地利用硬件资源，提高系统的吞吐量和响应速度，从而提升系统的整体性能表现。在各种应用场景或测试场景中，尤其是在多核多线程的应用场景上，使能Cluster调度优化特性将获得比较好的性能提升效果，提升幅度可达2%～20%。

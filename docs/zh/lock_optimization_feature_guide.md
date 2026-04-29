@@ -13,7 +13,8 @@
 虚拟机锁优化特性通过共享内存的方式，将vCPU是否被抢占的信息通过Hypervisor透传给虚拟机，虚拟机vCPU自旋等待时如果发现持锁的vCPU已经被抢占，则跳出自旋等待，减少因操作冲突导致的系统错误或崩溃，从而提高虚拟机系统稳定性和可靠性。
 
 **图 1** 虚拟机锁优化原理图<a name="fig2050617656"></a><a id="虚拟机锁优化原理图"></a>
-![](figures/虚拟机锁优化原理图.png "虚拟机锁优化原理图")
+
+![](figures/虚拟机锁优化图.png "虚拟机锁优化原理图")
 
 1. 虚拟机内核启动时，通过Hypercall将每个vCPU记录preempted状态的内存地址传递给Hypervisor。
 2. 当Hypervisor调度运行vCPU时，调用kvm\_arch\_vcpu\_load加载对应vCPU上下文，同时将其preempted状态设置为0。
@@ -40,8 +41,8 @@
 
 ### 应用场景<a name="ZH-CN_TOPIC_0000002105901593"></a>
 
-1. 虚拟机锁优化适用于vCPU范围绑核的超分场景，即一个物理核可能会有多个vCPU线程争抢资源的情况。
-2. 本特性以前后端协同方式，获取vCPU线程的抢占状态，优化内部调度/锁的性能。在涉及到CPU调度的场景下，如mutex\_spin\_on\_owner、mutex\_can\_spin\_on\_owner、rtmutex\_spin\_on\_owner and osq\_lock、available\_idle\_cpu会用到本特性。
+- 虚拟机锁优化适用于vCPU范围绑核的超分场景，即一个物理核可能会有多个vCPU线程争抢资源的情况。
+- 本特性以前后端协同方式，获取vCPU线程的抢占状态，优化内部调度/锁的性能。在涉及到CPU调度的场景下，如mutex\_spin\_on\_owner、mutex\_can\_spin\_on\_owner、rtmutex\_spin\_on\_owner and osq\_lock、available\_idle\_cpu会用到本特性。
 
 
 
