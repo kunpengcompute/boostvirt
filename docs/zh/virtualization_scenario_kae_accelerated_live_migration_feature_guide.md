@@ -62,7 +62,7 @@
 
 |项目|版本|获取方法|
 |--|--|--|
-|OS|openEuler 22.03 LTS SP4<br>本特性支持openEuler 22.03 LTS SP1/SP2/SP3/SP4。本文档基于openEuler 22.03 LTS SP4版本的操作系统进行使能和验证。|[获取链接](https://mirrors.huaweicloud.com/openeuler/openEuler-22.03-LTS-SP4/ISO/aarch64/openEuler-22.03-LTS-SP4-everything-aarch64-dvd.iso)|
+|OS|openEuler 22.03 LTS SP4<br>本特性支持openEuler 22.03 LTS SP1/SP2/SP3/SP4。<br>本文档基于openEuler 22.03 LTS SP4版本的操作系统进行使能和验证。|[获取链接](https://mirrors.huaweicloud.com/openeuler/openEuler-22.03-LTS-SP4/ISO/aarch64/openEuler-22.03-LTS-SP4-everything-aarch64-dvd.iso)|
 |libvirt|10.0.0及以上|[获取链接](https://gitee.com/openeuler/libvirt)|
 |QEMU|6.2.0|[获取链接](https://gitlab.com/qemu-project/qemu)|
 |Redis|6.0.20|[获取链接](http://download.redis.io/releases/redis-6.0.20.tar.gz)|

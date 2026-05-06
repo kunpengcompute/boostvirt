@@ -8,7 +8,7 @@
 
 在云原生环境日益普及的当下，Nginx作为关键的网络代理和负载均衡器，在处理HTTPS流量时面临着显著的挑战，尤其是SSL/TLS握手阶段的非对称加密运算，这成为了CPU性能的一大瓶颈。为了缓解这一问题，业界普遍采用硬件加速技术，将原本繁重的加密解密任务从CPU卸载至专用硬件处理，以此提升处理效率，减少CPU切换的开销和等待时间，进而优化整体的网络转发性能。
 
-鲲鹏加速引擎（Kunpeng Accelerator Engine，KAE）是基于鲲鹏920处理器提供的硬件加速解决方案，该加速方案主要对HTTPS请求处理中SSL/TLS握手时的非对称加解密算法（例如RSA算法）进行硬件卸载从而对HTTPS请求处理中的加解密算法进行加速。
+KAE（Kunpeng Accelerator Engine，鲲鹏加速引擎）是基于鲲鹏处理器提供的硬件加速解决方案，包含了KAE加解密和KAE解压缩。KAE加解密用于加速SSL（Secure Sockets Layer）/TLS（Transport Layer Security）应用，KAE解压缩用于加速数据压缩、解压，可以显著降低处理器消耗，提高处理器效率。
 
 vKAE（virtual Kunpeng Accelerator Engine）是专为基于鲲鹏920处理器的虚拟化和云原生场景设计的硬件加速解决方案。该方案的核心优势在于，它能够高效处理HTTPS请求中的SSL/TLS握手过程，特别是针对RSA等非对称加密算法，实现了硬件卸载。vKAE提供了两种灵活的接口方式：标准的OpenSSL API和定制化的API。这使得Nginx等通用软件以及客户自主研发的应用都能应用vKAE带来的性能提升。该方案使用前要求HostOS上已经安装KAE并已建立虚拟机，且虚拟机上已经安装KAE，最后在HostOS上完成相关配置后方可使用。
 
@@ -129,13 +129,13 @@ vKAE可以应用于虚拟化和云原生场景。
 
 |项目|版本|获取方式|
 |--|--|--|
-|OS|openEuler 22.03 LTS SP3、openEuler 24.03 LTS SP3|ISO镜像：获取链接|
+|OS|openEuler 22.03 LTS SP3、openEuler 24.03 LTS SP3|openEuler 22.03 LTS SP3 ISO镜像：[获取链接](https://repo.openeuler.org/openEuler-22.03-LTS-SP3/ISO/aarch64/)<br>openEuler 24.03 LTS SP3 ISO镜像：[获取链接](https://repo.openeuler.org/openEuler-24.03-LTS-SP3/ISO/aarch64/)|
 |QEMU|6.2.0、8.2.0|通过配置Yum源的方式安装|
 |libvirt|6.2.0、9.10.0|通过配置Yum源的方式安装|
 |Nginx|1.21.5|通过配置Yum源的方式安装|
 |OpenSSL|1.1.1|通过配置Yum源的方式安装|
 |HTTPress|1.1.0|通过配置Yum源的方式安装|
-|KAE|2.0|下载命令：`git clone https://gitee.com/kunpengcompute/KAE.git -b kae2 `|
+|KAE|2.0|下载命令：`git clone https://gitcode.com/boostkit/KAE.git -b kae2 `|
 
 
 
@@ -830,7 +830,7 @@ vKAE可以应用于虚拟化和云原生场景。
 
         以8C16G规格的虚拟机配置文件为例，虚拟机名为nginx1，对虚拟机进行了顺序绑核和内存绑核。修改完配置文件后重启虚拟机，使VF直通虚拟机生效。
 
-        1. 打开虚拟机配置文件，例如”vm01.xml”。
+        1. 打开虚拟机配置文件，例如“vm01.xml”。
 
             ```
             vim vm01.xml
@@ -840,12 +840,12 @@ vKAE可以应用于虚拟化和云原生场景。
 
             ```
             <domain type='kvm'>
-              <name>vm01</name>
+              <name>vm01</name> 
               <uuid>a1d11347-8738-45fb-8944-e3a058f464c9</uuid>
-              <memory unit='KiB'>16777216</memory>
+              <memory unit='KiB'>16777216</memory> 
               <currentMemory unit='KiB'>16777216</currentMemory>
               <memoryBacking>
-                <hugepages/>
+                <hugepages/> 
               </memoryBacking>
               <vcpu placement='static'>8</vcpu>
               <cputune>
@@ -962,7 +962,7 @@ vKAE可以应用于虚拟化和云原生场景。
                 </hostdev>
                 <hostdev mode='subsystem' type='pci' managed='yes'>
                   <source>
-                    <address domain='0x0000' bus='0x79' slot='0x00' function='0x1'/>
+                    <address domain='0x0000' bus='0x79' slot='0x00' function='0x1'/> <!-- 该参数请根据实际情况进行修改 -->
                   </source>
                 <address type='pci' domain='0x0000' bus='0x07' slot='0x00' function='0x0'/>
                </hostdev>
@@ -970,8 +970,6 @@ vKAE可以应用于虚拟化和云原生场景。
             </domain>
             ```
 
-            >![](public_sys-resources/icon-note.gif) **说明：** 
-            >加粗的参数请根据实际情况进行修改。
 
         3. 重启虚拟机，使VF直通虚拟机生效。
 
@@ -1102,7 +1100,7 @@ vKAE可以应用于虚拟化和云原生场景。
     /usr/local/nginx/sbin/nginx -v
     ```
 
-7. <a name="li1074555611337"></a>在不使能KAE的情况下，配置并启动Nginx开源版本。
+7. <a name="li1074555611337" id="li1074555611337"></a>在不使能KAE的情况下，配置并启动Nginx开源版本。
     1. 打开Nginx配置文件。
 
         ```
@@ -1237,7 +1235,7 @@ vKAE可以应用于虚拟化和云原生场景。
         >    /usr/local/nginx/sbin/nginx -s stop
         >    ```
 
-8. <a name="li367309154513"></a>配置使能KAE + Nginx的同步模式。
+8. <a name="li367309154513" id="li367309154513"></a>配置使能KAE + Nginx的同步模式。
     1. 在“usr/local/nginx/conf”目录下创建一个名为nginx\_kae.conf的配置文件。
 
         ```
@@ -1355,7 +1353,7 @@ vKAE可以应用于虚拟化和云原生场景。
         OPENSSL_CONF=/home/openssl.cnf /usr/local/nginx/sbin/nginx -c /usr/local/nginx/conf/nginx_kae.conf
         ```
 
-9. 配置使能KAE + Nginx的异步模式。
+9. <a name="li10813133111559" id="li10813133111559"></a>配置使能KAE + Nginx的异步模式。
 
     >![](public_sys-resources/icon-notice.gif) **须知：** 
     >配置使能KAE + Nginx的异步模式，需要额外下载适配异步模式的Nginx源代码。该源代码支持同步或异步模式，可以适配KAE或Intel QAT硬件加速。
@@ -1637,7 +1635,7 @@ vKAE可以应用于虚拟化和云原生场景。
 
 - vKAE硬件加速的优势：在资源受限的虚拟机环境中，vKAE硬件加速是提升RSA签名性能的有效手段。
 - 异步模式的优势：对于需要处理大量并发请求的应用，推荐采用Nginx异步模式结合vKAE硬件加速，以获得最佳性能。
-- 在不同规格的虚拟机中，不同的服务端线程数的测试结果、趋势都存在差异，需要具体问题具体分析。但在Nginx应用场景中，对于Nginx服务端，在不超过64个核的绑定场景下，vKAE硬件加速RSA-sign的上限值约为54000sign/s****，为实际部署提供了参考依据。
+- 在不同规格的虚拟机中，不同的服务端线程数的测试结果、趋势都存在差异，需要具体问题具体分析。但在Nginx应用场景中，对于Nginx服务端，在不超过64个核的绑定场景下，vKAE硬件加速RSA-sign的上限值约为54000sign/s，为实际部署提供了参考依据。
 
 
 ### 在Nginx应用场景中使用HTTPress对vKAE进行性能测试<a name="ZH-CN_TOPIC_0000002016398576"></a>
@@ -1802,9 +1800,9 @@ vKAE可以应用于虚拟化和云原生场景。
     >    listen       8090 ssl http2 so_keepalive=off;
     >    listen       [::]:8090 ssl http2 so_keepalive=off;
     >    ```
-    >-   如果要使用参数调优过的Nginx配置文件，可以直接使用[9](在虚拟机部署Nginx.md#li10813133111559)中的配置文件。
+    >-   如果要使用参数调优过的Nginx配置文件，可以直接使用[9](#li10813133111559)中的配置文件。
 
-3. 按“Esc”键，输入**:wq!** ，按“Enter”保存并退出编辑。
+3. 按“Esc”键，输入 **:wq!** ，按“Enter”保存并退出编辑。
 4. 在客户端上使用HTTPress对HTTPS短连接进行压力测试。
 
     以服务端分别使用1个线程和4个线程，客户端绑核数根据实际需要进行限制为例，在客户端上使用HTTPress对HTTPS短连接进行压力测试，测试命令如下：

@@ -52,7 +52,7 @@
 
 #### 安装libvirt与QEMU<a name="ZH-CN_TOPIC_0000002550008069"></a>
 
-通过配置虚拟机的XML或配置QEMU拉起虚拟机的命令将缓存结构信息传给虚拟机，使能前后观察虚拟机中的缓存结构信息，验证使能是否成功。配置前需通过编译rpm包的方式安装libvirt与QEMU。
+通过配置虚拟机的XML或配置QEMU拉起虚拟机的命令将缓存结构信息传给虚拟机，使能前后观察虚拟机中的缓存结构信息，验证使能是否成功。配置前需通过编译RPM包的方式安装libvirt与QEMU。
 
 1. <a name="li13594163933816"></a>获取libvirt与QEMU代码仓。
 
@@ -115,12 +115,12 @@
     yum-builddep -y /root/rpmbuild/SOURCES/qemu.spec
     ```
 
-6. 编译rpm包。
+6. 编译RPM包。
 
     编译安装相关的依赖包，libvirt的命令如下。
 
     ```
-    rpmbuild -ba /root/rpmbuild/SOURCES/libvirt.spec
+    RPMbuild -ba /root/rpmbuild/SOURCES/libvirt.spec
     ```
 
     QEMU的命令如下。
@@ -129,12 +129,12 @@
     rpmbuild -ba /root/rpmbuild/SOURCES/qemu.spec
     ```
 
-7. 安装rpm包。
+7. 安装RPM包。
 
     编译安装相关的依赖包，libvirt的命令如下。
 
     ```
-    cd /root/rpmbuild/RPMS/aarch64
+    cd /root/RPMbuild/RPMS/aarch64
     rpm -ivh libvirt* --nodeps --force
     ```
 
