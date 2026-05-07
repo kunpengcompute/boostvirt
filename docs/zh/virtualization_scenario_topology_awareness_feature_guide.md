@@ -54,7 +54,7 @@
 
 通过配置虚拟机的XML或配置QEMU拉起虚拟机的命令将缓存结构信息传给虚拟机，使能前后观察虚拟机中的缓存结构信息，验证使能是否成功。配置前需通过编译RPM包的方式安装libvirt与QEMU。
 
-1. <a name="li13594163933816"></a>获取libvirt与QEMU代码仓。
+1. <a id="li13594163933816"></a>获取libvirt与QEMU代码仓。
 
     获取针对openEuler 22.03 LTS SP4的libvirt，命令如下。
 
@@ -87,13 +87,13 @@
 
     - 如果没有补丁，则需要根据[**表 2** 操作系统与软件要求](#操作系统与软件要求)中的地址下载补丁。在对应补丁地址中，单击“克隆/下载-\>HTTPS-\>下载 Email Patch”的“下载 Email Patch”，将所有的代码复制保存成“Patch名称.patch”，并将Patch放到[步骤1](#li13594163933816)中克隆的文件夹的spec文件所在目录。补丁下载完成后，需要执行[步骤3](#li24971128394)的操作。
 
-3. <a name="li24971128394"></a>修改libvirt.spec与qemu.spec。
+3. <a id="li24971128394"></a>修改libvirt.spec与qemu.spec。
 
     修改对应的spec文件，以libvirt.spec文件为例。在libvirt.spec文件的Patch清单最后，加上前文所下载的libvirt Email Patch的名称。QEMU的操作类似。
 
     ![](figures/zh-cn_image_0000002550008071.png)
 
-4. <a name="li101064218395"></a>拷贝文件。
+4. <a id="li101064218395"></a>拷贝文件。
 
     以libvirt为例，把所有文件（libvirt-6.2.0.tar.xz, libvirt.spec, \*, patch）复制到“/root/rpmbuild/SOURCES”。QEMU的操作类似。
 
@@ -120,7 +120,7 @@
     编译安装相关的依赖包，libvirt的命令如下。
 
     ```
-    RPMbuild -ba /root/rpmbuild/SOURCES/libvirt.spec
+    rpmbuild -ba /root/rpmbuild/SOURCES/libvirt.spec
     ```
 
     QEMU的命令如下。
@@ -134,7 +134,7 @@
     编译安装相关的依赖包，libvirt的命令如下。
 
     ```
-    cd /root/RPMbuild/RPMS/aarch64
+    cd /root/rpmbuild/RPMS/aarch64
     rpm -ivh libvirt* --nodeps --force
     ```
 
