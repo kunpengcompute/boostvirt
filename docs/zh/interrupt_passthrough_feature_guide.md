@@ -343,16 +343,16 @@ https://gitee.com/openeuler/kernel/commit/43c7519a5d563325b19210009d04643fedd962
 2. 若只提示applying成功信息，则补丁可用，回显信息如下。
 
     ```
-    Applying：KVM：Reinstall old memslots if arch preparation fails
+    Applying: KVM: Reinstall old memslots if arch preparation fails
     ```
 
 3. 若有如下报错，则需根据错误提示在patch中找到无法合入部分，根据提示到相应文档中手动修改。
 
     ```
-    Applying：KVM：Reinstall old memslots if arch preparation fails
-    error：patch failed：virt/kvm/kvm_main.c:1117
-    error：virt/kvm/kvm_main.c：patch does not apply
-    Patch failed at 0001 KVM：Reinstall old memslots if arch preparation fails
+    Applying: KVM: Reinstall old memslots if arch preparation fails
+    error: patch failed: virt/kvm/kvm_main.c:1117
+    error: virt/kvm/kvm_main.c: patch does not apply
+    Patch failed at 0001 KVM: Reinstall old memslots if arch preparation fails
     ```
 
 4. 补丁合入并解决冲突后，重新编译安装内核。
