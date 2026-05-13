@@ -160,7 +160,7 @@
 
 拉起虚拟机可以通过libvirt，也可以通过QEMU命令。下面将针对两种拉起虚拟机的方式的缓存大小配置进行介绍。
 
-**通过libvirt拉起虚拟机<a name="section058302812215"></a>**
+##### 通过libvirt拉起虚拟机<a name="section058302812215"></a>
 
 采用libvirt拉起虚拟机的方式，需要在虚拟机的xml配置文件中修改缓存相关配置。
 
@@ -192,7 +192,7 @@
         ...
     ```
 
-**（可选）通过QEMU命令或Device Tree拉起虚拟机<a name="section587337679"></a>**
+##### （可选）通过QEMU命令或Device Tree拉起虚拟机<a name="section587337679"></a>
 
 采用QEMU命令或Device Tree拉起虚拟机，需要在QEMU命令中修改缓存相关配置。
 

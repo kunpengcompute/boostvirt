@@ -65,7 +65,7 @@
 
 
 
-### 安装KAE<a name="ZH-CN_TOPIC_0000002550006357"></a>
+### 安装KAE<a name="ZH-CN_TOPIC_0000002550006357" id="安装KAE"></a>
 
 KAE2.0源码包中包含KAEKernelDriver内核驱动、UADK框架、KAEOpensslEngine引擎和KAEZlib、KAEZstd、KAELz4几个模块，其中KAEKernelDriver内核驱动与UADK为必选项，其他模块按实际需求选择安装。本特性以KAEOpensslEngine引擎和KAEZlib为例进行特性的功能和性能测试验证，请参考本章节安装KAEOpensslEngine引擎和KAEZlib。
 
@@ -258,7 +258,7 @@ KAE2.0源码包中包含KAEKernelDriver内核驱动、UADK框架、KAEOpensslEng
         drwxr-xr-x. 2 root root   4096 Aug 29 10:20 pkgconfig
         ```
 
-    3. <a name="li20414340916"></a>编译安装KAEGzip解压缩工具。
+    3. <a id="li20414340916"></a>编译安装KAEGzip解压缩工具。
 
         ```
         sh build.sh gzip
@@ -266,7 +266,7 @@ KAE2.0源码包中包含KAEKernelDriver内核驱动、UADK框架、KAEOpensslEng
 
         工具安装在“/usr/local/kaegzip”。
 
-    4. <a name="li5793114715813"></a>查看KAEGzip解压缩工具是否安装成功。
+    4. <a id="li5793114715813"></a>查看KAEGzip解压缩工具是否安装成功。
 
         ```
         ldd /usr/local/kaegzip/gzip

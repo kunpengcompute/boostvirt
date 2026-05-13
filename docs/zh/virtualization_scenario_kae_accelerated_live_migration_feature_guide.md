@@ -168,12 +168,12 @@ b6:00.0 Network and computing encryption device: Huawei Technologies Co., Ltd. H
 >-   KAE安装权限：root账户。
 >-   KAE使用权限：root账户与非root账户。其中非root账户需要获取相关设备（/dev/hisi\_\*）和文件（/var/log/kae.\*）权限。
 >-   KAE驱动需要同时安装在源物理机和目标物理机。
->-   更多内容请参见《[加速器 用户指南（鲲鹏加速引擎）](https://www.hikunpeng.com/document/detail/zh/kunpengaccel/kae/usermanual/kunpengaccel_16_0002.html)》。
+>-   更多内容请参见《[加速器 用户指南（鲲鹏加速引擎）](https://www.hikunpeng.com/document/detail/zh/kunpengaccel/kae/kae/README.md)》。
 
-1. 从网页下载[KAE2.0源码包](https://gitee.com/kunpengcompute/KAE/tree/kae2/)或采用git clone方式。
+1. 从网页下载[KAE2.0源码包](https://gitcode.com/boostkit/KAE/tree/kae2/)或采用git clone方式。
 
     ```
-    git clone https://gitee.com/kunpengcompute/KAE.git -b kae2
+    git clone https://gitcode.com/boostkit/KAE.git -b kae2
     ```
 
 2. 安装相关依赖包。
