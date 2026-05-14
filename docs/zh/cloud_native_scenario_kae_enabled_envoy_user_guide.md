@@ -4,11 +4,13 @@
 
 本文主要介绍如何在使用openEuler操作系统的服务器中让Envoy使能KAE设备。
 
+KAE（Kunpeng Accelerator Engine，鲲鹏加速引擎）是基于鲲鹏处理器提供的硬件加速解决方案，包含了KAE加解密和KAE解压缩。KAE加解密用于加速SSL（Secure Sockets Layer）/TLS（Transport Layer Security）应用，KAE解压缩用于加速数据压缩、解压，可以显著降低处理器消耗，提高处理器效率。
+
 Envoy是一款专为现代云原生架构设计的高性能网络代理与通信总线，广泛用作服务网格中的数据平面组件。它通常以sidecar模式独立运行在每个微服务旁边，透明地接管服务间的入站和出站流量，实现流量管理、安全策略、可观测性等核心功能，并支持动态配置，是Istio等服务网格技术的关键基础设施。
 
 在微服务场景中，无论作为Ingress Gateway还是微服务的代理，Envoy都需处理大量TLS请求。尤其是在TLS握手阶段，非对称加解密操作对CPU资源消耗巨大。在大规模部署微服务的场景下，这一开销可能成为系统性能瓶颈。
 
-为解决此问题，Envoy的Kae Private Key Provider会将耗时的加密运算从CPU卸载到鲲鹏KAE加速器上，在加速加解密的同时也为其他业务负载释放CPU算力。
+为解决此问题，Envoy的KAE Private Key Provider会将耗时的加密运算从CPU卸载到鲲鹏KAE加速器上，在加速加解密的同时也为其他业务负载释放CPU算力。
 
 ## 环境要求<a name="ZH-CN_TOPIC_0000002511736266"></a>
 

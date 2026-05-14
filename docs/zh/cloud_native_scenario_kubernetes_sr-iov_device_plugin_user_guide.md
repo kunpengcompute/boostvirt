@@ -245,9 +245,9 @@ data:
 |resourcePrefix|资源名称的前缀，可自定义。|不能包含特殊字符，可以写成xx.com，例如huawei.com。|
 |deviceType|设备的类型。|目前支持的值有：accelerator、netDevice、auxNetDevice，默认值是netDevice。|
 |selectors|资源筛选器。|只有与selectors里面填写的筛选条件相同的设备才会被管理。|
-|vendors|设备的厂商号，比如华为的vendors是19e5，具体的查看方法参见2。|-|
-|devices|设备的设备号，具体的查看方法参见2。|-|
-|drivers|设备使用的驱动名字，具体的查看方法参见3。|-|
+|vendors|设备的厂商号，比如华为的vendors是19e5，具体的查看方法参见[2](#li12442201520150)。|-|
+|devices|设备的设备号，具体的查看方法参见[2](#li12442201520150)。|-|
+|drivers|设备使用的驱动名字，具体的查看方法参见[3](#li14503133373)。|-|
 |pfNames|网卡上的pf名称|机器上存在多个网口时，需全部添加，防止来自不同网口的vf混用。|
 
 
@@ -262,7 +262,7 @@ data:
     >![](public_sys-resources/icon-note.gif) **说明：** 
     >实际使用时创建的网卡设备的VF可能不只一个，选择其中一个VF的PCI地址查找即可，因为所有VF的“vendors”、“devices”、“drivers”都是一样。
 
-2. <a name="li12442201520150"></a>根据上一步回显信息确认需要使用VF设备的PCI地址是“85:00.1”，然后执行以下命令进一步确认设备的“vendors”和“devices”。
+2. <a id="li12442201520150"></a>根据上一步回显信息确认需要使用VF设备的PCI地址是“85:00.1”，然后执行以下命令进一步确认设备的“vendors”和“devices”。
 
     其中“vendors”是“19e5”，“devices”是“375e”。
 
@@ -272,7 +272,7 @@ data:
 
     ![](figures/zh-cn_image_0000002549885661.png)
 
-3. <a name="li14503133373"></a>确认设备对应的驱动“drivers”。
+3. <a id="li14503133373"></a>确认设备对应的驱动“drivers”。
 
     在输出中找到PCI地址为“85:00.1”的设备对应的驱动名称。
 
