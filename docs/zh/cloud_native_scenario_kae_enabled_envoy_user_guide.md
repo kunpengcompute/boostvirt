@@ -31,7 +31,26 @@ Envoy是一款专为现代云原生架构设计的高性能网络代理与通信
 |Docker|不低于20.10.13，且需支持Docker Compose功能|[获取链接](https://download.docker.com/linux/static/stable/aarch64/)|
 |KAE|2.0|[获取链接](https://www.hikunpeng.com/document/detail/zh/kunpengaccel/kae/usermanual/kunpengaccel_06_0012.html)|
 
-## 编译Envoy<a name="ZH-CN_TOPIC_0000002511738428"></a>
+## 获取Envoy<a name="ZH-CN_TOPIC_0000002511738428"></a>
+
+Envoy KAE Private Key Provider需要使用Envoy 1.38.0及之后版本，且需要使用ARM架构的contrib版本Envoy。可以从Envoy官方release页面直接下载，也可以从源码编译获取。
+
+### 从官网获取<a name="section_get_envoy_from_release"></a>
+
+访问[Envoy release页面](https://github.com/envoyproxy/envoy/releases)，选择Envoy版本，并在对应版本的Assets中下载ARM架构的contrib版本Envoy二进制文件。
+
+>![](public_sys-resources/icon-note.gif) **说明：** 
+>-   Envoy KAE Private Key Provider需要使用Envoy 1.38.0及之后版本。
+>-   下载二进制文件时，请选择文件名中包含“contrib”和“linux-aarch_64”的文件。
+
+将获取的Envoy二进制文件重命名为envoy-contrib，并添加可执行权限。
+
+```
+mv envoy-contrib-<version>-linux-aarch_64 envoy-contrib
+chmod +x envoy-contrib
+```
+
+### 从源码编译<a name="section_build_envoy_from_source"></a>
 
 使用Docker镜像进行Envoy编译。Envoy的编译操作需要依赖Docker Compose，请在编译之前确保Docker已经安装Compose插件。
 
@@ -54,12 +73,12 @@ Envoy是一款专为现代云原生架构设计的高性能网络代理与通信
 
     ```
     git clone https://github.com/envoyproxy/envoy.git 
+    cd envoy
     ```
 
 2. 编译Envoy获取软件二进制。
 
     ```
-    cd /path/to/envoy
     ./ci/run_envoy_docker.sh './ci/do_ci.sh release.server_only'
     ```
 
@@ -251,6 +270,3 @@ Envoy是一款专为现代云原生架构设计的高性能网络代理与通信
 |发布日期|修订记录|
 |--|--|
 |2026-03-30|第一次正式发布。|
-
-
-
