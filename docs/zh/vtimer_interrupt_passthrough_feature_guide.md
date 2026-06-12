@@ -120,6 +120,7 @@ dmesg | grep vtimer
 
 若回显中包含`using pvtimer status`状态模拟相关的日志信息，说明特性已生效。
 
+![](./figures/vtimer.png)
 
 
 ## 缩略语<a name="ZH-CN_TOPIC_0000002106021550"></a>
