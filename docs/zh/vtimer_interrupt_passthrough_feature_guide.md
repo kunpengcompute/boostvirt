@@ -56,10 +56,10 @@ vtimer中断透传特性允许虚拟机的timer中断直接注入，免去中断
 
 |项目|版本|获取方法|
 |--|--|--|
-|Host OS|openEuler 24.03 LTS SP4及以上版本|利用Yum工具直接安装。|
-|Guest OS|openEuler 24.03 LTS SP4及以上版本（开启vtimer status状态模拟时需要）|利用Yum工具直接安装。|
-|libvirt|9.10.0及以上均可|利用Yum工具直接安装。|
-|QEMU|8.2.0及以上均可|利用Yum工具直接安装。|
+|Host OS|openEuler 24.03 LTS SP4及以上版本|https://www.openeuler.openatom.cn/zh/download/?archive=true|
+|Guest OS|openEuler 24.03 LTS SP4及以上版本（开启vtimer status状态模拟时需要）|https://www.openeuler.openatom.cn/zh/download/?archive=true|
+|libvirt|9.10.0及以上均可|yum install libvirt|
+|QEMU|8.2.0及以上均可|yum install qemu|
 
 
 ### 特性使能<a name="ZH-CN_TOPIC_0000002105901586"></a>
@@ -120,6 +120,7 @@ dmesg | grep vtimer
 
 若回显中包含`using pvtimer status`状态模拟相关的日志信息，说明特性已生效。
 
+![](./figures/vtimer.png)
 
 
 ## 缩略语<a name="ZH-CN_TOPIC_0000002106021550"></a>
