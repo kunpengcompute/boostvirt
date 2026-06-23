@@ -23,7 +23,6 @@
 
 其中，preempted状态值用于记录vCPU在Host上是否被抢占，0表示Hypervisor正在调度执行该vCPU，1表示该vCPU已被Hypervisor调度停止。
 
-
 ### 可获得性<a name="ZH-CN_TOPIC_0000002105901569"></a>
 
 版本支持：
@@ -31,20 +30,16 @@
 - 支持openEuler 20.03 LTS SP1及以上的操作系统版本。
 - 非openEuler内核需要合入如[**表 3** 非openEuler内核补丁文件要求](#非openEuler内核补丁文件要求)所示使能补丁。补丁合入默认特性使能。
 
-
 ### 约束与限制<a name="ZH-CN_TOPIC_0000002070341630"></a>
 
 虚拟机锁优化特性暂不支持热迁移。
 
 虚拟机锁优化特性仅与操作系统内核有关，特性使能与否对libvirt和QEMU完全透明，无需在libvirt及QEMU侧进行任何附加操作。
 
-
 ### 应用场景<a name="ZH-CN_TOPIC_0000002105901593"></a>
 
 - 虚拟机锁优化适用于vCPU范围绑核的超分场景，即一个物理核可能会有多个vCPU线程争抢资源的情况。
 - 本特性以前后端协同方式，获取vCPU线程的抢占状态，优化内部调度/锁的性能。在涉及到CPU调度的场景下，如mutex\_spin\_on\_owner、mutex\_can\_spin\_on\_owner、rtmutex\_spin\_on\_owner and osq\_lock、available\_idle\_cpu会用到本特性。
-
-
 
 ## 特性使用<a name="ZH-CN_TOPIC_0000002070341634"></a>
 
@@ -62,7 +57,6 @@
 |--|--|
 |处理器|鲲鹏920系列处理器|
 
-
 **操作系统和软件要求<a name="section153345522323"></a>**
 
 操作系统和软件要求如[**表 2** 操作系统和软件要求](#操作系统和软件要求)所示。
@@ -74,7 +68,6 @@
 |OS|openEuler 20.03 LTS SP1<br>物理机、虚拟机均要求操作系统不低于以上版本|[获取链接](https://mirrors.huaweicloud.com/openeuler/openEuler-20.03-LTS-SP1/ISO/aarch64/openEuler-20.03-LTS-SP1-aarch64-dvd.iso)|
 |libvirt|6.2.0及以上均可|利用Yum工具直接安装。|
 |QEMU|4.1.0及以上均可|利用Yum工具直接安装。|
-
 
 **表 3** 非openEuler内核补丁文件要求<a id="非openEuler内核补丁文件要求"></a>
 
@@ -89,10 +82,8 @@
 |7|KVM: arm64: Implement PV_SCHED_KICK_CPU call|[获取链接](https://gitee.com/openeuler/kernel/commit/efed88dd593493653466917a7e95868ec38bef41)|
 |8|KVM: arm64: Add interface to support PV qspinlock|[获取链接](https://gitee.com/openeuler/kernel/commit/12e1ed766c347d47f85736fece113c7578ace94f)|
 
-
 >![](public_sys-resources/icon-notice.gif) **须知：** 
 >本特性功能需要物理机、虚拟机侧都有相应功能支持。因此，要在非openEuler内核上使用该特性，则物理机、虚拟机上都要合入以上补丁。
-
 
 ### 特性使能<a name="ZH-CN_TOPIC_0000002105901585"></a>
 
@@ -100,30 +91,24 @@
 
 在非openEuler内核上，使能该特性需要合入相应补丁，见[**表 3** 非openEuler内核补丁文件要求](#非openEuler内核补丁文件要求)，补丁合入后，系统启动默认使能。
 
-
 ### 特性验证<a name="ZH-CN_TOPIC_0000002070181858"></a>
 
 在安装libvirt和QEMU的前提下，创建并启动虚拟机。虚拟机系统启动后，在虚拟机内部执行如下命令。
 
-```
+```shell
 dmesg | grep PV
 ```
 
 如果特性运转正常，回显中将含有如下内容。
 
-```
+```txt
 arm-pv: using PV sched preempted
 ```
 
 本特性对用户完全透明，无需任何操作，即可提升虚拟机的vCPU调度性能。
-
-
 
 ## 缩略语<a name="ZH-CN_TOPIC_0000002106021549"></a>
 
 |**缩略语**|**英文全称**|**中文全称**|
 |--|--|--|
 |KVM|Kernel-based Virtual Machine|内核虚拟机|
-
-
-

@@ -42,7 +42,6 @@
 |--|--|
 |处理器|鲲鹏920新型号处理器、鲲鹏950处理器|
 
-
 **固件版本要求<a name="section4793193042413"></a>**
 
 固件版本要求如[**表 2** 固件版本要求](#固件版本要求) 所示，建议升级配套版本的全部固件。
@@ -52,7 +51,6 @@
 |项目|版本|
 |--|--|
 |鲲鹏920新型号处理器|基础板（BCU）CPLD 大于7.0.0|
-
 
 **操作系统和软件要求<a name="section153345522323"></a>**
 
@@ -89,7 +87,7 @@
 
 安装libvirt。
 
-```
+```shell
 yum install -y libvirt
 ```
 
@@ -99,13 +97,13 @@ yum install -y libvirt
 
 1. 编辑虚拟机XML。
 
-    ```
+    ```shell
     virsh edit <vm name>
     ```
 
 2. 按“i”进入编辑模式，在<features\>标签中添加<ras/\>标签。
 
-    ```
+    ```xml
     <domain type='kvm'>
       ...
       <features>
@@ -119,8 +117,6 @@ yum install -y libvirt
 
 3. 按“Esc”键退出编辑模式，输入 **:wq!**，按“Enter”键保存并退出文件。
 
-
-
 ## 功能测试<a name="ZH-CN_TOPIC_0000002544247337"></a>
 
 ### 安装测试工具<a name="ZH-CN_TOPIC_0000002516419674"></a>
@@ -131,7 +127,7 @@ yum install -y libvirt
 
 Nginx只作为验证注错过程对业务连续性影响的工具，Nginx的版本可任意选择，以1.24.0为例，该版本为Yum源自带版本，在虚拟机中执行以下命令安装。
 
-```
+```shell
 yum install -y nginx
 ```
 
@@ -139,7 +135,7 @@ yum install -y nginx
 
 Wrk是一款HTTP压力测试工具，使用它对Nginx进行压测，保证注错时业务进程处在高负载状态。Wrk的版本可任意选择，以4.2.0为例，该版本为Yum源自带版本，在物理机中执行以下命令安装。
 
-```
+```shell
 yum install -y wrk
 ```
 
@@ -147,7 +143,7 @@ yum install -y wrk
 
 Rasdaemon是一个守护进程，RAS事件发生后记录并打印故障信息，在物理机中执行以下命令安装。
 
-```
+```shell
 yum install -y rasdaemon
 ```
 
@@ -155,18 +151,19 @@ yum install -y rasdaemon
 
 单核CE故障注入使用内核提供的einj模块实现。
 >![](public_sys-resources/icon-note.gif) **说明：** 
+>
 >1. 单核故障注入只会生效在物理核上，在超线程场景下，无论选择哪个超线程注入，都只会生效在第一个超线程上。
 >2. 单核故障隔离是Host OS提供的能力，目前在超线程场景下，OS不会主动隔离所有超线程，需要用户/软件判断在故障时隔离1个或2个超线程。安全起见，在一个超线程因故障被隔离的情况下，用户需要主动隔离另一个超线程。
 
 1. 加载注错模块。
 
-    ```
+    ```shell
     modprobe einj
     ```
 
 2. 修改虚拟机XML，添加绑核信息。以4核虚拟机为例，添加如下内容。
 
-    ```
+    ```xml
     <cputune>
         <vcpupin vcpu='0' cpuset='10'/>
         <vcpupin vcpu='1' cpuset='11'/>
@@ -177,32 +174,32 @@ yum install -y rasdaemon
 
 3. 启动并进入虚拟机运行Nginx，关闭虚拟机防火墙。
 
-    ```
+    ```shell
     systemctl stop firewalld
     systemctl start nginx
     ```
 
 4. 回到物理机，使用wrk对Nginx进行压测。
 
-    ```
+    ```shell
     wrk -t4 -c64 -d60s http://<虚拟机IP>/
     ```
 
 5. 配置RAS功能生效阈值。
 
-    ```
+    ```shell
     export CPU_ISOLATION_ENABLE=yes; export CPU_CE_THRESHOLD=4; export CPU_ISOLATION_CYCLE=24h; export CPU_ISOLATION_LIMIT=10
     ```
 
 6. 启动Rasdaemon服务。
 
-    ```
+    ```shell
     rasdaemon -f -r
     ```
 
 7. 选择其中一个核心，以CPU10为例，重复执行以下步骤，进行多次注错。
 
-    ```
+    ```shell
     echo 0x1 > /sys/kernel/debug/apei/einj/error_type
     echo 10 > /sys/kernel/debug/apei/einj/param1
     echo 0xfffffffffffffff0 > /sys/kernel/debug/apei/einj/param2
@@ -216,13 +213,13 @@ yum install -y rasdaemon
 
 9. 注错次数达到阈值后，执行以下命令，查看被注错核心是否下线，对应vCPU绑核是否发生改变。
 
-    ```
+    ```shell
     lscpu
     ```
 
     ![](figures/zh-cn_image_0000002546157397.png)
 
-    ```
+    ```shell
     virsh vcpuinfo <vm name>
     ```
 
@@ -230,7 +227,7 @@ yum install -y rasdaemon
 
 10. 进入虚拟机查看Nginx运行状态。
 
-    ```
+    ```shell
     ps -ef | grep nginx
     ```
 
@@ -246,10 +243,9 @@ yum install -y rasdaemon
 
 重新安装qemu软件。
 
-```
+```shell
 yum reinstall qemu
 ```
-
 
 #### 获取故障注入地址<a name="ZH-CN_TOPIC_0000002514439060"></a>
 
@@ -259,13 +255,13 @@ yum reinstall qemu
 
 1. 进入虚拟机，启动Nginx。
 
-    ```
+    ```shell
     systemctl start nginx
     ```
 
 2. 获取Nginx进程号。
 
-    ```
+    ```shell
     ps -ef | grep nginx
     ```
 
@@ -273,7 +269,7 @@ yum reinstall qemu
 
 3. 选择worker进程，获取进程地址空间，取地址空间中heap段的地址作为注错地址的GVA（Guest Virtual Address）。
 
-    ```
+    ```shell
     cat /proc/<pid>/maps
     ```
 
@@ -281,14 +277,14 @@ yum reinstall qemu
 
 4. 编译并执行以下代码，将虚拟地址转换为物理地址。
 
-    ```
+    ```shell
     gcc -o addr_trans addr_trans.c
     ./addr_trans
     ```
 
     addr\_trans.c文件内容如下所示，执行脚本时根据实际情况修改PID与需要翻译的地址。
 
-    ```
+    ```c
     // addr_trans.c
     #include <stdio.h>
     #include <stdlib.h>
@@ -348,26 +344,26 @@ yum reinstall qemu
 
 1. 安装编译依赖。
 
-    ```
+    ```shell
     yum install -y kernel-devel-$(uname -r) kernel-headers-$(uname -r) gcc make elfutils-libelf-devel
     ```
 
 2. 编写内核模块。
     1. 创建模块目录。
 
-        ```
+        ```shell
         mkdir kmem && cd kmem
         ```
 
     2. 新建模块文件gva\_to\_gpa\_demo.c。
 
-        ```
+        ```shell
         vim gva_to_gpa_demo.c
         ```
 
     3. 按“i”进入编辑模式，编写模块文件，文件内容如下所示。
 
-        ```
+        ```c
         // gva_to_gpa_demo.c
         #include <linux/module.h>
         #include <linux/kernel.h>
@@ -461,13 +457,13 @@ yum reinstall qemu
     4. 按“Esc”键退出编辑模式，输入 **:wq!**，按“Enter”键保存并退出文件。
     5. 新建Makefile。
 
-        ```
+        ```shell
         vim Makefile
         ```
 
     6. 按“i”进入编辑模式，编写Makefile，文件内容如下所示。
 
-        ```
+        ```shell
         # Makefile
         obj-m := gva_to_gpa_demo.o
         
@@ -488,7 +484,7 @@ yum reinstall qemu
 
 3. 编译模块并安装，获取GPA（Guest Physical Address），结果如图所示，GPA为0x106525000。
 
-    ```
+    ```shell
     make
     insmod gva_to_gpa_demo.ko
     dmesg | tail
@@ -501,13 +497,13 @@ yum reinstall qemu
 1. 获取虚机物理地址，详细步骤见[获取虚拟机用户态地址](#section7262191845011)和[获取虚拟机内核态物理地址](#section1813642420262)。
 2. 获取QEMU进程PID。
 
-    ```
+    ```shell
     ps -ef | grep qemu
     ```
 
 3. 执行虚拟机物理地址到物理机虚拟地址转换。
 
-    ```
+    ```shell
     virsh qemu-monitor-command <vm name> --hmp "gpa2hva <GPA>"
     ```
 
@@ -518,7 +514,7 @@ yum reinstall qemu
 
     - 执行以下脚本将HVA翻译为页号，根据实际情况修改PID与需要翻译的地址。
 
-        ```
+        ```shell
         pid=<PID>
         addr=<HVA>
         page_size=$(getconf PAGESIZE)
@@ -535,14 +531,14 @@ yum reinstall qemu
 
     - 编译执行以下代码将HVA翻译为HPA。
 
-        ```
+        ```shell
         gcc -o addr_trans addr_trans.c
         ./addr_trans
         ```
 
         addr\_trans.c文件内容如下所示，执行脚本时根据实际情况修改PID与需要翻译的地址。
 
-        ```
+        ```c
         // addr_trans.c
         #include <stdio.h>
         #include <stdlib.h>
@@ -602,20 +598,20 @@ yum reinstall qemu
 
 1. 加载模块。
 
-    ```
+    ```shell
     modprobe hwpoison_inject
     ```
 
 2. 参见[获取故障注入地址](#获取故障注入地址)，将GPA翻译为物理机地址页号。
 3. （可选）注错地址为Nginx进程地址时，在物理机使用wrk对Nginx进行压测。
 
-    ```
+    ```shell
     wrk -t4 -c64 -d60s http://<虚拟机IP>/
     ```
 
 4. 执行注错。
 
-    ```
+    ```shell
     echo <pfn> > /sys/kernel/debug/hwpoison/corrupt-pfn
     ```
 
@@ -637,32 +633,32 @@ yum reinstall qemu
 
 1. 安装busybox工具。
 
-    ```
+    ```shell
     yum install busybox
     ```
 
 2. 加载模块。
 
-    ```
+    ```shell
     modprobe einj
     ```
 
 3. 请参见[获取故障注入地址](#获取故障注入地址)，将GPA翻译为HPA。
 4. （可选）注错地址为Nginx进程地址时，在物理机使用wrk对Nginx进行压测。
 
-    ```
+    ```shell
     wrk -t4 -c64 -d60s http://<虚拟机IP>/
     ```
 
 5. 启动Rasdaemon。
 
-    ```
+    ```shell
     rasdaemon -r -f
     ```
 
 6. 执行注错。
 
-    ```
+    ```shell
     echo 0x8 > /sys/kernel/debug/apei/einj/error_type
     echo <HPA> > /sys/kernel/debug/apei/einj/param1
     echo 0xfffffffffffffff0 > /sys/kernel/debug/apei/einj/param2
@@ -675,9 +671,6 @@ yum reinstall qemu
 7. 在物理机中观察结果，Rasdaemon是否有CE（Corrected Error）故障日志更新。
 
     ![](figures/zh-cn_image_0000002547978385.png)
-
-
-
 
 ## 缩略语<a name="ZH-CN_TOPIC_0000002516299116"></a>
 
@@ -692,13 +685,8 @@ yum reinstall qemu
 |HPA|Host Physical Address|物理机物理地址|
 |SEA|Synchronous External Abort|同步外部异常|
 
-
-
 ## 修订记录<a name="ZH-CN_TOPIC_0000002544287789"></a>
 
 |发布日期|修改说明|
 |--|--|
 |2026-03-30|第一次正式发布。|
-
-
-

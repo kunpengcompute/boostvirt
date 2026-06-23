@@ -33,14 +33,13 @@ Apply to the 1:1 core binding scenario. The optimal NUMA topology is displayed b
 
 NUMA awareness feature configuration implements memory block binding and vCPU binding so that VMs can detect the NUMA architecture of the host machine and optimize performance.
 
-
 ## Feature Usage<a name="EN-US_TOPIC_0000002070343110"></a>
 
 ### XML Configuration<a name="EN-US_TOPIC_0000002070183306"></a>
 
 When configuring the NUMA awareness feature, you can specify the location of virtual NUMA node (vNode) memory on the host to implement memory block binding and vCPU binding so that the vCPU and memory on the vNode are on the same physical NUMA node. The following provides the VM XML configuration for reference.
 
-```
+```xml
   <memory unit='KiB'>8388608</memory>
   <currentMemory unit='KiB'>8388608</currentMemory>
   <vcpu placement='static'>16</vcpu>
@@ -82,7 +81,7 @@ The configuration procedure is as follows:
 
     In the following configuration, the VM memory is set to 8 GB, the number of vCPUs is set to 16, and vCPUs 0 to 15 are bound to the host CPUs 24 to 39, respectively.
 
-    ```
+    ```xml
       <memory unit='KiB'>8388608</memory>
       <currentMemory unit='KiB'>8388608</currentMemory>
       <vcpu placement='static'>16</vcpu>
@@ -111,7 +110,7 @@ The configuration procedure is as follows:
 
     Configure two NUMA nodes for the VM: node 0 and node 1.
 
-    ```
+    ```xml
       <numatune>
         <memnode cellid='0' mode='strict' nodeset='0'/>
         <memnode cellid='1' mode='strict' nodeset='1'/>
@@ -122,7 +121,7 @@ The configuration procedure is as follows:
 
     Each of the two NUMA nodes has 4 GB memory. The node 0 contains CPUs 0 to 7, and node 1 contains CPUs 8 to 15.
 
-    ```
+    ```xml
       <cpu mode='host-passthrough' check='none'>
         <topology sockets='1' dies='1' clusters='4' cores='4' threads='1'/>
         <numa>
@@ -132,20 +131,17 @@ The configuration procedure is as follows:
       </cpu>
     ```
 
-
 ### Feature Verification<a name="EN-US_TOPIC_0000002105903009"></a>
 
 After the preceding configuration is complete, log in to the VM and run the following command to view the number of NUMA nodes:
 
-```
+```shell
 numactl -H
 ```
 
 As shown in the following figure, the number of NUMA nodes is 2. The node 0 contains CPUs 0 to 7, and the node 1 contains CPUs 8 to 15, which is the same as the VM XML configuration. Each of the two NUMA nodes has about 4 GB memory. The system consumes a portion of memory, so the memory size shown in the figure is slightly different from that configured in the VM XML file.
 
 ![](figures/en-us_image_0000002111775489.png)
-
-
 
 ## Acronyms and Abbreviations<a name="EN-US_TOPIC_0000002105903033"></a>
 

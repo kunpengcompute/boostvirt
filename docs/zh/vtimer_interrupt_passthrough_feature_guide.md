@@ -64,13 +64,13 @@ vtimer中断透传特性允许虚拟机的timer中断直接注入，免去中断
 
 1. 在Host OS的系统引导配置文件grub.cfg（以openEuler为例，该文件在“/boot/efi/EFI/openEuler/grub.cfg”）中添加如下参数至对应内核的“linux”行尾来启动vtimer中断透传。添加完参数后重启Host OS生效。
 
-    ```
+    ```text
     kvm-arm.vtimer_irqbypass=1
     ```
 
 2. 重启Host OS使配置生效。
 
-    ```
+    ```shell
     reboot
     ```
 
@@ -89,7 +89,7 @@ vtimer中断透传特性允许虚拟机的timer中断直接注入，免去中断
 
 配置完成后，重新定义虚拟机使配置生效。
 
-```
+```shell
 virsh define vm.xml
 ```
 
@@ -99,7 +99,7 @@ virsh define vm.xml
 
 在Host OS上执行如下命令，确认vtimer中断透传特性是否使能：
 
-```
+```shell
 cat /sys/module/kvm_arm/parameters/vtimer_irqbypass
 ```
 
@@ -109,7 +109,7 @@ cat /sys/module/kvm_arm/parameters/vtimer_irqbypass
 
 在虚拟机内部执行如下命令，确认vtimer status状态模拟特性是否生效：
 
-```
+```shell
 dmesg | grep vtimer
 ```
 

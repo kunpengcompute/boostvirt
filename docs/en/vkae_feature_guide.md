@@ -14,7 +14,6 @@ vKAE is also a hardware-based acceleration solution based on Kunpeng 920 process
 
 Through the OpenSSL APIs provided by vKAE, Nginx can accelerate the encryption algorithm during HTTPS request processing in the VM environment, improving network forwarding performance.
 
-
 ### Software Architecture<a name="EN-US_TOPIC_0000002005411110"></a>
 
 vKAE consists of the guest OS, host OS, and KAE hardware.
@@ -46,8 +45,6 @@ The vKAE acceleration process is similar to the process of using KAE on a physic
 |OpenSSL libssl|Library in OpenSSL that supports TLS (SSL and TLS protocols) and depends on libcrypto.|
 |Nginx|Nginx application.|
 
-
-
 ### Specifications<a name="EN-US_TOPIC_0000002005252858"></a>
 
 vKAE supports hardware-based acceleration on VMs allocated by servers powered by Kunpeng 920 processors. vKAE supports multiple VM specifications, such as 4C8G/8C16G/16C32G/32C64G, and is also applicable in container scenarios.
@@ -63,14 +60,12 @@ vKAE supports hardware-based acceleration on VMs allocated by servers powered by
 - vKAE supports the asynchronous mode of Nginx 1.21.5 (and later versions), which aims to provide hardware-based acceleration for the RSA algorithm during HTTPS handshake process, thereby improving the performance.
 - Tests are performed using the httpress tool on an 8C16G VM in the Nginx scenario. It is observed that before the CPU performance does not reach the bottleneck with the enablement of vKAE, the asynchronous mode supported by vKAE demonstrates better performance than the synchronous mode: The request per second (RPS) in the asynchronous mode is 40% higher than that in the synchronous mode, and the average response time is 30% shorter.
 
-
 ### Availability<a name="EN-US_TOPIC_0000002005252894"></a>
 
 Before configuring vKAE, you are required to use KAE 2.0 and install the KAE license on a physical machine.
 
 - License: Before configuring the vKAE feature, you are required to install the corresponding license on the physical machine. Successful installation of the license is the prerequisite for the OS to identify and utilize the accelerator. For details about how to apply for a license, see [Obtaining a License](https://www.hikunpeng.com/document/detail/en/kunpengaccel/kae/kae/docs/en/installation_guide.md#%E8%8E%B7%E5%8F%96license) in the *Accelerator User Guide (KAE)*. The hardware-based acceleration engine built in TaiShan K series servers is enabled by default. You do not need to apply for or install a license.
 - Version: KAE 2.0, which contains multiple key components, including the KAE kernel driver, UADK framework, KAE OpenSSL engine, and KAEZlib.
-
 
 ### Constraints<a name="EN-US_TOPIC_0000002041371045"></a>
 
@@ -90,14 +85,11 @@ Before configuring vKAE, you need to understand the constraints on vKAE, includi
 
     Before using vKAE, you are required to use KAE 2.0 and install the KAE driver license on the physical machine. You need to deploy the HPRE acceleration device on a physical machine, and create and configure the corresponding VFs using the HPRE acceleration device. Then you need to pass through these VFs to the target VM, for the VM to use vKAE to accelerate the RSA encryption and decryption algorithms.
 
-
 ### Application Scenarios<a name="EN-US_TOPIC_0000002041411949"></a>
 
 vKAE is applicable in virtualization and cloud native scenarios.
 
 With vKAE, the network forwarding efficiency of OpenSSL and Nginx in VMs can be significantly improved.
-
-
 
 ## Environment Requirements<a name="EN-US_TOPIC_0000002041411889"></a>
 
@@ -120,7 +112,6 @@ This document provides guidance based on the openEuler OS. Before performing ope
 |--|--|
 |CPU|Kunpeng 920 or Kunpeng 950|
 
-
 **OS and Software Requirements<a name="section21485361307"></a>**
 
 [**Table 2**](#os-and-software-requirements) lists the OS and software requirements.
@@ -136,8 +127,6 @@ This document provides guidance based on the openEuler OS. Before performing ope
 |OpenSSL|1.1.1|Install it using a Yum repository.|
 |httpress|1.1.0|Install it using a Yum repository.|
 |KAE|2.0|Download command: `git clone https://gitcode.com/boostkit/KAE.git -b kae2`|
-
-
 
 ## Configuring the Deployment Environment<a name="EN-US_TOPIC_0000002005252886"></a>
 
@@ -164,7 +153,6 @@ To enable SMMU, perform the following steps:
 
 3. Press `F10` to save the BIOS configuration and restart the server.
 
-
 ### Configuring the Server<a name="EN-US_TOPIC_0000002015928364" id="configuring-the-server"></a>
 
 On the server, configure the file descriptor restriction, SELinux status, audit service, and SR-IOV passthrough of NIC to the VM, and bind NIC interrupts to cores.
@@ -172,13 +160,13 @@ On the server, configure the file descriptor restriction, SELinux status, audit 
 1. Increase the number of file descriptors on the server.
     1. Open the file.
 
-        ```
+        ```shell
         vi /etc/security/limits.conf
         ```
 
     2. Press `i` to enter the insert mode and add the following content to the file. Set the `soft` and `hard` limits for all users (`*`), that is, set the number of file descriptors for both parameters to `102400`.
 
-        ```
+        ```txt
         * soft      nofile      102400
         * hard      nofile      102400
         ```
@@ -188,7 +176,7 @@ On the server, configure the file descriptor restriction, SELinux status, audit 
     3. Press `Esc`, type `:wq!`, and press `Enter` to save the file and exit.
     4. Log out the SSH terminal.
 
-        ```
+        ```shell
         logout
         ```
 
@@ -200,7 +188,7 @@ On the server, configure the file descriptor restriction, SELinux status, audit 
         >![](public_sys-resources/icon-notice.gif) **NOTICE:**
         >This operation becomes invalid after a server reboot.
 
-        ```
+        ```txt
         setenforce 0
         ```
 
@@ -211,7 +199,7 @@ On the server, configure the file descriptor restriction, SELinux status, audit 
 
         1. Modify the configuration file to disable SELinux.
 
-            ```
+            ```shell
             sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
             cat /etc/selinux/config
             ```
@@ -225,7 +213,7 @@ On the server, configure the file descriptor restriction, SELinux status, audit 
 3. Disable the audit service.
     1. Open the file.
 
-        ```
+        ```shell
         vim /boot/efi/EFI/openEuler/grub.cfg
         ```
 
@@ -242,13 +230,13 @@ On the server, configure the file descriptor restriction, SELinux status, audit 
 
     1. Create three VFs for the NIC. The quantity of created VFs are subject to actual requirements.
 
-        ```
+        ```shell
         echo 3 > /sys/class/net/enp7s0/device/sriov_numvfs
         ```
 
     2. Obtain the information about `bus-info` of the NIC.
 
-        ```
+        ```shell
         ethtool -i enp7s0
         ```
 
@@ -256,7 +244,7 @@ On the server, configure the file descriptor restriction, SELinux status, audit 
 
     3. Query the NUMA affinity of a NIC node.
 
-        ```
+        ```shell
         cat /sys/class/net/enp7s0/device/numa_node
         ```
 
@@ -266,16 +254,18 @@ On the server, configure the file descriptor restriction, SELinux status, audit 
 
         >![](public_sys-resources/icon-note.gif) **NOTE:**
         >You can also run the following command to query the NUMA affinity of a NIC node:
-        >```
+        >
+        >```shell
         >lspci -vvv -s 07:00.0 | grep NUMA
         >```
+        >
         >The physical NIC has affinity with NUMA node 0.
         >
         >![](figures/en-us_image_0000002090673913.png)
 
         Check the IDs of the CPU cores corresponding to NUMA node 0.
 
-        ```
+        ```shell
         ls cpu
         ```
 
@@ -283,9 +273,9 @@ On the server, configure the file descriptor restriction, SELinux status, audit 
 
         ![](figures/en-us_image_0000002016159808.png)
 
-    1. After three VFs are created for the physical NIC, check the bus information of the physical and virtual NICs.
+    4. After three VFs are created for the physical NIC, check the bus information of the physical and virtual NICs.
 
-        ```
+        ```shell
         cd /sys/class/net/enp7s0
         cd /device
         ls
@@ -295,7 +285,7 @@ On the server, configure the file descriptor restriction, SELinux status, audit 
 
         Check the NUMA affinity of `virtfn2`.
 
-        ```
+        ```shell
         cd virtfn2
         cat numa_node
         ```
@@ -304,24 +294,24 @@ On the server, configure the file descriptor restriction, SELinux status, audit 
 
         ![](figures/en-us_image_0000002052493921.png)
 
-    2. Check the PCI IDs of the NIC VFs.
+    5. Check the PCI IDs of the NIC VFs.
         - Method 1:
 
-            ```
+            ```shell
             cd virtfn0
             realpath .
             ```
 
             ![](figures/en-us_image_0000002052430921.png)
 
-            ```
+            ```shell
             cd virtfn1
             realpath .
             ```
 
             ![](figures/en-us_image_0000002052273961.png)
 
-            ```
+            ```shell
             cd virtfn2
             realpath .
             ```
@@ -330,19 +320,19 @@ On the server, configure the file descriptor restriction, SELinux status, audit 
 
         - Method 2:
 
-            ```
+            ```shell
             ethtool -i enp7s0v0
             ```
 
             ![](figures/en-us_image_0000002052435865.png)
 
-            ```
+            ```shell
             ethtool -i enp7s0v1
             ```
 
             ![](figures/en-us_image_0000002016316276.png)
 
-            ```
+            ```shell
             ethtool -i enp7s0v2
             ```
 
@@ -350,23 +340,23 @@ On the server, configure the file descriptor restriction, SELinux status, audit 
 
             The PCI IDs increase in ascending order.
 
-    3. Run the `ip a` command to check the three NIC VFs that are created. They are named `enp7s0v0`, `enp7s0v1`, and `enp7s0v2`.
+    6. Run the `ip a` command to check the three NIC VFs that are created. They are named `enp7s0v0`, `enp7s0v1`, and `enp7s0v2`.
 
-        ```
+        ```shell
         ip a
         ```
 
         ![](figures/en-us_image_0000002016311604.png)
 
-    4. Stop the VM.
+    7. Stop the VM.
 
-        ```
+        ```shell
         virsh shutdown <VM_name>
         ```
 
-    5. Modify the VM configuration file. Copy the following content to the `<devices>` tag in the VM configuration file to pass through the VFs to the VM:
+    8. Modify the VM configuration file. Copy the following content to the `<devices>` tag in the VM configuration file to pass through the VFs to the VM:
 
-        ```
+        ```txt
         <hostdev mode='subsystem' type='pci' managed='yes'>
         <source>
         <address domain='0x0000' bus='0x07' slot='0x00' function='0x1'/>
@@ -375,15 +365,15 @@ On the server, configure the file descriptor restriction, SELinux status, audit 
         </hostdev>
         ```
 
-    6. Start the VM and check whether the configuration takes effect.
+    9. Start the VM and check whether the configuration takes effect.
 
-        ```
+        ```shell
         virsh start <VM_name>
         ```
 
         After the VM is started, run the `ip a` command to check the NIC.
 
-        ```
+        ```shell
         ip a
         ```
 
@@ -395,13 +385,13 @@ On the server, configure the file descriptor restriction, SELinux status, audit 
 
     1. Create a core binding script file named `irq_server.sh` in the `/home` directory on the server.
 
-        ```
+        ```shell
         vim irq_server.sh
         ```
 
     2. Copy the following content to the core binding script file:
 
-        ```
+        ```txt
         #!/bin/bash
         # chkconfig: - 50 50
         # description: auto irq
@@ -469,41 +459,42 @@ On the server, configure the file descriptor restriction, SELinux status, audit 
 
         >![](public_sys-resources/icon-note.gif) **NOTE:**
         >Example
-        >1.  Run the following command to set the queue depth to `48` for the NIC whose network segment is `192.168` by default. That is, bind the NIC to the first 48 cores of the CPU:
-        >    ```
-        >    sh irq.sh
-        >    ```
-        >2.  Read the information about the cores bound to the NIC.
-        >    ```
-        >    sh irq.sh check eth1
-        >    ```
-        >    `eth1` indicates the NIC name. Replace it with the actual one.<br>
-        >3.  Change the queue depth for the `eth1` NIC to `24` and bind the interrupts to the four `'0 1 2 3'` cores cyclically. Consecutive core binding is supported, for example, `'1-3,6,7-9'`.
-        >    ```
-        >    sh irq.sh bind eth1 24 '0 1 2 3'
+        >1. Run the following command to set the queue depth to `48` for the NIC whose network segment is `192.168` by default. That is, bind the NIC to the first 48 cores of the CPU:
+            >
+            > ```shell
+            > sh irq.sh
+            >```
+            >
+        >2. Read the information about the cores bound to the NIC.
+            >
+            > ```shell
+            > sh irq.sh check eth1
+            >```
+            >
+            > `eth1` indicates the NIC name. Replace it with the actual one.<br>
+        >3. Change the queue depth for the `eth1` NIC to `24` and bind the interrupts to the four `'0 1 2 3'` cores cyclically. Consecutive core binding is supported, for example, `'1-3,6,7-9'`.
+        >
+        > ```shell
+        > sh irq.sh bind eth1 24 '0 1 2 3'
         >    ```
 
     3. Run the command to bind NIC interrupts to cores.
 
-        ```
+        ```shell
         sh irq_server.sh bind enp7s0v0 4 '32-35'
         ```
 
     4. Check whether NIC interrupts are successfully bound to cores.
 
-        ```
+        ```shell
         sh irq_server.sh check enp7s0v0
         ```
-
 
 ### Configuring the Client<a name="EN-US_TOPIC_0000002052047053" id="configuring-the-client"></a>
 
 If the client is a VM, configure the file descriptor restriction, SELinux status, audit service, and SR-IOV passthrough of NIC to the VM, and bind NIC interrupts to cores. If the client is a physical machine, only bind NIC interrupts to cores.
 
 For details, see [Configuring the Server](#configuring-the-server). Change the NIC name as required.
-
-
-
 
 ## Deployment<a name="EN-US_TOPIC_0000002041371057"></a>
 
@@ -514,13 +505,13 @@ The installation of KAE on a physical machine includes applying for and installi
 1. Apply for and install the KAE license. For details, see [Obtaining a License](https://www.hikunpeng.com/document/detail/en/kunpengaccel/kae/kae/docs/en/installation_guide.md#%E8%8E%B7%E5%8F%96license) in the *Accelerator User Guide (KAE)*.
 2. Install dependencies.
 
-    ```
+    ```shell
     yum -y install kernel-devel-$(uname -r) openssl-devel numactl-devel gcc make autoconf automake libtool patch
     ```
 
 3. Obtain the KAE 2.0 source package.
 
-    ```
+    ```shell
     git clone https://gitee.com/kunpengcompute/KAE.git -b kae2
     ```
 
@@ -533,7 +524,7 @@ The installation of KAE on a physical machine includes applying for and installi
 
     1. Go to the KAE source code directory and perform cleanup operations before the installation.
 
-        ```
+        ```shell
         cd KAE
         sh build.sh cleanup
         ```
@@ -542,7 +533,7 @@ The installation of KAE on a physical machine includes applying for and installi
 
     2. Install KAE in one-click mode.
 
-        ```
+        ```shell
         sh build.sh all
         ```
 
@@ -551,7 +542,7 @@ The installation of KAE on a physical machine includes applying for and installi
 5. Check whether KAE is successfully installed.
     1. Check whether related PCI drivers exist in the `/sys/bus/pci/drivers` directory.
 
-        ```
+        ```shell
         ls /sys/bus/pci/drivers
         ```
 
@@ -561,7 +552,7 @@ The installation of KAE on a physical machine includes applying for and installi
 
     2. Check whether the KAE drivers contain virtualization devices. `hisi_sec2` is used as an example here.
 
-        ```
+        ```shell
         ls -lt /sys/bus/pci/drivers/hisi_sec2
         ```
 
@@ -571,7 +562,7 @@ The installation of KAE on a physical machine includes applying for and installi
 
     3. Check `kae.so` to see whether KAE is successfully installed.
 
-        ```
+        ```shell
         ll /usr/local/lib/engines-1.1
         ```
 
@@ -583,7 +574,7 @@ The installation of KAE on a physical machine includes applying for and installi
 
         Check the devices and modules in the OS.
 
-        ```
+        ```shell
         ls -al /sys/class/uacce
         lsmod | grep uacce
         modprobe uacce
@@ -600,13 +591,13 @@ The installation of KAE on a physical machine includes applying for and installi
 
         If KAE devices such as `hisi_zip`, `hisi_sec2`, and `hisi_hpre` cannot be found, restart the server and check again whether KAE is successfully installed.
 
-        ```
+        ```shell
         reboot
         ```
 
         Check the KAE devices again.
 
-        ```
+        ```shell
         ls -al /sys/class/uacce
         ```
 
@@ -617,7 +608,7 @@ The installation of KAE on a physical machine includes applying for and installi
 
         Add the following content to the `openssl.cnf` file and save the file to the `/home` directory:
 
-        ```
+        ```txt
         openssl_conf=openssl_def
         [openssl_def]
         engines=engine_section
@@ -637,7 +628,7 @@ The installation of KAE on a physical machine includes applying for and installi
 
         - Obtain the performance metrics before KAE is enabled.
 
-            ```
+            ```shell
             openssl speed -elapsed rsa2048
             ```
 
@@ -645,7 +636,7 @@ The installation of KAE on a physical machine includes applying for and installi
 
         - Obtain the performance metrics after KAE is enabled.
 
-            ```
+            ```shell
             export OPENSSL_CONF=/home/openssl.cnf
             openssl speed -engine kae -elapsed rsa2048
             ```
@@ -654,7 +645,6 @@ The installation of KAE on a physical machine includes applying for and installi
 
         The performance metrics before and after KAE is enabled are 774.2 and 3,184.8 sign/s, respectively. The performance is improved by about 300%.
 
-
 ### Deploying vKAE on a VM<a name="EN-US_TOPIC_0000002041371073"></a>
 
 This section uses an 8C16G VM as an example to describe how to deploy vKAE on a VM. Operations include preparing the KAE environment on the VM, installing KAE on the VM, configuring VF passthrough to the VM, verifying the vKAE installation and enabling vKAE.
@@ -662,7 +652,7 @@ This section uses an 8C16G VM as an example to describe how to deploy vKAE on a 
 1. Prepare the KAE environment on the VM.
     1. Install dependencies.
 
-        ```
+        ```shell
         yum -y install kernel-devel-$(uname -r) openssl-devel numactl-devel gcc make autoconf automake libtool patch
         ```
 
@@ -672,7 +662,7 @@ This section uses an 8C16G VM as an example to describe how to deploy vKAE on a 
 
     2. Obtain the KAE 2.0 source package.
 
-        ```
+        ```shell
         git clone https://gitee.com/kunpengcompute/KAE.git -b kae2
         ```
 
@@ -685,7 +675,7 @@ This section uses an 8C16G VM as an example to describe how to deploy vKAE on a 
 
         1. Go to the KAE source code directory and perform cleanup operations before the installation.
 
-            ```
+            ```shell
             cd KAE
             sh build.sh cleanup
             ```
@@ -694,7 +684,7 @@ This section uses an 8C16G VM as an example to describe how to deploy vKAE on a 
 
         2. Install KAE in one-click mode.
 
-            ```
+            ```shell
             sh build.sh all
             ```
 
@@ -708,7 +698,7 @@ This section uses an 8C16G VM as an example to describe how to deploy vKAE on a 
 
     Check the name of the accelerator contained in KAE that is installed. In later steps, you need to use the accelerator name to search for the PCI IDs corresponding to the accelerator device, and then create VFs based on the PCI IDs.
 
-    ```
+    ```shell
     ls /sys/class/uacce
     ```
 
@@ -720,7 +710,7 @@ This section uses an 8C16G VM as an example to describe how to deploy vKAE on a 
 
 3. Check the actual path and PCI ID of the `hisi_hpre-1` accelerator device.
 
-    ```
+    ```shell
     cd /sys/class/uacce/hisi_hpre-1/device
     realpath .
     ```
@@ -729,13 +719,13 @@ This section uses an 8C16G VM as an example to describe how to deploy vKAE on a 
 
 4. The following uses the `hisi_hpre-1` accelerator as an example to describe how to create three KAE VFs to be passed through to the VM.
 
-    ```
+    ```shell
     echo 3 > /sys/devices/pci0000:78/0000:78:00.0/0000:79:00.0/sriov_numvfs
     ```
 
     Check whether the VFs of the KAE device are successfully created.
 
-    ```
+    ```shell
     ls -al /sys/class/uacce
     ```
 
@@ -744,31 +734,33 @@ This section uses an 8C16G VM as an example to describe how to deploy vKAE on a 
     >![](public_sys-resources/icon-note.gif) **NOTE:**
     >A server may have multiple HPRE accelerators. Each HPRE accelerator provides 1,024 queues. A PF uses 256 queues by default, and the other 768 queues are reserved for VFs. Number of VF queues = (1024 – Number of PF queues)/Number of VFs. The remainder queues are added to the last VF. You are advised to virtualize one PF into eight VFs.
     >Run the following command to check the folder where the created VFs are located:
-    >```
+    >
+    >```shell
     >cd /sys/class/uacce/hisi_hpre-1/device
     >ls
     >```
+    >
     >![](figures/en-us_image_0000002051807481.png)
 
 5. After three KAE VFs are created, three VM acceleration devices `virtfn0`, `virtfn1`, and `virtfn2` exist in the `hisi_hpre-1` accelerator list.
 
     Check the PCI IDs of `virtfn0`, `virtfn1`, and `virtfn2` to pass through the VFs to the VM.
 
-    ```
+    ```shell
     cd virtfn0
     realpath .
     ```
 
     ![](figures/en-us_image_0000002015687924.png)
 
-    ```
+    ```shell
     cd virtfn1
     realpath .
     ```
 
     ![](figures/en-us_image_0000002015529732.png)
 
-    ```
+    ```shell
     cd virtfn2
     realpath .
     ```
@@ -779,25 +771,25 @@ This section uses an 8C16G VM as an example to describe how to deploy vKAE on a 
     - Configure one KAE VF for the VM.
         1. Open the VM configuration file, for example, `vm01.xml`.
 
-            ```
+            ```shell
             vim vm01.xml
             ```
 
         2. Press `i` to enter the insert mode. Copy the following content to the `<devices>` tag in the VM configuration file:
 
-            ```
+            ```txt
             <hostdev mode='subsystem' type='pci' managed='yes'><source><address domain='0x0000' bus='0x79' slot='0x00' function='0x1'/></source><address type='pci' domain='0x0000' bus='0x07' slot='0x00' function='0x0'/>
             </hostdev>
             ```
 
             >![](public_sys-resources/icon-note.gif) **NOTE:**
-            >-   This operation is to split the VF address `0000:79:00.1`. `domain` uses `0000`, `bus` uses `79`, `slot` uses `00`, and `function` uses `1`.
-            >-   If the `address` already exists on the current VM, to prevent VM startup failures caused by conflicting addresses, delete the `address` line following `</source>`. After the VM is restarted, a new `address` is generated.
+            >- This operation is to split the VF address `0000:79:00.1`. `domain` uses `0000`, `bus` uses `79`, `slot` uses `00`, and `function` uses `1`.
+            >- If the `address` already exists on the current VM, to prevent VM startup failures caused by conflicting addresses, delete the `address` line following `</source>`. After the VM is restarted, a new `address` is generated.
 
         3. Press `Esc`, type `:wq!`, and press `Enter` to save the file and exit.
         4. Restart the VM for the KAE VF passthrough to take effect.
 
-            ```
+            ```shell
             reboot
             ```
 
@@ -808,13 +800,13 @@ This section uses an 8C16G VM as an example to describe how to deploy vKAE on a 
     - Configure multiple KAE VFs for the VM.
         1. Open the VM configuration file, for example, `vm01.xml`.
 
-            ```
+            ```shell
             vim vm01.xml
             ```
 
         2. Press `i` to enter the insert mode. Copy the following content to the `<devices>` tag in the VM configuration file:
 
-            ```
+            ```txt
             <hostdev mode='subsystem' type='pci' managed='yes'><source><address domain='0x0000' bus='0x79' slot='0x00' function='0x1'/></source><address type='pci' domain='0x0000' bus='0x07' slot='0x00' function='0x0'/>
             </hostdev>
             <hostdev mode='subsystem' type='pci' managed='yes'><source><address domain='0x0000' bus='0x79' slot='0x00' function='0x2'/></source><address type='pci' domain='0x0000' bus='0x07' slot='0x00' function='0x1'/>
@@ -823,7 +815,7 @@ This section uses an 8C16G VM as an example to describe how to deploy vKAE on a 
 
         3. Restart the VM for the KAE VF passthrough to take effect.
 
-            ```
+            ```shell
             reboot
             ```
 
@@ -833,13 +825,13 @@ This section uses an 8C16G VM as an example to describe how to deploy vKAE on a 
 
         1. Open the VM configuration file, for example, `vm01.xml`.
 
-            ```
+            ```shell
             vim vm01.xml
             ```
 
         2. Press `i` to enter the insert mode and copy the following content to the VM configuration file:
 
-            ```
+            ```txt
             <domain type='kvm'>
               <name>vm01</name> 
               <uuid>a1d11347-8738-45fb-8944-e3a058f464c9</uuid>
@@ -971,16 +963,15 @@ This section uses an 8C16G VM as an example to describe how to deploy vKAE on a 
             </domain>
             ```
 
-
         3. Restart the VM for the VF passthrough to take effect.
 
-            ```
+            ```shell
             reboot
             ```
 
         4. Check the VF device again.
 
-            ```
+            ```shell
             ls -al /sys/class/uacce
             ```
 
@@ -989,7 +980,7 @@ This section uses an 8C16G VM as an example to describe how to deploy vKAE on a 
 7. Verify whether the KAE installation and configuration are complete.
     1. Check whether the KAE device is successfully installed on the VM.
 
-        ```
+        ```shell
         lspci
         ll /usr/local/lib/engines-1.1
         ```
@@ -1002,7 +993,7 @@ This section uses an 8C16G VM as an example to describe how to deploy vKAE on a 
 
     2. Check whether the VF is successfully mounted to the VM.
 
-        ```
+        ```shell
         ls -al /sys/class/uacce
         ```
 
@@ -1012,7 +1003,7 @@ This section uses an 8C16G VM as an example to describe how to deploy vKAE on a 
 
         Check the address used by the VF.
 
-        ```
+        ```shell
         cd /sys/bus/pci/drivers
         cd hisi_hpre
         ls
@@ -1026,7 +1017,7 @@ This section uses an 8C16G VM as an example to describe how to deploy vKAE on a 
 
         - Obtain the performance metrics before KAE is enabled.
 
-        ```
+        ```shell
             openssl speed -elapsed rsa2048
         ```
 
@@ -1034,7 +1025,7 @@ This section uses an 8C16G VM as an example to describe how to deploy vKAE on a 
 
         - Obtain the performance metrics after KAE is enabled.
 
-        ```
+        ```shell
             export OPENSSL_CONF=/home/openssl.cnf
             openssl speed -engine kae -elapsed rsa2048
         ```
@@ -1043,7 +1034,7 @@ This section uses an 8C16G VM as an example to describe how to deploy vKAE on a 
 
     4. Check whether the loading module is loaded.
 
-        ```
+        ```shell
         lsmod | grep uacce
         ```
 
@@ -1051,26 +1042,25 @@ This section uses an 8C16G VM as an example to describe how to deploy vKAE on a 
 
         ![](figures/en-us_image_0000002015533000.png)
 
-
 ### Deploying Nginx on a VM<a name="EN-US_TOPIC_0000002051811469"></a>
 
 Deploy Nginx for KAE to enable the Nginx synchronous or asynchronous mode.
 
 1. Install dependencies on the VM.
 
-    ```
+    ```shell
     yum install -y openssl openssl-devel pcre pcre-devel zlib zlib-devel gcc make
     ```
 
 2. If the server is connected to the Internet, run the `wget` command to download the Nginx source code and then upload the Nginx source code to the `/home` directory on the VM.
 
-    ```
+    ```shell
     wget https://nginx.org/download/nginx-1.21.5.tar.gz --no-check-certificate
     ```
 
 3. Deploy Nginx.
 
-    ```
+    ```txt
     tar -zxvf nginx-1.21.5.tar.gz
     cd nginx-1.21.5/
     chmod 755 configure
@@ -1079,8 +1069,8 @@ Deploy Nginx for KAE to enable the Nginx synchronous or asynchronous mode.
     ```
 
     >![](public_sys-resources/icon-note.gif) **NOTE:**
-    >-   In the command, `-j 60` can make full use of the multi-core feature of the CPUs to accelerate the compilation.
-    >-   You can run the `lscpu` command to query the number of CPU cores.
+    >- In the command, `-j 60` can make full use of the multi-core feature of the CPUs to accelerate the compilation.
+    >- You can run the `lscpu` command to query the number of CPU cores.
 
 4. Generate an OpenSSL certificate.
 
@@ -1091,20 +1081,20 @@ Deploy Nginx for KAE to enable the Nginx synchronous or asynchronous mode.
 
 5. Check the Nginx installation directory.
 
-    ```
+    ```shell
     ls /usr/local/nginx
     ```
 
 6. Check that the Nginx version is the target version.
 
-    ```
+    ```shell
     /usr/local/nginx/sbin/nginx -v
     ```
 
 7. <a name="li1074555611337" id="li1074555611337"></a>Configure and start the open-source Nginx when KAE is disabled.
     1. Open the Nginx configuration file.
 
-        ```
+        ```shell
         cd /usr/local/nginx/conf
         vim nginx.conf
         ```
@@ -1113,7 +1103,7 @@ Deploy Nginx for KAE to enable the Nginx synchronous or asynchronous mode.
 
         The following is the content of the open-source Nginx configuration file `nginx.conf`, which is not tuned. KAE is not enabled as well.
 
-        ```
+        ```txt
         user  root;
         worker_processes  auto;
         
@@ -1206,7 +1196,7 @@ Deploy Nginx for KAE to enable the Nginx synchronous or asynchronous mode.
     3. Press `Esc`, type `:wq!`, and press `Enter` to save the file and exit.
     4. Run the open-source Nginx and check whether Nginx is started.
 
-        ```
+        ```shell
         /usr/local/nginx/sbin/nginx -c /usr/local/nginx/conf/nginx.conf
         ps -ef | grep nginx
         ```
@@ -1219,27 +1209,34 @@ Deploy Nginx for KAE to enable the Nginx synchronous or asynchronous mode.
 
         >![](public_sys-resources/icon-note.gif) **NOTE:**  
         >Commands for restarting and exiting Nginx.
-        >-   Restart Nginx.
+        >- Restart Nginx.
+        >
+        > ```shell
+        > sudo systemctl restart nginx
         >    ```
-        >    sudo systemctl restart nginx
+        >
+        >- Gracefully restart Nginx.
+        >
+        > ```shell
+        > sudo nginx -s reload
         >    ```
-        >-   Gracefully restart Nginx.
+        >
+        >- Exit Nginx.
+        >
+        > ```shell
+        > /usr/local/nginx/sbin/nginx -s quit
         >    ```
-        >    sudo nginx -s reload
-        >    ```
-        >-   Exit Nginx.
-        >    ```
-        >    /usr/local/nginx/sbin/nginx -s quit
-        >    ```
-        >    Or
-        >    ```
-        >    /usr/local/nginx/sbin/nginx -s stop
+        >
+        > Or
+        >
+        > ```shell
+        > /usr/local/nginx/sbin/nginx -s stop
         >    ```
 
 8. <a name="li367309154513" id="li367309154513"></a>Configure KAE enabled + Nginx synchronous mode.
     1. Create a configuration file named `nginx_kae.conf` in the `usr/local/nginx/conf` directory.
 
-        ```
+        ```shell
         vim nginx_kae.conf
         ```
 
@@ -1247,7 +1244,7 @@ Deploy Nginx for KAE to enable the Nginx synchronous or asynchronous mode.
 
         The following content of the Nginx configuration file `nginx.conf` is for enabling KAE and the Nginx synchronous mode. The Nginx parameters are tuned.
 
-        ```
+        ```txt
         user  root;
         worker_processes auto;
         #4-7
@@ -1349,7 +1346,7 @@ Deploy Nginx for KAE to enable the Nginx synchronous or asynchronous mode.
         >![](public_sys-resources/icon-notice.gif) **NOTICE:**
         >To run the configuration file for enabling KAE + Nginx synchronous mode with parameters tuned, you only need to add `OPENSSL_CONF=/home/openssl.cnf` before the Nginx execute command.
 
-        ```
+        ```shell
         /usr/local/nginx/sbin/nginx -s stop || true; sleep 1;
         OPENSSL_CONF=/home/openssl.cnf /usr/local/nginx/sbin/nginx -c /usr/local/nginx/conf/nginx_kae.conf
         ```
@@ -1361,7 +1358,7 @@ Deploy Nginx for KAE to enable the Nginx synchronous or asynchronous mode.
 
     1. Download the Nginx source code (version 0.4.9 in GitHub) that adapts to the asynchronous mode, and compile and install Nginx.
 
-        ```
+        ```shell
         cd /home
         git clone https://github.com/intel/asynch_mode_nginx.git
         cd /home/asynch_mode_nginx/
@@ -1375,7 +1372,7 @@ Deploy Nginx for KAE to enable the Nginx synchronous or asynchronous mode.
 
     2. Create a file named `nginx_kae_async.conf` in the `/root` directory.
 
-        ```
+        ```shell
         vim nginx_kae_async.conf
         ```
 
@@ -1383,7 +1380,7 @@ Deploy Nginx for KAE to enable the Nginx synchronous or asynchronous mode.
 
         The following content of the Nginx configuration file `nginx.conf` is for enabling KAE and the Nginx asynchronous mode. The Nginx parameters are tuned. Change the number of Nginx processes as required. Generally, setting `worker_processes` to `auto` will occupy all cores of the VM. The HTTP port number is `10000`, and the HTTPS port number is `20000`.
 
-        ```
+        ```txt
         # For more information on configuration, see:
         #   * Official English Documentation: http://nginx.org/en/docs/
         #   * Official Russian Documentation: http://nginx.org/ru/docs/
@@ -1502,7 +1499,8 @@ Deploy Nginx for KAE to enable the Nginx synchronous or asynchronous mode.
 
         >![](public_sys-resources/icon-note.gif) **NOTE:**
         >To create an OpenSSL certificate by yourself, run the following commands in the new path:
-        >```
+>
+        >```shell
         >openssl genrsa -des3 -out server_2048.key 2048
         >openssl rsa -in server_2048.key -out server_2048.key
         >openssl req -new -key server_2048.key -out server_2048.csr
@@ -1515,11 +1513,10 @@ Deploy Nginx for KAE to enable the Nginx synchronous or asynchronous mode.
         >![](public_sys-resources/icon-notice.gif) **NOTICE:**
         >To run the configuration file for enabling KAE + Nginx asynchronous mode with parameters tuned, you only need to add `OPENSSL_CONF=/home/openssl.cnf` before the Nginx execute command.
 
-        ```
+        ```shell
         /usr/share/nginx/sbin/nginx -s stop || true; sleep 1;
         OPENSSL_CONF=/home/openssl.cnf /usr/share/nginx/sbin/nginx -c /root/nginx_kae_async.conf
         ```
-
 
 ### Deploying httpress on the Client<a name="EN-US_TOPIC_0000002015863250"></a>
 
@@ -1529,20 +1526,20 @@ You can use either a physical machine or a VM as the client, which is flexible. 
 
 1. Install the dependencies.
 
-    ```
+    ```shell
     yum install -y gnutls-devel libev-devel openssl-devel
     ```
 
 2. Download the httpress installation package to the `/home` directory of the VM. If the VM is connected to the Internet, run the `wget` command to download the httpress source code.
 
-    ```
+    ```shell
     cd /home
     wget https://github.com/yarosla/httpress/archive/1.1.0.tar.gz --no-check-certificate -O httpress-1.1.0.tar.gz
     ```
 
 3. Decompress the httpress source package, go to the httpress directory generated after the decompression, and compile and install it.
 
-    ```
+    ```shell
     tar -zxvf httpress-1.1.0.tar.gz
     cd httpress-1.1.0
     make -j64
@@ -1550,7 +1547,7 @@ You can use either a physical machine or a VM as the client, which is flexible. 
 
 4. Configure httpress and check whether it is successfully installed.
 
-    ```
+    ```shell
     cp /home/httpress-1.1.0/bin/Release/httpress /usr/bin/
     httpress -v
     ```
@@ -1558,9 +1555,6 @@ You can use either a physical machine or a VM as the client, which is flexible. 
     The installed httpress version is the target version.
 
     ![](figures/en-us_image_0000002052160813.png)
-
-
-
 
 ## Tests<a name="EN-US_TOPIC_0000002041371065"></a>
 
@@ -1576,35 +1570,36 @@ The test commands of each group are as follows:
 
 - Nginx synchronous mode:
 
-    ```
+    ```shell
     numactl -C 0 openssl speed -elapsed -multi 1 rsa2048
     ```
 
 - Nginx asynchronous mode:
 
-    ```
+    ```shell
     numactl -C 0 openssl speed -elapsed -multi 1 -async_jobs 4 rsa2048
     ```
 
 - vKAE enabled + Nginx synchronous mode:
 
-    ```
+    ```shell
     OPENSSL_CONF=/home/openssl.cnf numactl -C 0 openssl speed -engine kae -elapsed -multi 1 rsa2048
     ```
 
 - vKAE enabled + Nginx asynchronous mode:
 
-    ```
+    ```shell
     OPENSSL_CONF=/home/openssl.cnf numactl -C 0 openssl speed -engine kae -elapsed -multi 1 -async_jobs 4 rsa2048
     ```
 
 >![](public_sys-resources/icon-note.gif) **NOTE:**
 >Adjust the following parameters as required:
->-   `numactl -C 0`: CPU core 0 is bound.
->-   `-m 0`: The core is bound to NUMA node 0.
->-   `-engine kae -elapsed`: KAE is used for acceleration.
->-   `-multi`: Number of concurrent threads. The value `1` indicates that there is no parallel operation, that is, only one operation is performed at a time.
->-   `-async_jobs`: Number of asynchronous jobs. The value `4` indicates that four asynchronous jobs are started at the same time.
+>
+>- `numactl -C 0`: CPU core 0 is bound.
+>- `-m 0`: The core is bound to NUMA node 0.
+>- `-engine kae -elapsed`: KAE is used for acceleration.
+>- `-multi`: Number of concurrent threads. The value `1` indicates that there is no parallel operation, that is, only one operation is performed at a time.
+>- `-async_jobs`: Number of asynchronous jobs. The value `4` indicates that four asynchronous jobs are started at the same time.
 
 **Test Results and Analysis<a name="section752112578145"></a>**
 
@@ -1618,7 +1613,6 @@ The test commands of each group are as follows:
 |Kunpeng 920|15593|52514|4C8G|Asynchronous|Enabled|
 |Kunpeng 920|774|3100|4C8G|Synchronous|Disabled|
 |Kunpeng 920|774|3096|4C8G|Asynchronous|Disabled|
-
 
 Conclusions are drawn under the circumstance that the CPU usage reaches 100%:
 
@@ -1638,7 +1632,6 @@ For VMs of the 4C8G specification:
 - Advantages of the asynchronous mode: For applications that need to process a large number of concurrent requests, it is recommended the Nginx asynchronous mode together with vKAE hardware-based acceleration be used to achieve optimal performance.
 - The test results and trends vary depending on the number of server threads and VM specifications. However, in the Nginx application scenario, for the Nginx server, as far as the number of CPU cores to bind does not exceed 64, the upper limit of the RSA-sign performance empowered by vKAE hardware-based acceleration is at about 54,000 sign/s, which provides a useful reference for actual scenarios.
 
-
 ### Testing the vKAE Performance Using httpress in the Nginx Application Scenario<a name="EN-US_TOPIC_0000002016398576"></a>
 
 In the Nginx application scenario, the httpress tool is used to perform detailed performance tests on vKAE on the client, covering the synchronous and asynchronous modes of the open-source Nginx and the synchronous and asynchronous modes of Nginx with vKAE enabled. The test results are analyzed in detail, and conclusions and suggestions are provided.
@@ -1651,26 +1644,27 @@ Two groups of performance tests using httpress on the VM are performed, covering
 
 - HTTPS persistent connection:
 
-    ```
+    ```txt
     httpress -n 2000000 -c 200 -t 10 -k https://<Server_IP_address>:<Server_port_number>/index<${nodeIndexNum}>.html
     ```
 
 - HTTPS short connection:
 
-    ```
+    ```txt
     httpress -n 20000 -c 200 -t 10 https://<Server_IP_address>:<Server_port_number>/index<${nodeIndexNum}>.html
     ```
 
 >![](public_sys-resources/icon-note.gif) **NOTE:**
->-   `-n` specifies the number of requests, `-t` specifies the number of threads, `-c` specifies the number of connections, and `-k` enables the use of persistent connections. The `-n`, `-t`, and `-c` parameters can be adjusted to optimal values based on actual situations, achieving the largest RPS value.
->-   *${nodeIndexNum}*, a variable, specifies the index of the page to be tested, which can be set as required.
->-   On the client, HTTP does not use encryption and decryption algorithms, while HTTPS uses the SSL/TLS algorithm based on HTTP, and the SSL/TLS handshake process involves encryption and decryption calculation. Asymmetric encryption and decryption calculation is complex and time-consuming, and the HPRE device only accelerates the RSA asymmetric encryption and decryption algorithms, that is, vKAE hardware-based acceleration only works for HTTPS persistent and short connections. Therefore, in the vKAE acceleration scenario, only HTTPS test results are analyzed.
+>
+>- `-n` specifies the number of requests, `-t` specifies the number of threads, `-c` specifies the number of connections, and `-k` enables the use of persistent connections. The `-n`, `-t`, and `-c` parameters can be adjusted to optimal values based on actual situations, achieving the largest RPS value.
+>- *${nodeIndexNum}*, a variable, specifies the index of the page to be tested, which can be set as required.
+>- On the client, HTTP does not use encryption and decryption algorithms, while HTTPS uses the SSL/TLS algorithm based on HTTP, and the SSL/TLS handshake process involves encryption and decryption calculation. Asymmetric encryption and decryption calculation is complex and time-consuming, and the HPRE device only accelerates the RSA asymmetric encryption and decryption algorithms, that is, vKAE hardware-based acceleration only works for HTTPS persistent and short connections. Therefore, in the vKAE acceleration scenario, only HTTPS test results are analyzed.
 
 **On the server**, perform the following operations.
 
 1. One thread is used as an example. Create an Nginx configuration file named `sync_nginx_1_worker.conf` in the `/root/test/` directory.
 
-    ```
+    ```shell
     vim sync_nginx_1_worker.conf
     ```
 
@@ -1678,7 +1672,7 @@ Two groups of performance tests using httpress on the VM are performed, covering
 
     The following is the content of the configuration file for enabling KAE + Nginx synchronous mode without parameter tuning.
 
-    ```
+    ```txt
     # For more information on configuration, see:
     #   * Official English Documentation: http://nginx.org/en/docs/
     #   * Official Russian Documentation: http://nginx.org/ru/docs/
@@ -1779,29 +1773,35 @@ Two groups of performance tests using httpress on the VM are performed, covering
     ```
 
     >![](public_sys-resources/icon-note.gif) **NOTE:**
-    >-   In the configuration file, the HTTP port number is `8080` and the HTTPS port number is `8090`.
-    >-   `worker_processes` specifies the number of threads on the server, and `worker_cpu_affinity` specifies NUMA affinity. You can change the number of threads on the server as required and change the NUMA affinity accordingly.
-    >-   To use four server threads, modify the `worker_processes` and `worker_cpu_affinity` parameters as follows:
+    >- In the configuration file, the HTTP port number is `8080` and the HTTPS port number is `8090`.
+    >- `worker_processes` specifies the number of threads on the server, and `worker_cpu_affinity` specifies NUMA affinity. You can change the number of threads on the server as required and change the NUMA affinity accordingly.
+    >- To use four server threads, modify the `worker_processes` and `worker_cpu_affinity` parameters as follows:
+    >
+    > ```txt
+    > worker_processes 4;
+    > worker_cpu_affinity
+    > 1
+    > 10
+    > 100
+    > 1000;
     >    ```
-    >    worker_processes 4;
-    >    worker_cpu_affinity
-    >    1
-    >    10
-    >    100
-    >    1000;
+    >
+    >- To configure a configuration file for enabling KAE + Nginx **asynchronous mode** without parameter tuning, create a configuration file named `async_nginx_x_worker.conf` (*x* is the number of threads to be used). Copy the preceding content to `async_nginx_x_worker.conf`, and delete the comment signs (#) at the start of the following three lines:
+    >
+    > ```txt
+    > #listen       8090 ssl http2 so_keepalive=off asynch;
+    > #listen       [::]:8090 ssl http2 so_keepalive=off asynch;
+    > # ssl_asynch on;
     >    ```
-    >-   To configure a configuration file for enabling KAE + Nginx **asynchronous mode** without parameter tuning, create a configuration file named `async_nginx_x_worker.conf` (*x* is the number of threads to be used). Copy the preceding content to `async_nginx_x_worker.conf`, and delete the comment signs (#) at the start of the following three lines:
+    >
+    > Add comment signs (#) to the start of the following two lines:
+    >
+    > ```txt
+    > listen       8090 ssl http2 so_keepalive=off;
+    > listen       [::]:8090 ssl http2 so_keepalive=off;
     >    ```
-    >    #listen       8090 ssl http2 so_keepalive=off asynch;
-    >    #listen       [::]:8090 ssl http2 so_keepalive=off asynch;
-    >    # ssl_asynch on;
-    >    ```
-    >    Add comment signs (#) to the start of the following two lines:
-    >    ```
-    >    listen       8090 ssl http2 so_keepalive=off;
-    >    listen       [::]:8090 ssl http2 so_keepalive=off;
-    >    ```
-    >-   If you want to use the Nginx configuration file with tuned parameters, you can use the configuration file in [9](#li10813133111559).
+    >
+    >- If you want to use the Nginx configuration file with tuned parameters, you can use the configuration file in [9](#li10813133111559).
 
 3. Press `Esc`, type `:wq!`, and press `Enter` to save the file and exit.
 4. On the client, use httpress to perform a stress test on HTTPS short connections.
@@ -1811,104 +1811,104 @@ Two groups of performance tests using httpress on the VM are performed, covering
     - KAE enabled + Nginx synchronous mode + One thread used by the server
         - On the server:
 
-            ```
+            ```shell
             nginx -s stop || true; sleep 1; OPENSSL_CONF=/home/openssl.cnf /usr/share/nginx/sbin/nginx -c /root/test/sync_nginx_1_worker.conf; sleep 1
             ```
 
         - On the client:
 
-            ```
+            ```shell
             taskset -c 64-254 httpress -c 64 -t 32 -n 64000 https://<Server_IP_address>:8090/index.html
             ```
 
     - KAE enabled + Nginx asynchronous mode + One thread used by the server
         - On the server:
 
-            ```
+            ```shell
             nginx -s stop || true; sleep 1; OPENSSL_CONF=/home/openssl.cnf /usr/share/nginx/sbin/nginx -c /root/test/async_nginx_1_worker.conf; sleep 1
             ```
 
         - On the client:
 
-            ```
+            ```shell
             taskset -c 64-254 httpress -c 64 -t 32 -n 64000 https://<Server_IP_address>:8090/index.html
             ```
 
     - KAE enabled + Nginx synchronous mode + Four threads used by the server
         - On the server:
 
-            ```
+            ```shell
             nginx -s stop || true; sleep 1; OPENSSL_CONF=/home/openssl.cnf /usr/share/nginx/sbin/nginx -c /root/test/sync_nginx_4_worker.conf; sleep 1
             ```
 
         - On the client:
 
-            ```
+            ```shell
             taskset -c 64-254 httpress -c 64 -t 32 -n 128000 https://<Server_IP_address>:8090/index.html
             ```
 
     - KAE enabled + Nginx asynchronous mode + Four threads used by the server
         - On the server:
 
-            ```
+            ```shell
             nginx -s stop || true; sleep 1; OPENSSL_CONF=/home/openssl.cnf /usr/share/nginx/sbin/nginx -c /root/test/async_nginx_4_worker.conf; sleep 1
             ```
 
         - On the client:
 
-            ```
+            ```shell
             taskset -c 64-254 httpress -c 64 -t 32 -n 128000 https://<Server_IP_address>:8090/index.html
             ```
 
     - KAE disabled + Nginx synchronous mode + One thread used by the server
         - On the server:
 
-            ```
+            ```shell
             nginx -s stop || true; sleep 1; /usr/share/nginx/sbin/nginx -c /root/test/sync_nginx_1_worker.conf; sleep 1
             ```
 
         - On the client:
 
-            ```
+            ```shell
             taskset -c 64-254 httpress -c 64 -t 32 -n 64000 https://<Server_IP_address>:8090/index.html
             ```
 
     - KAE disabled + Nginx asynchronous mode + One thread used by the server
         - On the server:
 
-            ```
+            ```shell
             nginx -s stop || true; sleep 1; /usr/share/nginx/sbin/nginx -c /root/test/async_nginx_1_worker.conf; sleep 1
             ```
 
         - On the client:
 
-            ```
+            ```shell
             taskset -c 64-254 httpress -c 64 -t 32 -n 64000 https://<Server_IP_address>:8090/index.html
             ```
 
     - KAE disabled + Nginx synchronous mode + Four threads used by the server
         - On the server:
 
-            ```
+            ```shell
             nginx -s stop || true; sleep 1; /usr/share/nginx/sbin/nginx -c /root/test/sync_nginx_4_worker.conf; sleep 1
             ```
 
         - On the client:
 
-            ```
+            ```shell
             taskset -c 64-254 httpress -c 64 -t 32 -n 128000 https://<Server_IP_address>:8090/index.html
             ```
 
     - KAE disabled + Nginx asynchronous mode + Four threads used by the server
         - On the server:
 
-            ```
+            ```shell
             nginx -s stop || true; sleep 1; /usr/share/nginx/sbin/nginx -c /root/test/async_nginx_4_worker.conf; sleep 1
             ```
 
         - On the client:
 
-            ```
+            ```shell
             taskset -c 64-254 httpress -c 64 -t 32 -n 128000 https://<Server_IP_address>:8090/index.html
             ```
 
@@ -1925,7 +1925,6 @@ Two groups of performance tests using httpress on the VM are performed, covering
 |Kunpeng 920|587|2255|8C16G|Synchronous|Disabled|
 |Kunpeng 920|584|2245|8C16G|Asynchronous|Disabled|
 
-
 Conclusions are drawn under the circumstance that the CPU usage reaches 100%:
 
 - For 8C16G VMs, the performance in the synchronous and asynchronous modes is almost the same when vKAE is disabled. After vKAE is enabled and before the CPU reaches the performance bottleneck, vKAE gains better performance in the asynchronous mode than in the synchronous mode, and the RPS in the asynchronous mode is 40% higher than that in the synchronous mode.
@@ -1938,9 +1937,6 @@ For VMs of the 8C16G specification:
 - When vKAE is disabled, the performance of the Nginx synchronous and asynchronous modes is almost the same. After vKAE is enabled, the Nginx asynchronous mode demonstrates better performance especially when processing HTTPS requests. Therefore, in scenarios where high-performance HTTPS services are required, you are advised to use the combined configuration of vKAE and the Nginx asynchronous mode.
 - The parameter tuning of the Nginx configuration file is also key to performance improvement. You can properly adjust Nginx parameters such as `worker_processes` and `worker_cpu_affinity` to further explore hardware capability potential and improve the overall performance of the system.
 
-
-
-
 ## Troubleshooting<a name="EN-US_TOPIC_0000002054694708"></a>
 
 ### Failed to Generate an OpenSSL Certificate When Deploying Nginx on a VM During vKAE Deployment<a id="EN-US_TOPIC_0000002054536396"></a>
@@ -1949,7 +1945,7 @@ For VMs of the 8C16G specification:
 
 During Nginx deployment on a VM for vKAE deployment, the following information is displayed when an OpenSSL certificate is to be generated:
 
-```
+```txt
 unable to find 'distinguished_name' in config
 ```
 
@@ -1961,17 +1957,15 @@ The command for generating an OpenSSL certificate conflicts with the `export OPE
 
 1. Cancel the setting of the `OPENSSL_CONF` environment variable in the current environment.
 
-    ```
+    ```shell
     unset OPENSSL_CONF
     ```
 
 2. Regenerate an OpenSSL certificate.
 
-    ```
+    ```shell
     openssl req -new -key server_2048.key -out server_2048.csr
     ```
-
-
 
 ## Acronyms and Abbreviations<a name="EN-US_TOPIC_0000002041538761"></a>
 

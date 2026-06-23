@@ -15,7 +15,6 @@ vCPU热插拔技术可以在虚拟机运行状态下增加或减少vCPU数量，
 - 加快虚拟机启动速度。特别对于轻量化场景的受益较大。比如Kata安全容器初始只配置1个vCPU，等启动完成后，可以热插更多vCPU。
 - 按需使用资源，从而优化业务成本。开发者根据业务负载需求，在线调整虚拟机vCPU数量。负载大时增加资源，负载小时减少资源。
 
-
 ### 约束与限制<a name="ZH-CN_TOPIC_0000002550127413"></a>
 
 - 如果处理器为AArch64架构，创建虚拟机时指定的虚拟机芯片组类型（machine）需为virt-4.2及以上版本。如果处理器为x86\_64架构，创建虚拟机时指定的虚拟机芯片组类型（machine）需为pc-i440fx-1.5及以上版本。
@@ -29,7 +28,6 @@ vCPU热插拔技术可以在虚拟机运行状态下增加或减少vCPU数量，
     - 为了满足QEMU的要求，虚拟机XML配置文件中必须包含**vcpu**节点。该节点的作用是指定虚拟机初次启动时的vCPU个数，以及能够通过vCPU热插所能达到的最大vCPU个数。
     - vCPU热插同时受限于Hypervisor和GuestOS支持的最大CPU数目，具体约束项根据操作系统类型而定。
 
-
 ### 应用场景<a name="ZH-CN_TOPIC_0000002550007407"></a>
 
 - 基于vCPU热插拔机制加快虚拟机启动速度。
@@ -37,8 +35,6 @@ vCPU热插拔技术可以在虚拟机运行状态下增加或减少vCPU数量，
     特别对于轻量安全容器场景受益较大。比如Kata安全容器初始只配置1个vCPU，等启动完成后热插更多vCPU。
 
 - 云厂商基于vCPU热插拔为用户按需扩展，用户根据业务负载需求，申请在线调整虚拟机vCPU数量，不影响业务运行。
-
-
 
 ## 特性使用<a name="ZH-CN_TOPIC_0000002518687568"></a>
 
@@ -56,7 +52,6 @@ vCPU热插拔技术可以在虚拟机运行状态下增加或减少vCPU数量，
 |--|--|
 |处理器|鲲鹏920系列处理器|
 
-
 **操作系统和软件要求<a name="section153345522323"></a>**
 
 操作系统和软件要求如[**表 2** 操作系统和软件要求](#操作系统和软件要求)所示。
@@ -69,12 +64,11 @@ vCPU热插拔技术可以在虚拟机运行状态下增加或减少vCPU数量，
 |libvirt|9.10.0|使用Yum工具直接安装。|
 |QEMU|8.2.0|使用Yum工具直接安装。|
 
-
 ### 特性使能<a name="ZH-CN_TOPIC_0000002550127411"></a>
 
 使用vCPU热插功能，需要在创建虚拟机时配置虚拟机当前的CPU数目、虚拟机所支持的最大CPU数目，以及虚拟机芯片组类型（对于AArch64架构，需为virt-4.2及以上版本。对于x86\_64架构，需为pc-i440fx-1.5及以上版本）。这里以AArch64架构虚拟机为例，配置模板如下。
 
-```
+```xml
 <domain type='kvm'>
 ...
 <vcpu placement='static' current='m'>n</vcpu>
@@ -85,13 +79,14 @@ vCPU热插拔技术可以在虚拟机运行状态下增加或减少vCPU数量，
 ```
 
 >![](public_sys-resources/icon-note.gif) **说明：** 
->-   placement的值必须是static。
->-   m为虚拟机当前CPU数目，即虚拟机启动后默认的CPU数目。n为虚拟机支持热插到的最大CPU数目，该值不能超过Hypervisor支持的虚拟机最大CPU规格及GuestOS支持的最大CPU规格，n≥m。
->-   通过virt-install命令创建虚拟机的场景下，默认虚拟机创建完成后，其xml配置文件中不含以上vcpu节点。通过virsh edit <vm name>命令进行动态添加时，该节点不会即时生效，因此添加操作完成后需自行重启虚拟机，才能进行后续的vCPU热插拔操作。
+>
+>- placement的值必须是static。
+>- m为虚拟机当前CPU数目，即虚拟机启动后默认的CPU数目。n为虚拟机支持热插到的最大CPU数目，该值不能超过Hypervisor支持的虚拟机最大CPU规格及GuestOS支持的最大CPU规格，n≥m。
+>- 通过virt-install命令创建虚拟机的场景下，默认虚拟机创建完成后，其xml配置文件中不含以上vcpu节点。通过virsh edit <vm name>命令进行动态添加时，该节点不会即时生效，因此添加操作完成后需自行重启虚拟机，才能进行后续的vCPU热插拔操作。
 
 openEuler 24.03 LTS版本中，该特性默认开启，系统安装即使能。非openEuler内核需要自行合入并适配如下功能补丁。
 
-```
+```txt
 qemu：
 https://gitee.com/openeuler/qemu/pulls/804
 https://gitee.com/openeuler/qemu/pulls/850
@@ -104,14 +99,13 @@ https://gitee.com/openeuler/kernel/pulls/7902
 https://gitee.com/openeuler/kernel/pulls/9746
 ```
 
-
 ### 特性验证<a name="ZH-CN_TOPIC_0000002550007409"></a>
 
 在支持的openEuler版本中，部署libvirt 9.10.0及QEMU 8.2.0，并在配置虚拟机xml后，启动虚拟机。以下假设配置虚拟机当前CPU数目为4，所支持的最大CPU数目为8，且虚拟机名为test\_vm。
 
 1. 进入虚拟机。
 
-    ```
+    ```shell
     virsh console test_vm
     ```
 
@@ -119,32 +113,27 @@ https://gitee.com/openeuler/kernel/pulls/9746
 3. 通过“ctrl + \]”快捷键退出虚拟机。
 4. 执行vCPU热插命令。
 
-    ```
+    ```shell
     virsh setvcpus test_vm --count 8 --live
     ```
 
     >![](public_sys-resources/icon-note.gif) **说明：** 
-    >-   热插拔命令中的8是热插拔操作后预期的vCPU个数，可按需要自行配置，但不应大于虚拟机定义时预先给定的最大vCPU数目。
-    >-   --live表示vCPU热插操作即时生效，但重启后会恢复初始设置。
-    >-   仅指定--live的情况下，虚拟机一旦重启，热插拔动作将失效。如需将vCPU热插动作持久化，可指定--config参数，使操作在下次虚拟机重启时仍生效。在openEuler 24.03 LTS系统中，config参数与live参数可同时指定。
-    >-   虚拟机能通过热插达到的最大vCPU个数受系统限制，且在不同的系统版本限制的个数有所不同。热插命令中指定的vCPU数目如果超过虚拟机定义时预先给定的最大vCPU数目或者系统指定的虚拟机最大vCPU数目（常见于起大规格虚拟机场景下），热插命令会报错，且无法生效。
-    >-   **lscpu**命令支持查看当前系统内vCPU的在线、离线情况，其中，仅在线状态的vCPU会被虚拟机调度使用。因此，上述验证方法中，所记录的CPU数目，应为当前时刻下，**lscpu**命令回显信息中，"On-line CPU\(s\) list"子项中所含的CPU的个数，也即在线CPU个数。
+    >- 热插拔命令中的8是热插拔操作后预期的vCPU个数，可按需要自行配置，但不应大于虚拟机定义时预先给定的最大vCPU数目。
+    >- --live表示vCPU热插操作即时生效，但重启后会恢复初始设置。
+    >- 仅指定--live的情况下，虚拟机一旦重启，热插拔动作将失效。如需将vCPU热插动作持久化，可指定--config参数，使操作在下次虚拟机重启时仍生效。在openEuler 24.03 LTS系统中，config参数与live参数可同时指定。
+    >- 虚拟机能通过热插达到的最大vCPU个数受系统限制，且在不同的系统版本限制的个数有所不同。热插命令中指定的vCPU数目如果超过虚拟机定义时预先给定的最大vCPU数目或者系统指定的虚拟机最大vCPU数目（常见于起大规格虚拟机场景下），热插命令会报错，且无法生效。
+    >- **lscpu**命令支持查看当前系统内vCPU的在线、离线情况，其中，仅在线状态的vCPU会被虚拟机调度使用。因此，上述验证方法中，所记录的CPU数目，应为当前时刻下，**lscpu**命令回显信息中，"On-line CPU\(s\) list"子项中所含的CPU的个数，也即在线CPU个数。
 
 5. 重新进入虚拟机。
 
-    ```bash
+    ```shell
     virsh console test_vm
     ```
 
 6. 通过**lscpu**命令，记录在线CPU数目，应为8，即vCPU热插成功。
-
-
 
 ## 缩略语<a name="ZH-CN_TOPIC_0000002518687570"></a>
 
 |**缩略语**|**英文全称**|**中文全称**|
 |--|--|--|
 |RAS|Reliability, Availability and Serviceability|可靠性、可用性和可维护性|
-
-
-

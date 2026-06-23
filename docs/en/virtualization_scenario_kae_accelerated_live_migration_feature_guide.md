@@ -1,4 +1,4 @@
-# Virtualization Scenario KAE Accelerated Live Migration Feature Guide<a name="EN-US_TOPIC_0000002552288801"></a>
+# Virtualization Scenario KAE Accelerated Live Migration Feature Guide
 
 ## Feature Description<a name="EN-US_TOPIC_0000002550131443"></a>
 
@@ -18,10 +18,11 @@ Supported VM specifications include but are not limited to 2 vCPUs with 8 GB mem
 
 >![](public_sys-resources/icon-notice.gif) **NOTICE:**
 >When the open-source compression library zlib is enabled during the Redis pressure test, live migration is restricted in scenarios with the following VM specifications and number of live migration threads:
->-   VMs of 2 vCPUs and 8 GB, and live migration threads fewer than 32.
->-   VMs of 4 vCPUs and 8 GB, and live migration threads fewer than or equal to 4.
->-   VMs of 4 vCPUs and 16 GB, and live migration threads fewer than or equal to 4.
->-   VMs of 8 vCPUs and 16 GB, 16 vCPUs and 32 GB, and 32 vCPUs and 64 GB, and live migration threads fewer than or equal to 3.
+>
+>- VMs of 2 vCPUs and 8 GB, and live migration threads fewer than 32.
+>- VMs of 4 vCPUs and 8 GB, and live migration threads fewer than or equal to 4.
+>- VMs of 4 vCPUs and 16 GB, and live migration threads fewer than or equal to 4.
+>- VMs of 8 vCPUs and 16 GB, 16 vCPUs and 32 GB, and 32 vCPUs and 64 GB, and live migration threads fewer than or equal to 3.
 
 **Version Requirements<a name="section1625164615574"></a>**
 
@@ -34,8 +35,6 @@ Supported VM specifications include but are not limited to 2 vCPUs with 8 GB mem
 **Application Scenarios<a name="section49961711506"></a>**
 
 VM live migration applies to load balancing, hardware maintenance, and disaster recovery (DR) high availability (HA) scenarios. It dynamically adjusts VM distribution to prevent a single physical host from being overloaded and improve resource utilization. VMs can be migrated without interrupting services to facilitate the maintenance or upgrade of the source host. In addition, when a host is faulty or its performance deteriorates, VMs can be quickly migrated to ensure service continuity.
-
-
 
 ## Installation and Usage<a name="EN-US_TOPIC_0000002550011437"></a>
 
@@ -53,7 +52,6 @@ This section provides guidance based on the openEuler OS. Before performing oper
 |--|--|
 |Processor|New Kunpeng 920 processor model|
 
-
 **OS and Software Requirements<a name="section153345522323"></a>**
 
 [**Table 2**](#os-and-software-requirements) lists the OS and software requirements.
@@ -68,7 +66,6 @@ This section provides guidance based on the openEuler OS. Before performing oper
 |Redis|6.0.20|[Link](http://download.redis.io/releases/redis-6.0.20.tar.gz)|
 |KAE|2.0|[Link](https://gitee.com/kunpengcompute/KAE)|
 
-
 **iBMC and BIOS Version Requirements<a name="section4793193042413"></a>**
 
 This feature has no specific requirements for the iBMC and BIOS versions.
@@ -82,26 +79,25 @@ This feature has no specific requirements for the iBMC and BIOS versions.
 |iBMC|55.00.01.03, 5.05.12.08|
 |BIOS|12.70, 11.78|
 
-
-
 ### Installing libvirt<a name="EN-US_TOPIC_0000002550131445"></a>
 
 Only libvirt 10.0.0 and later versions support data compression and decompression using the zlib library during VM live migration.
 
 >![](public_sys-resources/icon-notice.gif) **NOTICE:**
->-   The feature installation involves system file modification. By default, all operations during the installation are performed by the `root` user. If you are a non-`root` user, ensure that you have corresponding permissions.
->-   If the libvirt of an earlier version exists, a shared library conflict may occur when the libvirt of a later version is directly installed. Therefore, uninstall the libvirt of the earlier version first.
->-   Configure the Yum repository in advance.
+>
+>- The feature installation involves system file modification. By default, all operations during the installation are performed by the `root` user. If you are a non-`root` user, ensure that you have corresponding permissions.
+>- If the libvirt of an earlier version exists, a shared library conflict may occur when the libvirt of a later version is directly installed. Therefore, uninstall the libvirt of the earlier version first.
+>- Configure the Yum repository in advance.
 
 1. Install the libvirt 10.0.0 dependencies.
 
-    ```
+    ```shell
     yum install -y meson gnutls-devel yajl-devel libtirpc-devel libxslt glib2-devel libxml2-devel glusterfs-api dnsmasq git gcc patch make autoconf automake libtool
     ```
 
 2. Perform the compilation and installation.
 
-    ```
+    ```shell
     meson setup build -Dsystem=true -Ddriver_qemu=enabled -Ddriver_lxc=enabled -Ddocs=disabled
     ninja -C build install
     ```
@@ -110,7 +106,7 @@ Only libvirt 10.0.0 and later versions support data compression and decompressio
 
     Configure `/etc/ld.so.conf` and add the path for searching for the link to the compilation and installation library.
 
-    ```
+    ```shell
     /usr/local/lib64
     ```
 
@@ -118,10 +114,9 @@ Only libvirt 10.0.0 and later versions support data compression and decompressio
 
     Run the following command to update the dynamic linker cache:
 
-    ```
+    ```shell
     ldconfig
     ```
-
 
 ### Applying for, Installing, and Verifying the KAE License<a name="EN-US_TOPIC_0000002550131449"></a>
 
@@ -144,7 +139,7 @@ Log in to the iBMC of a server. If a license has been installed, as shown in the
 
 If the following information is displayed in the `lspci` command output, the license starts to take effect.
 
-```
+```txt
 lspci | grep HPRE
 79:00.0 Network and computing encryption device: Huawei Technologies Co., Ltd. HiSilicon HPRE Engine (rev 21)
 b9:00.0 Network and computing encryption device: Huawei Technologies Co., Ltd. HiSilicon HPRE Engine (rev 21)
@@ -156,7 +151,6 @@ lspci | grep SEC
 b6:00.0 Network and computing encryption device: Huawei Technologies Co., Ltd. HiSilicon SEC Engine (rev 21)
 ```
 
-
 ### Installing the KAE Software<a name="EN-US_TOPIC_0000002550011441"></a>
 
 After the KAE license is installed, install the KAE software to use the KAEZlib compression module.
@@ -164,21 +158,22 @@ After the KAE license is installed, install the KAE software to use the KAEZlib 
 The KAE driver mentioned in this document is of the KAE 2.0 version. The source package contains the KAE kernel driver, UADK framework, KAEOpensslEngine, and KAEZlib modules. You can use a script to install all of the software or only install the KAE kernel driver, UADK framework, and KAEZlib. After the installation, check whether the installation is successful.
 
 >![](public_sys-resources/icon-notice.gif) **NOTICE:**
->-   The system environment must meet the environment requirements before installation.
->-   The `root` account is required for KAE installation.
->-   Both `root` and non-`root` accounts can run KAE. A non-`root` account needs to obtain permissions for related devices (`/dev/hisi_*`) and files (`/var/log/kae.*`).
->-   The KAE driver must be installed on both the source and target physical hosts.
->-   For details, see [KAE User Guide](https://www.hikunpeng.com/document/detail/en/kunpengaccel/kae/usermanual/kunpengaccel_16_0002.html).
+>
+>- The system environment must meet the environment requirements before installation.
+>- The `root` account is required for KAE installation.
+>- Both `root` and non-`root` accounts can run KAE. A non-`root` account needs to obtain permissions for related devices (`/dev/hisi_*`) and files (`/var/log/kae.*`).
+>- The KAE driver must be installed on both the source and target physical hosts.
+>- For details, see [KAE User Guide](https://www.hikunpeng.com/document/detail/en/kunpengaccel/kae/usermanual/kunpengaccel_16_0002.html).
 
 1. Download the KAE 2.0 source package from the [website](https://gitee.com/kunpengcompute/KAE/tree/kae2/) or use `git clone` to download it.
 
-    ```
+    ```shell
     git clone https://gitee.com/kunpengcompute/KAE.git -b kae2
     ```
 
 2. Install the dependencies.
 
-    ```
+    ```shell
     yum install -y meson gnutls-devel yajl-devel libtirpc-devel libxslt glib2-devel libxml2-devel kernel-devel automake libtool autoconf numactl-devel
     ```
 
@@ -186,13 +181,13 @@ The KAE driver mentioned in this document is of the KAE 2.0 version. The source 
 
     1. Go to the directory of the KAE source package. You are advised to run the `clearup` command first.
 
-        ```
+        ```shell
         sh build.sh cleanup
         ```
 
     2. Install the KAE driver and KAEZlib library.
 
-        ```
+        ```shell
         sh build.sh driver
         sh build.sh uadk
         sh build.sh zlib
@@ -200,7 +195,7 @@ The KAE driver mentioned in this document is of the KAE 2.0 version. The source 
 
         Alternatively, install all KAE modules (KAE driver, UADK, KAEZlib, and OpenSSLEngine).
 
-        ```
+        ```shell
         sh build.sh all
         ```
 
@@ -213,7 +208,7 @@ The KAE driver mentioned in this document is of the KAE 2.0 version. The source 
 
         Check whether the accelerator engine file system exists in the corresponding directory.
 
-        ```
+        ```shell
         ll /sys/class/uacce/
         ```
 
@@ -223,7 +218,7 @@ The KAE driver mentioned in this document is of the KAE 2.0 version. The source 
 
     2. Use `lsmod` to check whether the driver is installed.
 
-        ```
+        ```shell
         lsmod | grep uacce
         ```
 
@@ -233,7 +228,7 @@ The KAE driver mentioned in this document is of the KAE 2.0 version. The source 
 
     3. Check whether UADK is installed.
 
-        ```
+        ```shell
         ll /usr/local/lib/libwd*
         ```
 
@@ -241,30 +236,32 @@ The KAE driver mentioned in this document is of the KAE 2.0 version. The source 
 
     4. Check whether the KAEZlib library is installed.
 
-        ```
+        ```shell
         ll /usr/local/kaezip/lib/
         ```
 
         ![](figures/en-us_image_0000002550011447.png)
 
-        ```
+        ```shell
         ldd /usr/local/kaezip/lib/libz.so.1.2.11
         ```
 
         ![](figures/en-us_image_0000002518531696.png)
 
     >![](public_sys-resources/icon-note.gif) **NOTE:**
-    >-   If no device file is queried after the device is restarted and a driver is installed, a possible cause is that the OS has a built-in accelerator driver. You can unload the driver and then reload it. Alternatively, add the command for reloading the driver to the startup script `re.local`. The following uses hisi_sec2 as an example.
+    >- If no device file is queried after the device is restarted and a driver is installed, a possible cause is that the OS has a built-in accelerator driver. You can unload the driver and then reload it. Alternatively, add the command for reloading the driver to the startup script `re.local`. The following uses hisi_sec2 as an example.
+>
+    > ```shell
+    > rmmod hisi_sec2 
+    > modprobe hisi_sec
     >    ```
-    >    rmmod hisi_sec2 
-    >    modprobe hisi_sec
+>
+    >- If the device file still cannot be queried after the `sh build.sh cleanup` command is executed, check whether the license is successfully installed. If no license is available, the driver cannot be installed.
+    >- If the installation fails, delete the installed files and reinstall the software.
+>
+    > ```shell
+    > sh build.sh cleanup
     >    ```
-    >-   If the device file still cannot be queried after the `sh build.sh cleanup` command is executed, check whether the license is successfully installed. If no license is available, the driver cannot be installed.
-    >-   If the installation fails, delete the installed files and reinstall the software.
-    >    ```
-    >    sh build.sh cleanup
-    >    ```
-
 
 ### Modifying libvirt and QEMU Configurations<a name="EN-US_TOPIC_0000002518691584"></a>
 
@@ -274,7 +271,7 @@ To enable libvirt to monitor VMs and use KAEZlib for acceleration during live mi
 
 Modify the `/etc/libvirt/libvirtd.conf` file to enable libvirt to monitor the VM status during live migration. Let libvirt listen to port 16509 on all network interfaces through TCP.
 
-```
+```txt
 listen_tls = 0
 listen_tcp = 1
 tcp_port = "16509"
@@ -283,14 +280,15 @@ auth_tcp = "none"
 ```
 
 >![](public_sys-resources/icon-notice.gif) **NOTICE:**
->-   The preceding configurations are usually used in development and test environments or scenarios that do not require high security. If higher security is required, you need to configure the listening address, identity authentication, and encryption protocol.
->-   Disable the firewall or enable port 16509 on the firewall.
+>
+>- The preceding configurations are usually used in development and test environments or scenarios that do not require high security. If higher security is required, you need to configure the listening address, identity authentication, and encryption protocol.
+>- Disable the firewall or enable port 16509 on the firewall.
 
 **Adding KAE Device Configurations<a name="section4954121010912"></a>**
 
 1. Check the model of the `/dev/hisi_zip-<xx>` device.
 
-    ```
+    ```shell
     ll /sys/class/uacce/
     ```
 
@@ -300,7 +298,7 @@ auth_tcp = "none"
 
     Modify the `/etc/libvirt/qemu.conf` file to allow libvirt/QEMU to use the KAEZlib device. The value of `hisi_zip-<xx>` must be the same as that in step 1.
 
-    ```
+    ```txt
     cgroup_device_acl = [
         "/dev/null", "/dev/full", "/dev/zero",
         "/dev/random", "/dev/urandom",
@@ -314,27 +312,27 @@ auth_tcp = "none"
 
 3. After the configuration is modified, restart the libvirt service.
 
-    ```
+    ```shell
     systemctl stop libvirtd.socket libvirtd-ro.socket libvirtd-admin.socket libvirtd-tls.socket libvirtd-tcp.socket
     systemctl stop libvirtd
     systemctl daemon-reload
     systemctl start libvirtd-tcp.socket
     ```
 
-
 ### Setting Up the Network Bridge<a name="EN-US_TOPIC_0000002518531690"></a>
 
 The KAE-accelerated live migration test uses the Linux network bridge.
 
 >![](public_sys-resources/icon-notice.gif) **NOTICE:**
->-   If the source physical host is directly connected to the target physical host, you do not need to configure the gateway.
->-   The network bridge name of the source physical host must be the same as that of the target one.
->-   The source and target physical hosts must be in the same network segment.
->-   The IP address of the VM must be in the same network segment as that of the network bridge.
+>
+>- If the source physical host is directly connected to the target physical host, you do not need to configure the gateway.
+>- The network bridge name of the source physical host must be the same as that of the target one.
+>- The source and target physical hosts must be in the same network segment.
+>- The IP address of the VM must be in the same network segment as that of the network bridge.
 
 1. Create a network bridge interface.
 
-    ```
+    ```shell
     brctl addbr <Network_bridge_name>
     ```
 
@@ -342,26 +340,26 @@ The KAE-accelerated live migration test uses the Linux network bridge.
 
     If the NIC has an IP address, clear the IP address.
 
-    ```
+    ```shell
     ip addr flush dev <NIC_name>
     ```
 
     Bind the NIC to the network bridge.
 
-    ```
+    ```shell
     ip link set <NIC_name> master <Network_bridge_name>
     ```
 
 3. Start the interface.
 
-    ```
+    ```shell
     sudo ip link set <Network_bridge_name> up
     sudo ip link set <NIC_name> up
     ```
 
 4. Check whether the binding is successful.
 
-    ```
+    ```shell
     brctl show
     ```
 
@@ -374,14 +372,14 @@ The KAE-accelerated live migration test uses the Linux network bridge.
 
 5. Configure the IP address and gateway of the network bridge.
 
-    ```
+    ```shell
     ip addr add <IP_address> dev <Network_bridge_name>
     ip route add default via <Gateway_IP_address> dev <NIC_name>
     ```
 
 6. Modify the VM XML file to bind the network bridge.
 
-    ```
+    ```xml
     <interface type='bridge'>
       <mac address='<MAC_address>'/>
       <source bridge='<Network_bridge_name>'/>
@@ -392,7 +390,7 @@ The KAE-accelerated live migration test uses the Linux network bridge.
 
     The commands for configuring the IP address and gateway of the VM are as follows:
 
-    ```
+    ```shell
     ip addr add <IP_address> dev <Virtual_NIC_name>
     ip route add default via <Gateway_IP_address> dev <Virtual_NIC_name>
     ```
@@ -401,10 +399,9 @@ The KAE-accelerated live migration test uses the Linux network bridge.
 
     On the target physical host, run the following command to check whether the VM network is normal. If the network connection is normal, the network is successfully set up.
 
-    ```
+    ```shell
     ping <Virtual_NIC_IP_address>
     ```
-
 
 ### Enabling KAEZlib<a name="EN-US_TOPIC_0000002550011439"></a>
 
@@ -412,13 +409,13 @@ Using the KAEZlib library during VM live migration requires to add the KAEZlib p
 
 1. Check the XML configuration of the VM.
 
-    ```
+    ```shell
     virsh edit <VM_name>
     ```
 
 2. Modify the XML file of the VM to replace the open-source zlib library with KAEZlib.
 
-    ```
+    ```xml
     <qemu:commandline xmlns:qemu='http://libvirt.org/schemas/domain/qemu/1.0'>
         <qemu:env name='LD_LIBRARY_PATH' value='/usr/local/kaezip/lib:/usr/local/lib:$LD_LIBRARY_PATH'/>
     </qemu:commandline>
@@ -427,18 +424,17 @@ Using the KAEZlib library during VM live migration requires to add the KAEZlib p
 >![](public_sys-resources/icon-note.gif) **NOTE:**
 >VMs do not require the configuration of huge pages. VMs configured with huge pages require additional adaptation for their live migration.
 
-
-
-
 ## KAE-accelerated Live Migration Test<a name="EN-US_TOPIC_0000002518531688"></a>
 
 In the KAE-accelerated live migration test, redis-benchmark is used to perform the `set` operation of the pressure test on the VM to simulate the service scenario, and collect the live migration time with KAEZlib enabled.
 
 >![](public_sys-resources/icon-notice.gif) **NOTICE:**
->-   In a non-shared storage environment, it is required to copy the image file and NVRAM file of the VM to the target physical host before performing live migration.
->-   SELinux needs to be disabled.
->    ```
->    setenforce 0
+>
+>- In a non-shared storage environment, it is required to copy the image file and NVRAM file of the VM to the target physical host before performing live migration.
+>- SELinux needs to be disabled.
+>
+> ```shell
+> setenforce 0
 >    ```
 
 ### Installing Redis<a name="EN-US_TOPIC_0000002550131447"></a>
@@ -447,16 +443,16 @@ In the VM live migration, the memory dirty page rate impacts the live migration 
 
 >![](public_sys-resources/icon-note.gif) **NOTE:**
 >IP address of the virtual NIC needs to be specified in the `/etc/redis.conf` file of Redis.
->```
+>
+>```shell
 >bind <Virtual_NIC_IP_address>
 >```
-
 
 ### Live Migration Test<a name="EN-US_TOPIC_0000002518531692"></a>
 
 1. Start the VM.
 
-    ```
+    ```shell
     virsh start <VM_name>
     ```
 
@@ -464,7 +460,7 @@ In the VM live migration, the memory dirty page rate impacts the live migration 
 
     After the VM is started, check the number of KAE hardware queues. If the number decreases, the KAE device is in use.
 
-    ```
+    ```shell
     watch -n 0.1 "cat /sys/class/uacce/hisi_zip-*/available_instances"
     ```
 
@@ -472,7 +468,7 @@ In the VM live migration, the memory dirty page rate impacts the live migration 
 
 3. Start the Redis server.
 
-    ```
+    ```shell
     redis-server /etc/redis.conf --port 6379 &
     ```
 
@@ -480,13 +476,13 @@ In the VM live migration, the memory dirty page rate impacts the live migration 
 
     On the target physical host, use 20 threads and 1,000 connections to perform 10 million `set` operations on the Redis server.
 
-    ```
+    ```shell
     redis-benchmark -h <VM_IP_address> -n 10000000 -c 1000 -r 10000000  -t set -p 6379 --threads 20
     ```
 
 5. Live migrate the VM.
 
-    ```
+    ```shell
     time virsh migrate --parallel --parallel-connections <Number_of_live_migration_threads> --compressed --comp-methods zlib --live --verbose --domain <VM_name> qemu+ssh://<IP_address_of_target_physical_host_network_bridge>/system --migrateuri tcp://<IP_address_of_target_physical_host_network_bridge> --unsafe
     ```
 

@@ -15,7 +15,6 @@ It also leverages hardware resources more efficiently, increases the system thro
 
 Through the VM vCPU topology configuration, the topology of the physical CPU cluster can be mapped to the VM to help the VM to achieve the same tuning effect as that of the physical CPU.
 
-
 ### Availability<a name="EN-US_TOPIC_0000002070182902"></a>
 
 Before configuring the cluster awareness feature, learn about its version and license support information.
@@ -23,17 +22,13 @@ Before configuring the cluster awareness feature, learn about its version and li
 - Version: openEuler 22.03 LTS SP2 or later
 - License: none
 
-
 ### Constraints<a name="EN-US_TOPIC_0000002105902633"></a>
 
 openEuler 22.03 LTS SP2 or later is required. The topology information of the physical CPU cluster must be correctly mapped to the VM.
 
-
 ### Application Scenarios<a name="EN-US_TOPIC_0000002070342698"></a>
 
 Apply to the 1:1 core binding scenario. The optimal cluster topology is displayed based on the topology of vCPUs bound to the physical CPUs.
-
-
 
 ## Feature Usage<a name="EN-US_TOPIC_0000002070182918"></a>
 
@@ -51,7 +46,6 @@ This document provides guidance based on the openEuler OS. Before performing ope
 |--|--|
 |Processor|Kunpeng 920 series|
 
-
 **OS and Software Requirements<a name="section153345522323"></a>**
 
 [**Table 2**](#os-and-software-requirements) lists the OS and software requirements.
@@ -62,8 +56,6 @@ This document provides guidance based on the openEuler OS. Before performing ope
 |--|--|--|
 |OS|openEuler 22.03 LTS SP2 or later|[Link](https://mirrors.huaweicloud.com/openeuler/openEuler-22.03-LTS-SP4/ISO/aarch64/openEuler-22.03-LTS-SP4-everything-aarch64-dvd.iso)|
 
-
-
 ### Enablement and Verification<a name="EN-US_TOPIC_0000002105902617"></a>
 
 Configure the VM XML file to map the CPU cluster topology information of the physical host to the VM, and enable the cluster-aware scheduler on the VM to enable this feature. Observe the scheduling group status of each vCPU before and after the feature is enabled to check whether the feature is successfully enabled.
@@ -72,13 +64,13 @@ Configure the VM XML file to map the CPU cluster topology information of the phy
 
     For example, if the vCPUs on the VM with the specification of 16 vCPUs and 32 GB memory are bound to four clusters (16 cores) in 1:1 mode, the optimal configuration is as follows:
 
-    ```
+    ```xml
     <topology sockets='1' dies='1' clusters='4' cores='4' threads='1'/>
     ```
 
 2. Run the following commands in the guest OS to ensure that the cluster-aware scheduler is disabled and observe the scheduling group of each vCPU:
 
-    ```
+    ```shell
     echo 0 > /proc/sys/kernel/sched_cluster
     cat /proc/schedstat
     ```
@@ -89,7 +81,7 @@ Configure the VM XML file to map the CPU cluster topology information of the phy
 
 3. In the guest OS, enable the cluster-aware scheduler and observe the scheduling group of each vCPU.
 
-    ```
+    ```shell
     echo 1 > /proc/sys/kernel/sched_cluster
     cat /proc/schedstat
     ```

@@ -23,7 +23,6 @@ The lock optimization feature uses shared memory to relay vCPU preemption status
 
 The preempted state value tracks whether the vCPU has been preempted on the host. A value of 0 indicates that the hypervisor is actively scheduling the vCPU, while 1 signifies the vCPU has been stopped by the hypervisor.
 
-
 ### Availability<a name="EN-US_TOPIC_0000002105901569"></a>
 
 Version requirements:
@@ -31,20 +30,16 @@ Version requirements:
 - openEuler 20.03 LTS SP1 or later is supported.
 - For non-openEuler kernels, the patches listed in [**Table 3**](#patch-requirements-for-non-openeuler-kernels) must be applied. The feature is enabled by default after the patches are applied.
 
-
 ### Constraints<a name="EN-US_TOPIC_0000002070341630"></a>
 
 The VM lock optimization feature does not support live migration.
 
 The VM lock optimization feature operates exclusively at the OS kernel level. Its activation status has no impact on libvirt or QEMU, eliminating the need for any supplementary configuration on either platform.
 
-
 ### Application Scenarios<a name="EN-US_TOPIC_0000002105901593"></a>
 
 - The VM lock optimization feature applies to overcommitment scenarios core-bound vCPUs, where multiple vCPU threads contend for resources on shared physical cores.
 - Using a coordinated frontend-backend approach, the feature tracks vCPU thread preemption to refine scheduling and lock efficiency. It improves performance in CPU scheduling operations such as `mutex_spin_on_owner`, `mutex_can_spin_on_owner`, `rtmutex_spin_on_owner`, `osq_lock`, and `available_idle_cpu`.
-
-
 
 ## Feature Usage<a name="EN-US_TOPIC_0000002070341634"></a>
 
@@ -62,7 +57,6 @@ This document provides guidance based on the openEuler OS. Before performing ope
 |--|--|
 |Processor|Kunpeng 920 series|
 
-
 **OS and Software Requirements<a name="section153345522323"></a>**
 
 [**Table 2**](#os-and-software-requirements) lists the OS and software requirements.
@@ -74,7 +68,6 @@ This document provides guidance based on the openEuler OS. Before performing ope
 |OS|openEuler 20.03 LTS SP1<br>The minimum OS version requirement applies to both physical and virtual machines.|[Link](https://mirrors.huaweicloud.com/openeuler/openEuler-20.03-LTS-SP1/ISO/aarch64/openEuler-20.03-LTS-SP1-aarch64-dvd.iso)|
 |libvirt|6.2.0 or later|Install it using Yum.|
 |QEMU|4.1.0 or later|Install it using Yum.|
-
 
 **Table 3** Patch requirements for non-openEuler kernels<a id="patch-requirements-for-non-openeuler-kernels"></a>
 
@@ -89,10 +82,8 @@ This document provides guidance based on the openEuler OS. Before performing ope
 |7|KVM: arm64: Implement PV_SCHED_KICK_CPU call|[Link](https://gitee.com/openeuler/kernel/commit/efed88dd593493653466917a7e95868ec38bef41)|
 |8|KVM: arm64: Add interface to support PV qspinlock|[Link](https://gitee.com/openeuler/kernel/commit/12e1ed766c347d47f85736fece113c7578ace94f)|
 
-
 >![](public_sys-resources/icon-notice.gif) **NOTICE:**
 >This feature depends on support from both physical and virtual machines. For non-openEuler kernels, the specified patches must be installed on both sides.
-
 
 ### Feature Enablement<a name="EN-US_TOPIC_0000002105901585"></a>
 
@@ -100,24 +91,21 @@ This feature supports openEuler 20.03 LTS SP1 and later versions. It is enabled 
 
 To enable this feature on a non-openEuler kernel, you need to apply the related patches. For details, see [**Table 3**](#patch-requirements-for-non-openeuler-kernels). After the patches are integrated, the feature is enabled by default after system boot.
 
-
 ### Feature Verification<a name="EN-US_TOPIC_0000002070181858"></a>
 
 After setting up libvirt and QEMU, launch a VM. Once the VM is running, run the following command within it:
 
-```
+```shell
 dmesg | grep PV
 ```
 
 If the feature is running properly, the command output contains the following information:
 
-```
+```shell
 arm-pv: using PV sched preempted
 ```
 
 This feature works automatically without user intervention, optimizing vCPU scheduling efficiency in the VM.
-
-
 
 ## Acronyms and Abbreviations<a name="EN-US_TOPIC_0000002106021549"></a>
 

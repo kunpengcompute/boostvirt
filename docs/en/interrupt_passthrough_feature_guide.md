@@ -35,9 +35,6 @@ New Kunpeng 920 processor models support the following interrupt passthrough typ
 |GICv4.1 virtual device interrupt passthrough|Injects virtio device interrupts into VMs via Kunpeng-optimized GICv4.1, bypassing VM exit/entry.|Reduces interrupt response delays and improves throughput for network- or I/O-intensive workloads.|
 |GICv4.1 vSGI passthrough|Injects vCPU inter-processor interrupts (IPIs) into VMs via GICv4.1, bypassing VM exit/entry.|Lowers IPI response delays and boosts performance in multi-core IPI-heavy scenarios.|
 
-
-
-
 ## Environment Requirements<a name="EN-US_TOPIC_0000002043929896"></a>
 
 This document provides guidance based on the openEuler OS. Before performing operations, ensure that your hardware and software meet the requirements.
@@ -52,7 +49,6 @@ This document provides guidance based on the openEuler OS. Before performing ope
 |--|--|
 |Processor|New Kunpeng 920 processor model|
 
-
 **OS and Software Requirements<a name="section153345522323"></a>**
 
 [**Table 2**](#os-and-software-requirements) lists the OS and software requirements.
@@ -64,8 +60,6 @@ This document provides guidance based on the openEuler OS. Before performing ope
 |OS|openEuler 22.03 LTS SP3|[Link](https://mirrors.huaweicloud.com/openeuler/openEuler-22.03-LTS-SP3/ISO/aarch64/openEuler-22.03-LTS-SP3-everything-aarch64-dvd.iso)|
 |libvirt|6.2.0|Install it using Yum.|
 |QEMU|6.2.0|Install it using Yum.|
-
-
 
 ## Activation<a name="EN-US_TOPIC_0000002043771620"></a>
 
@@ -86,19 +80,19 @@ This section describes how to enable the interrupt passthrough feature on the ne
 
 3. To activate GICv4.1, append the following parameter to the kernel boot parameters in the host OS configuration file (for openEuler 22.03 LTS SP3, modify the line starting with `linux /vmlinuz-5.10.0-182.0.0.95.oe2203sp3.aarch64 root=` in `/boot/efi/EFI/openEuler/grub.cfg`). Reboot the host OS to make the modification effective.
 
-    ```
+    ```txt
     kvm-arm.vgic_v4_enable=1
     ```
 
 4. Confirm GICv4.1 is enabled by running the following command on the host:
 
-    ```
+    ```shell
     dmesg | grep GIC
     ```
 
     If the following information is displayed, GICv4.1 is enabled:
 
-    ```
+    ```txt
     kvm [1]: GICv4.1 support enabled
     ```
 
@@ -117,32 +111,30 @@ This section describes how to enable the interrupt passthrough feature on the ne
 
 3. To activate GICv4.1, append the following parameter to the kernel boot parameters in the host OS configuration file (for openEuler 22.03 LTS SP3, modify the line starting with `linux /vmlinuz-5.10.0-182.0.0.95.oe2203sp3.aarch64 root=` in `/boot/efi/EFI/openEuler/grub.cfg`). Reboot the host OS to make the modification effective.
 
-    ```
+    ```txt
     kvm-arm.vgic_v4_enable=1
     ```
 
 4. Confirm GICv4.1 is enabled by running the following command on the host:
 
-    ```
+    ```shell
     dmesg | grep GIC
     ```
 
     If the following information is displayed, GICv4.1 is enabled:
 
-    ```
+    ```txt
     kvm [1]: GICv4.1 support enabled
     ```
 
 5. Check the `dmesg` logs of the guest OS. If the following information is displayed, the vSGI passthrough function has been enabled.
 
-    ```
+    ```txt
     Enabling SGIs without active state
     ```
 
     >![](public_sys-resources/icon-note.gif) **NOTE:**
     >When many IPIs are triggered inside the VM, `vmtop` reveals that the VM interrupt exits remain largely unchanged.
-
-
 
 **GICv4.1 Virtual Device Interrupt Passthrough<a name="section4441112154714"></a>**
 
@@ -152,19 +144,19 @@ This section describes how to enable the interrupt passthrough feature on the ne
 
 2. To activate GICv4.1, append the following parameter to the kernel boot parameters in the host OS configuration file (for openEuler 22.03 LTS SP3, modify the line starting with `linux /vmlinuz-5.10.0-182.0.0.95.oe2203sp3.aarch64 root=` in `/boot/efi/EFI/openEuler/grub.cfg`). Reboot the host OS to make the modification effective.
 
-    ```
+    ```txt
     kvm-arm.vgic_v4_enable=1
     ```
 
 3. Confirm GICv4.1 is enabled by running the following command on the host:
 
-    ```
+    ```shell
     dmesg | grep GIC
     ```
 
     If the following information is displayed, GICv4.1 is enabled:
 
-    ```
+    ```txt
     kvm [1]: GICv4.1 support enabled
     ```
 
@@ -172,13 +164,13 @@ This section describes how to enable the interrupt passthrough feature on the ne
 
     `start` indicates the start number, and `count` indicates the PCI number count.
 
-    ```
+    ```txt
     kvm-arm.virt_msi_bypass=1 irqchip.gicv3_rsv_buses_start=30 irqchip.gicv3_rsv_buses_count=10
     ```
 
     During VM creation, if the following information is displayed in the `dmesg` output on the host OS, virtual device interrupt passthrough is enabled successfully.
 
-    ```
+    ```shell
     Create shadow device
     ```
 
@@ -192,7 +184,7 @@ This feature is compatible with openEuler 22.03 LTS SP3 and later versions. Non-
 >![](public_sys-resources/icon-note.gif) **NOTE:**
 >Given the significant number of patches needed for non-openEuler kernels, you are advised to use openEuler 22.03 LTS SP3 or later to enable this feature.
 
-```
+```txt
 https://lore.kernel.org/all/20191017113341.13778-1-ben.dooks@codethink.co.uk/
 https://lists.cs.columbia.edu/pipermail/kvmarm/2019-November/037998.html
 https://lore.kernel.org/linux-arm-kernel/20191025135144.8805-1-christoffer.dall@arm.com/T/
@@ -339,19 +331,19 @@ https://gitee.com/openeuler/kernel/commit/43c7519a5d563325b19210009d04643fedd962
 
 1. Apply a patch using `git am`.
 
-    ```
+    ```shell
     git am -s  /path/to/patch/Reinstall_old_memslots_if_arch_preparation_fails.patch
     ```
 
 2. A successful application message indicates that the patch is usable. The output will appear as:
 
-    ```
+    ```txt
     Applying: KVM: Reinstall old memslots if arch preparation fails
     ```
 
 3. If an error occurs, identify the conflicting section in the patch based on the error message and manually adjust it based on the documentation:
 
-    ```
+    ```txt
     Applying: KVM: Reinstall old memslots if arch preparation fails
     error: patch failed: virt/kvm/kvm_main.c:1117
     error: virt/kvm/kvm_main.c: patch does not apply

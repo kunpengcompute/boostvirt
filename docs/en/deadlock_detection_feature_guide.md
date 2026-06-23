@@ -29,14 +29,13 @@ openEuler offers two NMI watchdog implementations for AArch64 platforms:
 
 >![](public_sys-resources/icon-notice.gif) **NOTICE:**
 >For AArch64 systems:
->-   openEuler defaults to the SDEI watchdog, but if this mechanism cannot initialize in virtualized environments, the system does not automatically fall back to the NMI watchdog based on Performance Monitoring Counter (PMC) or PMU. You need to manually disable the SDEI watchdog through kernel parameters.
->-   To enable the PMC/PMU watchdog, explicitly disable the SDEI watchdog by including `disable_sdei_nmi_watchdog` in the boot parameters. Full parameter details are available in [Activation](#activation).
-
+>
+>- openEuler defaults to the SDEI watchdog, but if this mechanism cannot initialize in virtualized environments, the system does not automatically fall back to the NMI watchdog based on Performance Monitoring Counter (PMC) or PMU. You need to manually disable the SDEI watchdog through kernel parameters.
+>- To enable the PMC/PMU watchdog, explicitly disable the SDEI watchdog by including `disable_sdei_nmi_watchdog` in the boot parameters. Full parameter details are available in [Activation](#activation).
 
 ### Availability<a name="EN-US_TOPIC_0000002070178706"></a>
 
 Version requirements: The feature is validated on VMs hosted on Kunpeng 920 series-based servers, running openEuler 22.03 LTS SP2 with libvirt 6.2.0 and QEMU 6.2.0.
-
 
 ### Constraints<a name="EN-US_TOPIC_0000002105898393"></a>
 
@@ -45,12 +44,9 @@ The feature requires hardware that meets either of the following conditions:
 - NMI capability (not available in virtualized environments)
 - PMC or PMU support
 
-
 ### Application Scenarios<a name="EN-US_TOPIC_0000002070338458"></a>
 
 This feature applies to public and private clouds.
-
-
 
 ## Feature Usage<a name="EN-US_TOPIC_0000002070178682"></a>
 
@@ -68,7 +64,6 @@ This document provides guidance based on the openEuler OS. Before performing ope
 |--|--|
 |Processor|Kunpeng 920 series|
 
-
 **OS and Software Requirements<a name="section153345522323"></a>**
 
 [**Table 2**](#os-and-software-requirements) lists the OS and software requirements.
@@ -81,41 +76,39 @@ This document provides guidance based on the openEuler OS. Before performing ope
 |libvirt|6.2.0 or later|Install it using Yum.|
 |QEMU|6.2.0 or later|Install it using Yum.|
 
-
-
 ### Activation<a name="EN-US_TOPIC_0000002105898413" id="activation"></a>
 
 Hardware support for NMIs is required to activate NMI watchdog on AArch64 platforms. Virtualized environments lack standard NMI support but offer pseudo-NMI functionality, which requires the following setup before system boot:
 
 1. Add the following configuration to the `GRUB_CMDLINE_LINUX` parameter in the `/etc/default/grub` boot configuration file of the VM OS:
 
-    ```
+    ```txt
     nmi_watchdog=1 pmu_nmi_enable hardlockup_cpu_freq=auto irqchip.gicv3_pseudo_nmi=1 disable_sdei_nmi_watchdog hardlockup_enable=1
     ```
 
 2. After setting the parameters, update the GRUB configuration.
 
-    ```
+    ```shell
     grub2-mkconfig -o /boot/efi/EFI/openEuler/grub.cfg
     ```
 
 3. Reboot the system for configuration to take effect.
 
-    ```
+    ```shell
     reboot
     ```
 
 >![](public_sys-resources/icon-notice.gif) **NOTICE:**
->-   Only the described configuration is supported in virtualized environments.
->-   The `irqchip.gicv3_pseudo_nmi=1` parameter is strictly necessary for the pseudo-NMI-based NMI watchdog.
->-   Kernel compilation must include `CONFIG_ARM64_PSEUDO_NMI` (enabled by default) for pseudo-NMI functionality.
-
+>
+>- Only the described configuration is supported in virtualized environments.
+>- The `irqchip.gicv3_pseudo_nmi=1` parameter is strictly necessary for the pseudo-NMI-based NMI watchdog.
+>- Kernel compilation must include `CONFIG_ARM64_PSEUDO_NMI` (enabled by default) for pseudo-NMI functionality.
 
 ### Verification<a name="EN-US_TOPIC_0000002105898401"></a>
 
 To confirm the successful loading of the NMI watchdog based on PMC (PMU) after activation, run the following command within the VM:
 
-```
+```shell
 dmesg | grep "NMI watchdog"
 ```
 
@@ -123,34 +116,31 @@ The output varies based on the watchdog type:
 
 - For a successfully loaded SDEI watchdog, the following information is displayed:
 
-    ```
+    ```txt
     SDEI NMI watchdog: SDEI Watchdog registered successfully
     ```
 
 - In virtualized environments, the SDEI watchdog is loaded by default but will fail. The following information is displayed:
 
-    ```
+    ```txt
     SDEI NMI watchdog: Disable SDEI NMI Watchdog in VM
     ```
 
 - For a successfully loaded NMI watchdog based on PMC (PMU), which is the sole viable option in virtualized environments, the following information is displayed:
 
-    ```
+    ```txt
     NMI watchdog: Enabled. Permanently consumes one hw-PMU counter.
     ```
-
 
 ### Configuration<a name="EN-US_TOPIC_0000002094732684"></a>
 
 The triggering threshold of the NMI watchdog can be adjusted from its default 10-second hard lockup detection interval.
 
-```
+```shell
 echo 10 > /proc/sys/kernel/watchdog_thresh
 ```
 
 This command modifies the threshold after OS boot. The valid threshold range is 0 to 60. Note that this change will not persist after a system reboot.
-
-
 
 ## Acronyms and Abbreviations<a name="EN-US_TOPIC_0000002070338482"></a>
 

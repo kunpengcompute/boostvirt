@@ -7,10 +7,10 @@
 在虚拟化场景中，多个虚拟机共享同一物理机的CPU核心资源，资源竞争可能导致性能瓶颈，影响虚拟机的性能表现。通过将虚拟机的vCPU与物理CPU核心绑定，可以合理分配资源，避免资源过度集中或不足，从而提升整体性能。在服务器CPU架构中，Socket中包含多个CPU Die，而CPU Die中包含多个Cluster。因此，虚拟机vCPU绑定的物理CPU核心所在的微架构不同，会影响vCPU所使用的资源范围。
 
 >![](public_sys-resources/icon-note.gif) **说明：** 
->-   Socket是物理层级的CPU封装单位，对应一个独立的处理器封装。
->-   Die是指中央处理器（CPU）芯片上的芯片核心区域。它是一个单独的硅片，其中包含了CPU的核心部分，包括运算单元、缓存、控制逻辑等。
->-   Cluster是芯片内部多个CPU核心的逻辑分组，共享缓存等资源。
-
+>
+>- Socket是物理层级的CPU封装单位，对应一个独立的处理器封装。
+>- Die是指中央处理器（CPU）芯片上的芯片核心区域。它是一个单独的硅片，其中包含了CPU的核心部分，包括运算单元、缓存、控制逻辑等。
+>- Cluster是芯片内部多个CPU核心的逻辑分组，共享缓存等资源。
 
 ## 环境要求<a name="ZH-CN_TOPIC_0000002550007099"></a>
 
@@ -29,7 +29,6 @@
 |内存|内存按1DPC方式配置将获得最佳性能，即将DIMM0插满。|
 |系统盘|无特殊要求|
 
-
 **软件要求<a name="section102619448716"></a>**
 
 软件要求如[**表 2** 软件要求](#软件要求)所示。
@@ -42,8 +41,6 @@
 |libvirt|9.10.0|yum源安装|
 |QEMU|8.2.0|yum源安装|
 
-
-
 ## 4个NUMA节点场景配置Cluster调优<a name="ZH-CN_TOPIC_0000002518527338" id="4个NUMA节点场景配置Cluster调优"></a>
 
 通过对虚拟机vCPU所绑定的物理CPU核心和vCPU拓扑进行Cluster调优，以确保虚拟机的最佳性能表现。
@@ -55,7 +52,7 @@
 
 1. 找到目标虚拟机名称。
 
-    ```
+    ```shell
     virsh list --all
     ```
 
@@ -63,13 +60,13 @@
 
 2. 修改虚拟机xml。
 
-    ```
+    ```shell
     virsh edit <虚拟机名称>
     ```
 
     以下是一个Cluster调优策略的配置示例。在本示例中，cputune模块中对vCPU与物理CPU核心进行1:1绑定。在numatune模块中，只设置单虚拟机NUMA节点，nodeset指向物理机核心所在NUMA节点。在虚拟机的cpu模块中，设置Socket数量为1，Die数量为1，Clusters数量为4，每个Cluster中的vCPU数量为4，超线程数量为2。
 
-    ```
+    ```xml
     <domain type = 'KVM'>
     ...
       <vcpu placement='static'>32</vcpu>
@@ -121,7 +118,6 @@
     <domain>
     ```
 
-
 ## 2个NUMA节点场景配置CPU调优<a name="ZH-CN_TOPIC_0000002550127095"></a>
 
 ### 修改BIOS配置<a name="ZH-CN_TOPIC_0000002550127097"></a>
@@ -136,7 +132,6 @@
 |--|--|--|
 |One Numa Per Socket|Enabled|Advanced>Memory Configuration>One Numa Per Socket|
 |Die Interleaving|Enabled|Advanced>Memory Configuration>Die Interleaving|
-
 
 按照上表推荐的BIOS配置项，配置操作步骤如下：
 
@@ -154,7 +149,6 @@
 
 4. 按**F10**保存BIOS设置，并重启服务器。
 
-
 ### CPU绑核调优<a name="ZH-CN_TOPIC_0000002518527340"></a>
 
 在2个NUMA节点场景中，调整虚拟机vCPU绑定的物理机所在Die与vCPU拓扑，确保虚拟机的高性能。
@@ -170,7 +164,7 @@
 >![](public_sys-resources/icon-note.gif) **说明：** 
 >该示例是基于32C64G规格的虚拟机进行CPU绑核调优，请根据实际需求和虚拟机规格对参数进行相应的调整。
 
-```
+```xml
 <domain type = 'KVM'>
 ...
   <vcpu placement='static'>32</vcpu>
@@ -222,8 +216,6 @@
 <domain>
 ```
 
-
-
 ## 缩略语<a name="ZH-CN_TOPIC_0000002518687256"></a>
 
 |**缩略语**|**英文全称**|**中文全称**|
@@ -232,6 +224,3 @@
 |KVM|Kernel-based Virtual Machine|基于内核的虚拟机|
 |DIMM|Dual Inline Memory Module|双列直插内存模块|
 |DIMM0|Dual Inline Memory Module slot 0|计算机主板上的第一个内存插槽|
-
-
-

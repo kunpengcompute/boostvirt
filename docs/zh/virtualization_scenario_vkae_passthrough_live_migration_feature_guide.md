@@ -39,7 +39,6 @@
 |--|--|
 |处理器|鲲鹏920系列处理器、鲲鹏950处理器|
 
-
 **操作系统和软件要求<a name="section1240364411598"></a>**
 
 操作系统和软件要求如[**表 2** 已验证操作系统与软件要求](#已验证操作系统与软件要求)所示，迁移源端与目的端BIOS以及固件版本需要保持一致。
@@ -53,7 +52,6 @@
 |libvirt|6.2.0|代码仓：[获取链接](https://gitee.com/src-openeuler/libvirt/tree/openEuler-22.03-LTS-SP4/)|
 |KAE|2.0|代码仓：[获取链接](https://gitcode.com/boostkit/KAE)|
 
-
 **表 3** 已验证操作系统与软件要求<a id="已验证操作系统与软件要求_1"></a>
 
 |软件名称|版本|获取方法|
@@ -63,8 +61,6 @@
 |libvirt|9.10.0|通过配置Yum源的方式安装|
 |KAE|2.0|代码仓：[获取链接](https://gitcode.com/boostkit/KAE)|
 
-
-
 ### 安装KAE<a name="ZH-CN_TOPIC_0000002550006357" id="安装KAE"></a>
 
 KAE2.0源码包中包含KAEKernelDriver内核驱动、UADK框架、KAEOpensslEngine引擎和KAEZlib、KAEZstd、KAELz4几个模块，其中KAEKernelDriver内核驱动与UADK为必选项，其他模块按实际需求选择安装。本特性以KAEOpensslEngine引擎和KAEZlib为例进行特性的功能和性能测试验证，请参考本章节安装KAEOpensslEngine引擎和KAEZlib。
@@ -73,27 +69,27 @@ KAE2.0源码包中包含KAEKernelDriver内核驱动、UADK框架、KAEOpensslEng
 
 1. 下载KAE2.0源码包。
 
-    ```
+    ```shell
     git clone https://gitee.com/kunpengcompute/KAE.git -b kae2
     ```
 
 2. 安装依赖，安装前需要自行配置好yum源。
 
-    ```
+    ```shell
     yum -y install kernel-devel-$(uname -r) openssl-devel numactl-devel gcc make autoconf automake libtool patch
     ```
 
 3. 在KAE源码目录下安装内核驱动。
     - openEuler 22.03 LTS SP4
 
-        ```
+        ```shell
         cd KAE
         sh build.sh driver
         ```
 
     - openEuler 24.03 LTS SP3
 
-        ```
+        ```shell
         cd KAE
         sh build.sh driver_migration
         ```
@@ -102,13 +98,13 @@ KAE2.0源码包中包含KAEKernelDriver内核驱动、UADK框架、KAEOpensslEng
 
     查看“/sys/class/uacce”是否存在加速引擎文件系统。
 
-    ```
+    ```shell
     ll /sys/class/uacce/
     ```
 
     回显信息如下所示，表示驱动安装成功。
 
-    ```
+    ```text
     lrwxrwxrwx. 1 root root 0 Aug 22 17:14 hisi_hpre-2 -> ../../devices/pci0000:78/0000:78:00.0/0000:79:00.0/uacce/hisi_hpre-2
     lrwxrwxrwx. 1 root root 0 Aug 22 17:14 hisi_hpre-3 -> ../../devices/pci0000:b8/0000:b8:00.0/0000:b9:00.0/uacce/hisi_hpre-3
     lrwxrwxrwx. 1 root root 0 Aug 22 17:14 hisi_sec2-0 -> ../../devices/pci0000:74/0000:74:01.0/0000:76:00.0/uacce/hisi_sec2-0
@@ -120,7 +116,7 @@ KAE2.0源码包中包含KAEKernelDriver内核驱动、UADK框架、KAEOpensslEng
 5. 安装UADK框架。
     1. 执行安装UADK框架的脚本命令。
 
-        ```
+        ```shell
         sh build.sh uadk
         ```
 
@@ -131,13 +127,13 @@ KAE2.0源码包中包含KAEKernelDriver内核驱动、UADK框架、KAEOpensslEng
 
     2. 查看UADK框架是否安装成功。
 
-        ```
+        ```shell
         ll /usr/local/lib/libwd*
         ```
 
         回显信息如下，表示安装成功。
 
-        ```
+        ```txt
         -rwxr-xr-x. 1 root root     961 Aug 22 17:23 /usr/local/lib/libwd_comp.la
         lrwxrwxrwx. 1 root root      19 Aug 22 17:23 /usr/local/lib/libwd_comp.so -> libwd_comp.so.2.5.0
         lrwxrwxrwx. 1 root root      19 Aug 22 17:23 /usr/local/lib/libwd_comp.so.2 -> libwd_comp.so.2.5.0
@@ -157,39 +153,39 @@ KAE2.0源码包中包含KAEKernelDriver内核驱动、UADK框架、KAEOpensslEng
     - OpenSSL 1.1.1x系列：
         - 使用默认路径下的OpenSSL。
 
-            ```
+            ```shell
             sh build.sh engine
             ```
 
         - 支持使用其他路径下的OpenSSL，如下所示。
 
-            ```
+            ```shell
             sh build.sh engine /usr/local/ssl1_1_1w
             ```
 
     - OpenSSL 3.0.x系列：
         - 使用默认路径下的OpenSSL。
 
-            ```
+            ```shell
             sh build.sh engine3
             ```
 
         - 支持使用其他路径下的OpenSSL，如下所示。
 
-            ```
+            ```shell
             sh build.sh engine3 /usr/local/ssl3_0_14
             ```
 
     - Tongsuo：
         - 使用默认路径下的Tongsuo。
 
-            ```
+            ```shell
             sh build.sh engine3_tongsuo
             ```
 
         - 支持使用其他路径下的Tongsuo，如下所示。
 
-            ```
+            ```shell
             sh build.sh engine3_tongsuo /opt/tongsuo
             ```
 
@@ -199,25 +195,25 @@ KAE2.0源码包中包含KAEKernelDriver内核驱动、UADK框架、KAEOpensslEng
 
     - OpenSSL 1.1.1x系列：
 
-        ```
+        ```shell
         ll /usr/local/lib/engines-1.1
         ```
 
     - OpenSSL 3.0.x系列：
 
-        ```
+        ```shell
         ll /usr/local/lib/engines-3.0
         ```
 
     - Tongsuo 8.4.0：
 
-        ```
+        ```shell
         ll /usr/local/tongsuo/lib/engines-3.0
         ```
 
     回显信息如下，表示安装成功。
 
-    ```
+    ```txt
     total 5644
     -rw-r--r--. 1 root root 3846524 Aug 22 17:28 kae.a
     -rwxr-xr-x. 1 root root     995 Aug 22 17:28 kae.la
@@ -233,7 +229,7 @@ KAE2.0源码包中包含KAEKernelDriver内核驱动、UADK框架、KAEOpensslEng
 
     1. 编译安装。
 
-        ```
+        ```shell
         sh build.sh zlib
         ```
 
@@ -241,13 +237,13 @@ KAE2.0源码包中包含KAEKernelDriver内核驱动、UADK框架、KAEOpensslEng
 
     2. 查看zlib加速压缩库是否安装成功。
 
-        ```
+        ```shell
         ll /usr/local/kaezip/lib/
         ```
 
         回显信息如下所示，表示安装成功。
 
-        ```
+        ```txt
         lrwxrwxrwx. 1 root root     40 Aug 29 10:20 libkaezip.so -> /usr/local/kaezip/lib/libkaezip.so.2.0.0
         lrwxrwxrwx. 1 root root     40 Aug 29 10:20 libkaezip.so.0 -> /usr/local/kaezip/lib/libkaezip.so.2.0.0
         -rwxr-xr-x. 1 root root 148096 Aug 29 10:20 libkaezip.so.2.0.0
@@ -260,7 +256,7 @@ KAE2.0源码包中包含KAEKernelDriver内核驱动、UADK框架、KAEOpensslEng
 
     3. <a id="li20414340916"></a>编译安装KAEGzip解压缩工具。
 
-        ```
+        ```shell
         sh build.sh gzip
         ```
 
@@ -268,22 +264,22 @@ KAE2.0源码包中包含KAEKernelDriver内核驱动、UADK框架、KAEOpensslEng
 
     4. <a id="li5793114715813"></a>查看KAEGzip解压缩工具是否安装成功。
 
-        ```
+        ```shell
         ldd /usr/local/kaegzip/gzip
         ```
 
         回显信息如下所示，表示安装成功。
 
-        ```
+        ```txt
         [root@localhost /]# ldd /usr/local/kaegzip/gzip 
-        	linux-vdso.so.1 (0x0000ffff7fbc1000)
-        	libz.so.1 => /usr/local/kaezip/lib/libz.so.1 (0x0000ffff7fb50000)
-        	libwd.so.2 => /usr/local/lib/libwd.so.2 (0x0000ffff7fae0000)
-        	libkaezip.so => /usr/local/kaezip/lib/libkaezip.so (0x0000ffff7fa90000)
-        	libc.so.6 => /usr/lib64/libc.so.6 (0x0000ffff7f8e0000)
-        	/lib/ld-linux-aarch64.so.1 (0x0000ffff7fb84000)
-        	libwd_comp.so.2 => /usr/local/lib/libwd_comp.so.2 (0x0000ffff7f8a0000)
-        	libnuma.so.1 => /usr/lib64/libnuma.so.1 (0x0000ffff7f870000)
+         linux-vdso.so.1 (0x0000ffff7fbc1000)
+         libz.so.1 => /usr/local/kaezip/lib/libz.so.1 (0x0000ffff7fb50000)
+         libwd.so.2 => /usr/local/lib/libwd.so.2 (0x0000ffff7fae0000)
+         libkaezip.so => /usr/local/kaezip/lib/libkaezip.so (0x0000ffff7fa90000)
+         libc.so.6 => /usr/lib64/libc.so.6 (0x0000ffff7f8e0000)
+         /lib/ld-linux-aarch64.so.1 (0x0000ffff7fb84000)
+         libwd_comp.so.2 => /usr/local/lib/libwd_comp.so.2 (0x0000ffff7f8a0000)
+         libnuma.so.1 => /usr/lib64/libnuma.so.1 (0x0000ffff7f870000)
         ```
 
 ### 使能设备<a name="ZH-CN_TOPIC_0000002518526590"></a>
@@ -293,14 +289,14 @@ KAE2.0源码包中包含KAEKernelDriver内核驱动、UADK框架、KAEOpensslEng
 1. 在物理机上使能驱动。
     - 若Host OS为openEuler 22.03 LTS SP4，使用如下命令使能驱动。
 
-        ```
+        ```shell
         modprobe hisi_zip pf_q_num=32
         modprobe hisi_migration
         ```
 
     - 若Host OS为openEuler 24.03 LTS SP3，使用如下命令使能驱动。
 
-        ```
+        ```shell
         insmod /lib/modules/`uname -r`/extra/uacce.ko
         insmod /lib/modules/`uname -r`/extra/hisi_qm.ko
         insmod /lib/modules/`uname -r`/extra/hisi_zip.ko
@@ -311,7 +307,7 @@ KAE2.0源码包中包含KAEKernelDriver内核驱动、UADK框架、KAEOpensslEng
 
 2. 查询ZIP设备bdf号。
 
-    ```
+    ```shell
     lspci | grep ZIP
     ```
 
@@ -319,7 +315,7 @@ KAE2.0源码包中包含KAEKernelDriver内核驱动、UADK框架、KAEOpensslEng
 
 3. （可选）确认ZIP设备所在NUMA节点。
 
-    ```
+    ```shell
     lspci -s 31:00.0 -v
     ```
 
@@ -331,7 +327,7 @@ KAE2.0源码包中包含KAEKernelDriver内核驱动、UADK框架、KAEOpensslEng
 4. 在物理机上设置VF。
     - 若Host OS为openEuler 22.03 LTS SP4，使用如下命令设置VF。
 
-        ```
+        ```shell
         echo 8 > /sys/bus/pci/devices/0000:31:00.0/sriov_numvfs
         echo 0000:31:00.1 > /sys/bus/pci/drivers/hisi_zip/unbind
         echo vfio-pci > /sys/devices/pci0000:30/0000:30:00.0/0000:31:00.1/driver_override
@@ -340,13 +336,12 @@ KAE2.0源码包中包含KAEKernelDriver内核驱动、UADK框架、KAEOpensslEng
 
     - 若Host OS为openEuler 24.03 LTS SP3，使用如下命令设置VF。
 
-        ```
+        ```shell
         echo 8 > /sys/bus/pci/devices/0000:31:00.0/sriov_numvfs
         echo 0000:31:00.1 > /sys/bus/pci/drivers/hisi_zip/unbind
         echo hisi_acc_vfio_pci > /sys/devices/pci0000:30/0000:30:00.0/0000:31:00.1/driver_override
         echo 0000:31:00.1 > /sys/bus/pci/drivers_probe
         ```
-
 
 ### 配置虚拟机XML<a name="ZH-CN_TOPIC_0000002518526594"></a>
 
@@ -358,7 +353,7 @@ KAE2.0源码包中包含KAEKernelDriver内核驱动、UADK框架、KAEOpensslEng
 
 XML配置内容如下所示。
 
-```
+```xml
     ...
     <devices>
         ...
@@ -379,7 +374,7 @@ XML配置内容如下所示。
 
 XML配置内容如下所示。
 
-```
+```xml
     ...
     <devices>
         ...
@@ -394,8 +389,6 @@ XML配置内容如下所示。
     ... 
 ```
 
-
-
 ## 验证特性<a name="ZH-CN_TOPIC_0000002550006353"></a>
 
 ### 功能测试<a name="ZH-CN_TOPIC_0000002550126359"></a>
@@ -407,13 +400,13 @@ XML配置内容如下所示。
 
 1. 启动虚拟机。
 
-    ```
+    ```shell
     virsh start <虚拟机名称> --console
     ```
 
 2. 编译测试工具。
 
-    ```
+    ```shell
     export LD_LIBRARY_PATH=/usr/local/kaezip/lib:$ LD_LIBRARY_PATH
     cd KAEZlib/test/perftest
     make
@@ -424,20 +417,19 @@ XML配置内容如下所示。
 
 3. 在虚拟机中使用KAE执行压缩任务。
 
-    ```
+    ```shell
     ./kaezip_perf -m 6 -l 10240 -n 3000
     ```
 
 4. 源端物理机执行虚拟机热迁移操作。
 
-    ```
+    ```shell
     virsh migrate --live --unsafe <虚拟机名称> qemu+ssh://<目的端物理机IP地址>/system tcp://<目的端物理机IP地址>
     ```
 
 5. 迁移完成后，由目的端物理机进入虚拟机，等待并查看KAE压缩任务是否完成并成功打印。
 
     ![](figures/zh-cn_image_0000002550126363.png)
-
 
 ### 性能测试<a name="ZH-CN_TOPIC_0000002518686502"></a>
 
@@ -447,13 +439,13 @@ XML配置内容如下所示。
 
 1. 打开文件。
 
-    ```
+    ```shell
     virsh edit <虚拟机名>
     ```
 
 2. 按“i”进入编辑模式，在XML末尾增加**qemu:commandline**标签，打开“all\_vcpus\_paused”和“all\_vcpus\_prepared”两个trace事件。
 
-    ```
+    ```xml
     <domain type="kvm" xmlns:qemu='http://libvirt.org/schemas/domain/qemu/1.0'>
         ...
         <qemu:commandline>
@@ -466,25 +458,25 @@ XML配置内容如下所示。
 3. 按“Esc”键退出编辑模式，输入 **:wq!**，按“Enter”键保存退出文件。
 4. 设置控制台日志级别，避免KAE设备驱动的日志打印到串口中。
 
-    ```
+    ```shell
     sysctl -w kernel.printk="4 4 1 7"
     ```
 
 5. 同步迁移源端和目的端的本地时间。
 
-    ```
+    ```shell
     ntpdate <ntp服务器ip>
     ```
 
 6. 检查时间是否一致。
 
-    ```
+    ```shell
     date +%Y-%m-%d\ %H:%M:%S.%3N
     ```
 
 7. 设置downtime-limit为100。
 
-    ```
+    ```shell
     virsh migrate-setmaxdowntime <虚拟机名称> 100
     ```
 
@@ -492,7 +484,7 @@ XML配置内容如下所示。
 
 1. 编译测试工具。
 
-    ```
+    ```shell
     export LD_LIBRARY_PATH=/usr/local/kaezip/lib:$ LD_LIBRARY_PATH
     cd KAEZlib/test/perftest
     make
@@ -503,7 +495,7 @@ XML配置内容如下所示。
 
 2. 在虚拟机中使用KAE加速压缩任务。
 
-    ```
+    ```shell
     ./kaezip_perf -m 6 -l 10240 -n 3000
     ```
 
@@ -517,7 +509,7 @@ XML配置内容如下所示。
 
 1. 源端物理机执行虚拟机热迁移操作。
 
-    ```
+    ```shell
     virsh migrate --live --unsafe <虚拟机名称> qemu+ssh://<目的端物理机IP地址>/system tcp://<目的端物理机IP地址>
     ```
 
@@ -525,15 +517,13 @@ XML配置内容如下所示。
 
     查看日志：
 
-    ```
+    ```shell
     less /var/log/libvirt/qemu/<虚拟机名称>.log
     ```
 
     ![](figures/zh-cn_image_0000002518686508.png)
 
     ![](figures/zh-cn_image_0000002550126365.png)
-
-
 
 ## 故障排除<a name="ZH-CN_TOPIC_0000002550126357"></a>
 
@@ -551,11 +541,10 @@ openEuler 22.03 LTS SP4操作系统自带的加速驱动不兼容导致。
 
 卸载操作系统自带的加速驱动后，重新加载手动编译的KAE。或者在启动脚本**rc.local**中加上重新加载驱动命令，以hisi\_sec2为例进行说明。
 
-```
+```shell
 rmmod hisi_sec2
 modprobe hisi_sec2
 ```
-
 
 ### 在Host OS为openEuler 24.03 LTS SP3的物理机上重启设备安装驱动后查询不到设备文件的解决方法<a name="ZH-CN_TOPIC_0000002550006355"></a>
 
@@ -571,10 +560,7 @@ openEuler 24.03 LTS SP3操作系统自带的加速驱动不兼容导致。
 
 卸载操作系统自带的加速驱动后，重新加载手动编译的KAE。或者在启动脚本**rc.local**中加上重新加载驱动命令，以hisi\_sec2为例进行说明。
 
-```
+```shell
 rmmod hisi_sec2
 insmod /lib/modules/`uname -r`/extra/hisi_sec2.ko
 ```
-
-
-
