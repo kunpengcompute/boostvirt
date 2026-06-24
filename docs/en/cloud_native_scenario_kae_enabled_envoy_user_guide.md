@@ -1,4 +1,4 @@
-# Cloud Native Scenario KAE-enabled Envoy User Guide<a name="EN-US_TOPIC_0000002552168791"></a>
+# Cloud Native Scenario KAE-enabled Envoy User Guide
 
 ## Overview<a name="EN-US_TOPIC_0000002511547578"></a>
 
@@ -20,7 +20,6 @@ This document provides guidance based on specific environments. Before performin
 |--|--|
 |CPU|Kunpeng 920 series processor or Kunpeng 950 processor|
 
-
 **Table 2** Verified OS and software versions<a id="verified-os-and-software-versions"></a>
 
 |Software|Version|How to Obtain|
@@ -40,7 +39,7 @@ Use the Docker image to compile Envoy. The Envoy compilation depends on Docker C
 - Ensure sufficient drive space as the intermediate files generated during Envoy compilation occupy a large amount of space (about 50 GB).
 - You can run the following command to customize the proxy and build directory:
 
-    ```
+    ```txt
     ENVOY_DOCKER_BUILD_DIR=/path/to/build go_proxy=https://goproxy.cn,direct http_proxy=http://proxy.foo.com:8080 https_proxy=http://proxy.bar.com:8080 ./ci/run_envoy_docker.sh './ci/do_ci.sh release.server_only'
     ```
 
@@ -50,13 +49,13 @@ Use the Docker image to compile Envoy. The Envoy compilation depends on Docker C
 
 1. Obtain the Envoy source code.
 
-    ```
+    ```shell
     git clone https://github.com/envoyproxy/envoy.git 
     ```
 
 2. Compile Envoy to obtain the software binary.
 
-    ```
+    ```shell
     cd /path/to/envoy
     ./ci/run_envoy_docker.sh './ci/do_ci.sh release.server_only'
     ```
@@ -67,7 +66,7 @@ Use the Docker image to compile Envoy. The Envoy compilation depends on Docker C
 
 3. Decompress the obtained Envoy package to obtain the Envoy binary file `envoy-contrib`.
 
-    ```
+    ```shell
     unzstd release.tar.zst && tar -xvf release.tar
     chmod +x envoy-contrib
     ```
@@ -88,7 +87,7 @@ KAE has been installed. If KAE is not installed, install it as instructed in [En
 
     The following is an example of the Envoy startup configuration file `envoy-kae.yaml`.
 
-    ```
+    ```yaml
     static_resources:
       listeners:
       - name: listener_tls
@@ -141,13 +140,13 @@ KAE has been installed. If KAE is not installed, install it as instructed in [En
     ```
 
     >![](public_sys-resources/icon-note.gif) **NOTE:**
-    >-   In the preceding configuration file, `poll_delay` indicates the sleep time of KAE polling threads. A smaller value of `poll_delay` indicates faster polling and better performance, but higher CPU usage. Set `poll_delay` based on the site requirements.
-    >-   `max_instances` indicates the number of KAE polling threads to be created. The default value is `16`. The actual value is the minimum of the actual and configured numbers of KAE queues. The more the KAE polling threads, the better the performance. You can set its quantity based on the site requirements.
-    >-   As HTTPS requests are involved, you need to configure certificates for Envoy. The certificates in the preceding configuration file are stored in the `/etc/envoy/tls/` directory. You can modify the certificate storage directory based on the site requirements.
+    >- In the preceding configuration file, `poll_delay` indicates the sleep time of KAE polling threads. A smaller value of `poll_delay` indicates faster polling and better performance, but higher CPU usage. Set `poll_delay` based on the site requirements.
+    >- `max_instances` indicates the number of KAE polling threads to be created. The default value is `16`. The actual value is the minimum of the actual and configured numbers of KAE queues. The more the KAE polling threads, the better the performance. You can set its quantity based on the site requirements.
+    >- As HTTPS requests are involved, you need to configure certificates for Envoy. The certificates in the preceding configuration file are stored in the `/etc/envoy/tls/` directory. You can modify the certificate storage directory based on the site requirements.
 
 2. Run the following command to start Envoy:
 
-    ```
+    ```shell
     ./envoy-contrib -c /path/to/envoy-kae.yaml
     ```
 
@@ -159,7 +158,7 @@ KAE has been installed. If KAE is not installed, install it as instructed in [En
 
     1. Start Envoy and run the test command on another terminal. [**Figure 1**](#performance-result-before-kae-is-enabled-for-envoy) shows the performance result.
 
-        ```
+        ```shell
         numactl -C 0-7 ./envoy-contrib -c /path/to/envoy-no-kae.yaml
         # Run the following command on another terminal.
         numactl -C 192-255 k6 run --vus 30 --duration 20s  k6.js
@@ -170,7 +169,7 @@ KAE has been installed. If KAE is not installed, install it as instructed in [En
 
     2. Run the following command after KAE is enabled for Envoy. [**Figure 2**](#performance-result-after-kae-is-enabled-for-envoy) shows the performance result.
 
-        ```
+        ```shell
         numactl -C 0-7 ./envoy-contrib -c /path/to/envoy-kae.yaml
         # Run the following command on another terminal.
         numactl -C 192-255 k6 run --vus 30 --duration 20s  k6.js
@@ -183,7 +182,7 @@ KAE has been installed. If KAE is not installed, install it as instructed in [En
 
     The k6 configuration file `k6.js` is as follows:
 
-    ```
+    ```js
     import http from "k6/http";
     
     export let options = {
@@ -199,7 +198,7 @@ KAE has been installed. If KAE is not installed, install it as instructed in [En
 
     The following is an example of the Envoy configuration file `envoy-no-kae.yaml` with KAE disabled:
 
-    ```
+    ```yaml
     static_resources:
       listeners:
       - name: listener_tls

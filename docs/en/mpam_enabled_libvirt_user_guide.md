@@ -1,4 +1,4 @@
-# MPAM-enabled libvirt User Guide<a name="EN-US_TOPIC_0000002521088818"></a>
+# MPAM-enabled libvirt User Guide
 
 ## Feature Description<a name="EN-US_TOPIC_0000002518685864"></a>
 
@@ -39,7 +39,6 @@ This document provides guidance based on the openEuler OS. Before performing ope
 |--|--|
 |Processor|New Kunpeng 920 processor model or Kunpeng 950 processor|
 
-
 **OS and Software Requirements<a name="section153345522323"></a>**
 
 [**Table 2**](#os-and-software-requirements) lists the OS and software requirements.
@@ -53,7 +52,6 @@ This document provides guidance based on the openEuler OS. Before performing ope
 |QEMU|8.2.0|Install it using a Yum repository.|
 |LMbench|3-4|Install it using a Yum repository.|
 
-
 ### Enabling MPAM<a name="EN-US_TOPIC_0000002518685866"></a>
 
 To enable MPAM, you need to modify the kernel startup parameter and mount the resctrl file system.
@@ -61,7 +59,7 @@ To enable MPAM, you need to modify the kernel startup parameter and mount the re
 1. Modify the kernel startup parameter.
     1. Open the `grub.cfg` file.
 
-        ```
+        ```shell
         vi /boot/efi/EFI/openEuler/grub.cfg
         ```
 
@@ -73,7 +71,7 @@ To enable MPAM, you need to modify the kernel startup parameter and mount the re
 
 2. Restart the physical machine and check whether the `/sys/fs/resctrl` directory is available.
 
-    ```
+    ```shell
     reboot
     ll /sys/fs/resctrl
     ```
@@ -82,13 +80,13 @@ To enable MPAM, you need to modify the kernel startup parameter and mount the re
 
 3. Mount the resctrl file system.
 
-    ```
+    ```shell
     mount -t resctrl resctrl /sys/fs/resctrl/
     ```
 
 4. Check whether the mounting is successful. If the `resctrl` directory contains the content shown in the following figure, the mounting is successful.
 
-    ```
+    ```shell
     ll /sys/fs/resctrl
     ```
 
@@ -106,10 +104,9 @@ Configure an online Yum repository. For details, see [Configuring a Yum Source](
 
 Install libvirt.
 
-```
+```shell
 yum install -y libvirt
 ```
-
 
 ### Configuring the VM XML File<a name="EN-US_TOPIC_0000002550005731"></a>
 
@@ -119,7 +116,7 @@ You can configure VM cache and memory bandwidth in an XML file. The MPAM feature
 
 The following shows the XML file for configuring the cache. For details about the parameters, see [Table 1](#parameter-description)
 
-```
+```xml
 <cputune>
     <cachetune vcpus='0-15'>
       <cache id='0' level='3' type='both' size='2560' unit='KiB'/>
@@ -139,7 +136,6 @@ The following shows the XML file for configuring the cache. For details about th
 |size|If `type` is set to `priority`, this parameter indicates the priority value, ranging from 0 to 3. If `type` is set to `min`, the value of this parameter ranges from 0 to 100. If `type` is set to `max`, the value of this parameter ranges from 1 to 100. When `type` is set to other values, `size` and `unit` together determine the cache line size. For details about how to manually configure the cache line size, see [Example of Manually Configuring the Cache Line](#section2711453414).|
 |unit|This parameter is left blank when `type` is set to `priority`, `max`, or `min`. If `type` is set to other values, this parameter specifies the unit of the cache line size. The value can be `KiB` (default), `B`, `MiB`, or `GiB`. For details about how to manually configure the cache line size, see [Example of Manually Configuring the Cache Line](#section2711453414).|
 
-
 **Example of Manually Configuring the Cache Line<a id="section2711453414"></a>**
 
 The following example describes how to manually configure the cache line size, with `size` set to `2` and `unit` set to `MiB`.
@@ -154,7 +150,7 @@ The configured cache line size must be an integer multiple of the size of a sing
 
 The following shows the XML configuration of memory bandwidth. For details about the parameters, see [**Table 2**](#parameter-description-1)
 
-```
+```xml
 <cputune>
     <memorytune vcpus='0-15'>
       <node id='0' bandwidth='60' min_bandwidth='10' hardlimit='0' priority='2'/>
@@ -173,11 +169,8 @@ The following shows the XML configuration of memory bandwidth. For details about
 |hardlimit|(Optional) Corresponds to `MBHDL` of MPAM. The value can be `0` or `1`.|
 |priority|(Optional) Corresponds to `MBPRI` of MPAM. The value ranges from 0 to 7.|
 
-
 >![](public_sys-resources/icon-note.gif) **NOTE:**
 >For more information about MPAM parameters, see [MPAM Parameters](https://gitee.com/openeuler/kernel/blob/c3f8f5c91794b44b7d65a27371a536a1bc86905e/Documentation/arch/arm64/mpam.md#331-pri-%E4%BC%98%E5%85%88%E7%BA%A7%E8%AE%BE%E7%BD%AE).
-
-
 
 ## Feature Verification<a name="EN-US_TOPIC_0000002550125721"></a>
 
@@ -194,21 +187,21 @@ A VM has been created. Supported VM specifications include but are not limited t
 
 This section uses LMbench 3-4 as an example. This version is provided in the Yum repository. Run the following command on the VM to install the tool:
 
-```
+```shell
 yum install -y lmbench
 ```
 
 **Limiting the Memory Bandwidth<a name="section6695756134"></a>**
 
-1. Edit the VM XML file. Replace *<vm name>* with the actual VM name.
+1. Edit the VM XML file. Replace `<vm name>` with the actual VM name.
 
-    ```
+    ```shell
     virsh edit <vm name>
     ```
 
 2. Use the following XML configurations to limit the memory bandwidth of node 0 to 60%.
 
-    ```
+    ```xml
     <domain type='kvm'>
     ......
       <cputune>
@@ -222,14 +215,14 @@ yum install -y lmbench
 
 3. Start the VM.
 
-    ```
+    ```shell
     virsh start <vm name>
     ```
 
 4. Check whether the corresponding MPAM control group is created in `/sys/fs/resctrl`. The control group name is determined based on the VM ID, name, and restricted vCPUs.
     1. Check whether the corresponding control group exists.
 
-        ```
+        ```shell
         ll /sys/fs/resctrl
         ```
 
@@ -237,7 +230,7 @@ yum install -y lmbench
 
     2. Check whether the content of the `schemata` file of this control group matches the XML configurations.
 
-        ```
+        ```shell
         cat /sys/fs/resctrl/<group name>/schemata
         ```
 
@@ -246,14 +239,14 @@ yum install -y lmbench
 5. Enter the VM, use LMbench to test the bandwidth, and check whether the bandwidth changes in different configurations.
 
     >![](public_sys-resources/icon-note.gif) **NOTE:**
-    >-   The upper limit of memory bandwidth varies with VM specifications. MPAM limits bandwidth based on the theoretical upper limit, not the actual limit that can be reached by a VM. This test focuses on the change trend.
-    >-   The concurrency (`-P`) and memory page size parameters in the following commands need to be adjusted based on the VM specifications. The value of `-P` should be the same as the number of vCPUs.
+    >- The upper limit of memory bandwidth varies with VM specifications. MPAM limits bandwidth based on the theoretical upper limit, not the actual limit that can be reached by a VM. This test focuses on the change trend.
+    >- The concurrency (`-P`) and memory page size parameters in the following commands need to be adjusted based on the VM specifications. The value of `-P` should be the same as the number of vCPUs.
 
     The following uses a VM with 32 vCPUs and 64 GB memory as an example.
 
     1. Bind the VM to NUMA node 0, set the memory bandwidth limitation to `50`, and start and enter the VM. Then run the test command to test the memory bandwidth.
 
-        ```
+        ```xml
         <cputune>
             <vcpupin vcpu='0' cpuset='0'/>
             <vcpupin vcpu='1' cpuset='1'/>
@@ -269,7 +262,7 @@ yum install -y lmbench
         </numatune>
         ```
 
-        ```
+        ```txt
         /opt/lmbench/bin/bw_mem -P 32 -N 5 512M rd
         ```
 
@@ -277,7 +270,7 @@ yum install -y lmbench
 
     2. Repeat the preceding operations, change the memory bandwidth limitation to `80`, and restart the VM. Then run the same test command to test the memory bandwidth again. Check whether the memory bandwidth increases significantly.
 
-        ```
+        ```shell
         virsh shutdown <vm name>
         virsh start <vm name>
         ```
@@ -291,19 +284,19 @@ yum install -y lmbench
 
 1. Modify the L3 cache data of the default control group to set the cache lines corresponding to the two highest-order mask bits as idle.
 
-    ```
+    ```shell
     echo "L3:1=3ffffff" > /sys/fs/resctrl/schemata
     ```
 
 2. Edit the VM XML file.
 
-    ```
+    ```shell
     virsh edit <vm name>
     ```
 
 3. Use the following XML configurations to limit the L3 cache of node 0 to 4 MiB, which corresponds to two cache lines of the physical machine.
 
-    ```
+    ```xml
     <domain type='kvm'>
     ......
       <cputune>
@@ -318,14 +311,14 @@ yum install -y lmbench
 
 4. Start the VM.
 
-    ```
+    ```shell
     virsh start <vm name>
     ```
 
 5. Check whether the corresponding MPAM control group is created in `/sys/fs/resctrl`. The control group name is determined based on the VM ID, name, and restricted vCPUs.
     1. Check whether the corresponding control group exists.
 
-        ```
+        ```shell
         ll /sys/fs/resctrl
         ```
 
@@ -333,7 +326,7 @@ yum install -y lmbench
 
     2. Check whether the content of the `schemata` file of this control group matches the XML configurations.
 
-        ```
+        ```shell
         cat /sys/fs/resctrl/<group name>/schemata
         ```
 
@@ -341,13 +334,12 @@ yum install -y lmbench
 
 6. View the statistics of the control group, and check whether the limitation takes effect and whether the data size (in bytes) is under the limit set in the XML file.
 
-    ```
+    ```shell
     cd /sys/fs/resctrl/<group name>/mon_data/mon_L3_01
     watch -n 1 grep . *
     ```
 
     ![](figures/en-us_image_0000002550125727.png)
-
 
 ## Troubleshooting<a name="EN-US_TOPIC_0000002518525980"></a>
 
@@ -363,7 +355,7 @@ None
 
 Run the following commands to rectify the fault:
 
-```
+```shell
 sudo systemctl enable --now virtlogd.socket
 sudo systemctl enable --now libvirtd.service
 sudo pkill virtlogd

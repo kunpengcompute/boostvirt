@@ -1,4 +1,4 @@
-# Kubernetes SR-IOV Device Plugin User Guide<a name="EN-US_TOPIC_0000002552285773"></a>
+# Kubernetes SR-IOV Device Plugin User Guide
 
 ## Introduction<a name="EN-US_TOPIC_0000002549765655"></a>
 
@@ -40,12 +40,9 @@ The SR-IOV device plugin runs on compute nodes in a Kubernetes cluster and is de
 |SR-IOV-CNI network plugin|Managed by Multus CNI and called by the kubelet, it configures SR-IOV network interfaces for Pods. It interacts with the physical NICs of a node and allocates VFs from the physical NICs to containers.|
 |Bond-CNI plugin|Managed by Multus CNI and called by the kubelet, it builds bond network interfaces based on SR-IOV network interfaces of Pods.|
 
-
-
 ### Specifications<a name="EN-US_TOPIC_0000002549885659"></a>
 
 The Kubernetes SR-IOV device plugin supports Kunpeng 920 series processors and can automatically identify and manage SR-IOV devices in a Kubernetes cluster.
-
 
 ### Constraints<a name="EN-US_TOPIC_0000002549885655"></a>
 
@@ -62,7 +59,6 @@ The SR-IOV device plugin requires that the Kubernetes cluster use Docker or cont
 |containerd|1.7.14|[Link](https://github.com/containerd/containerd/releases/download/v1.7.14/containerd-1.7.14-linux-arm64.tar.gz)|
 |Docker|20.10.14|Install it using an image repository.|
 
-
 ## Plugin Compilation<a name="EN-US_TOPIC_0000002518245894"></a>
 
 ### Compilation Environment Requirements<a name="EN-US_TOPIC_0000002518245896"></a>
@@ -76,7 +72,6 @@ This document provides guidance based on the openEuler OS. Before performing ope
 |Item|Description|
 |--|--|
 |Processor|Kunpeng 920 series|
-
 
 **OS and Software Requirements<a name="section377795111612"></a>**
 
@@ -98,7 +93,7 @@ This document provides guidance based on the openEuler OS. Before performing ope
 
 The deployment of the SR-IOV-CNI network plugin depends on Multus and the SR-IOV device plugin. Before the deployment, run the following commands to obtain the images of the SR-IOV device plugin, SR-IOV-CNI network plugin, and Multus CNI.
 
-```
+```shell
 docker pull ghcr.io/k8snetworkplumbingwg/sriov-network-device-plugin:latest
 docker pull ghcr.io/k8snetworkplumbingwg/sriov-cni:latest
 docker pull ghcr.io/k8snetworkplumbingwg/multus-cni:snapshot
@@ -106,10 +101,9 @@ docker pull ghcr.io/k8snetworkplumbingwg/multus-cni:snapshot
 
 If you need to configure a global whereabouts, pull the whereabouts plugin image in advance.
 
-```
+```shell
 docker pull ghcr.io/k8snetworkplumbingwg/whereabouts:latest
 ```
-
 
 ### Obtaining the Bond-CNI Plugin<a name="EN-US_TOPIC_0000002518245898"></a>
 
@@ -117,23 +111,21 @@ Compile the Bond-CNI plugin source code to obtain an executable file.
 
 1. Obtain the [source code](https://github.com/k8snetworkplumbingwg/bond-cni.git).
 
-    ```
+    ```shell
     git clone https://github.com/k8snetworkplumbingwg/bond-cni.git
     ```
 
 2. Go to the source code directory and compile the source code.
 
-    ```
+    ```shell
     ./build.sh
     ```
 
 3. After the compilation is complete, copy the binary file `./bin/bond` to the `/opt/cni/bin` directory on the cluster compute node.
 
-    ```
+    ```shell
     cp ./bin/bond /opt/cni/bin/
     ```
-
-
 
 ## Plugin Deployment<a name="EN-US_TOPIC_0000002549765651"></a>
 
@@ -150,7 +142,6 @@ The plugin must be deployed on the master node, and the container image must be 
 |Item|Description|
 |--|--|
 |Processor|Kunpeng 920 series|
-
 
 **OS and Software Requirements<a name="section94101941192313"></a>**
 
@@ -181,19 +172,19 @@ Multus is the manager of Kubernetes network plugins. It calls different network 
 
 1. Deploy Multus on the master node of the cluster.
 
-    ```
+    ```shell
     kubectl apply -f multus-daemonset.yml
     ```
 
 2. Check the deployment status.
 
-    ```
+    ```shell
     kubectl -n kube-system get pod
     ```
 
     `multus-ds` must be in the `Running` state, as shown below.
 
-    ```
+    ```txt
     NAME                             READY   STATUS    RESTARTS      AGE
     kube-multus-ds-ds26q             1/1     Running   0             20d
     kube-multus-ds-pp6mh             1/1     Running   0             20d
@@ -205,7 +196,7 @@ Before deploying the SR-IOV device plugin, you need to modify its configuration 
 
 `configMap.yaml` describes the devices to be managed by the SR-IOV plugin, that is, the devices that are expected to be passed through.
 
-```
+```yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -250,10 +241,9 @@ data:
 |drivers|Name of the driver used by the device. For details, see [3](#li14503133373).|-|
 |pfNames|PF name on the NIC.|If there are network ports, add all of them to prevent VFs from different network ports from being used together.|
 
-
 1. Check the PCI address of the NIC VF to be used on the node.
 
-    ```
+    ```shell
     lspci | grep Ethernet
     ```
 
@@ -266,7 +256,7 @@ data:
 
     The value of `vendors` is `19e5`, and the value of `devices` is `375e`.
 
-    ```
+    ```shell
     lspci -n | grep 85
     ```
 
@@ -276,7 +266,7 @@ data:
 
     In the command output, find the driver name corresponding to the device whose PCI address is `85:00.1`.
 
-    ```
+    ```shell
     lspci -k
     ```
 
@@ -285,7 +275,7 @@ data:
 4. After obtaining the information about `vendors`, `devices`, and `drivers`, fill the information in the `configMap.yaml` file. Each SR-IOV device corresponds to an item in `resourceList`.
 5. Deploy the SR-IOV device plugin in DaemonSet mode in the cluster based on the `sriovdp-daemonset.yaml` file.
 
-    ```
+    ```shell
     git clone https://gitee.com/kunpeng_compute/sriov-network-device-plugin.git
     cd sriov-network-device-plugin
     kubectl apply -f deployments/configMap.yaml
@@ -294,13 +284,13 @@ data:
 
 6. Check the deployment status.
 
-    ```
+    ```shell
     kubectl -n kube-system get pod
     ```
 
     If the deployment is successful, the following information is displayed. The number of `kube-sriov-device-plugins` must be the same as the number of nodes in the cluster.
 
-    ```
+    ```txt
     NAME                             READY   STATUS              RESTARTS          AGE
     kube-sriov-device-plugin-wkmrd   1/1     Running             0                 14d
     kube-sriov-device-plugin-xvcs3   1/1     Running             0                 14d
@@ -311,7 +301,7 @@ data:
 
 1. Create a deployment file `sriov-cni-daemonset.yaml` as follows and deploy the plugin in DaemonSet mode in the cluster based on the file.
 
-    ```
+    ```yaml
     ---
     apiVersion: apps/v1
     kind: DaemonSet
@@ -368,13 +358,13 @@ data:
 
     Run the following command to deploy the plugin:
 
-    ```
+    ```shell
     kubectl apply -f deployments/sriov-cni-daemonset.yaml
     ```
 
 2. Create an SR-IOV passthrough network in Multus and create the `sriov-crd.yaml` configuration file to specify SR-IOV network information.
 
-    ```
+    ```yaml
     apiVersion: "k8s.cni.cncf.io/v1"
     kind: NetworkAttachmentDefinition
     metadata:
@@ -399,19 +389,19 @@ data:
 
     Run the following command to deploy the plugin:
 
-    ```
+    ```shell
     kubectl apply -f deployments/sriov-crd.yaml
     ```
 
 3. After the deployment, check whether all network plugins are running properly.
 
-    ```
+    ```shell
     kubectl get pods -owide -n kube-system
     ```
 
     As shown below, all deployed containers are in the `Running` state. Otherwise, check the error information.
 
-    ```
+    ```txt
     kube-multus-ds-qhqp4             1/1     Running   0             22h    10.175.119.147   compute01   <none>           <none>
     kube-sriov-cni-ds-4kks2          1/1     Running   0             168m   10.244.1.20      compute01   <none>           <none>
     kube-sriov-device-plugin-bnvg9   1/1     Running   0             20h    10.175.119.147   compute01   <none>           <none>
@@ -419,13 +409,13 @@ data:
 
     Check whether the network configuration is successful by running the following command to view the custom resources in the cluster.
 
-    ```
+    ```shell
     kubectl get crds
     ```
 
     The command output must contain `network-attachment-definitions.k8s.cni.cncf.io`, as shown below:
 
-    ```
+    ```txt
     network-attachment-definitions.k8s.cni.cncf.io    2025-03-05T08:21:27Z
     ```
 
@@ -435,13 +425,13 @@ In the SR-IOV-CNI network plugin example, IP address management is handled using
 
 1. Download the whereabouts plugin as instructed in [Deployment Environment Requirements](#deployment-environment-requirements) and go to the directory.
 
-    ```
+    ```shell
     git clone https://github.com/k8snetworkplumbingwg/whereabouts && cd whereabouts
     ```
 
 2. Deploy the plugin.
 
-    ```
+    ```shell
     kubectl apply -f doc/crds/daemonset-install.yaml \
           -f doc/crds/whereabouts.cni.cncf.io_ippools.yaml \
           -f doc/crds/whereabouts.cni.cncf.io_overlappingrangeipreservations.yaml
@@ -449,7 +439,7 @@ In the SR-IOV-CNI network plugin example, IP address management is handled using
 
 3. Remove the `sriov-crd.yaml` file that has been deployed, set `ipam.type` to `whereabouts`, change `subnet` to `range`, and modify other parameters as required. After the file is modified, deploy the file again. The following is an example:
 
-    ```
+    ```yaml
     apiVersion: "k8s.cni.cncf.io/v1"
     kind: NetworkAttachmentDefinition
     metadata:
@@ -483,7 +473,7 @@ The Bond-CNI plugin needs to be integrated with other multi-NIC and passthrough 
 
     Configure VF passthrough for a NIC in the `sriov-crd-01.yaml` file.
 
-    ```
+    ```yaml
     apiVersion: "k8s.cni.cncf.io/v1"
     kind: NetworkAttachmentDefinition
     metadata:
@@ -501,7 +491,7 @@ The Bond-CNI plugin needs to be integrated with other multi-NIC and passthrough 
 
     Configure VF passthrough for the other NIC in the `sriov-crd-02.yaml` file.
 
-    ```
+    ```yaml
     apiVersion: "k8s.cni.cncf.io/v1"
     kind: NetworkAttachmentDefinition
     metadata:
@@ -519,7 +509,7 @@ The Bond-CNI plugin needs to be integrated with other multi-NIC and passthrough 
 
     Deploy the two files in the cluster.
 
-    ```
+    ```shell
     kubectl apply -f sriov-crd-01.yaml
     kubectl apply -f sriov-crd-02.yaml
     ```
@@ -538,7 +528,7 @@ The Bond-CNI plugin needs to be integrated with other multi-NIC and passthrough 
 
     **Only modes 0, 1, and 2 are recommended. Mode 4 is not recommended because its protocol constraints hinder concurrent usage by multiple containers on a single cluster node.** Below is a deployment example:
 
-    ```
+    ```yaml
     apiVersion: "k8s.cni.cncf.io/v1"
     kind: NetworkAttachmentDefinition
     metadata:
@@ -570,7 +560,7 @@ The Bond-CNI plugin needs to be integrated with other multi-NIC and passthrough 
 
     Deploy the file in the cluster.
 
-    ```
+    ```shell
     kubectl apply -f sriov-crd-bond.yaml
     ```
 
@@ -583,7 +573,7 @@ The Bond-CNI plugin needs to be integrated with other multi-NIC and passthrough 
 
         Method 1: Add `"trust": "on"` to the `sriov-crd-01.yaml` and `sriov-crd-02.yaml` configuration files.
 
-        ```
+        ```yaml
         apiVersion: "k8s.cni.cncf.io/v1"
         kind: NetworkAttachmentDefinition
         metadata:
@@ -602,13 +592,13 @@ The Bond-CNI plugin needs to be integrated with other multi-NIC and passthrough 
 
         Method 2: Use `ip link` to directly enable trust.
 
-        ```
+        ```shell
         ip link set dev *<PF interface name>* vf *<VF ID>* 0 trust on
         ```
 
         After the setting, you can check whether `trust on` is displayed using `ip link show <PF interface name>`, as shown below:
 
-        ```
+        ```txt
         7: enp65s0f1np1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP mode DEFAULT group default qlen 1000
             link/ether 20:fa:db:e2:84:ed brd ff:ff:ff:ff:ff:ff
             vf 0     link/ether 00:00:00:00:00:00 brd ff:ff:ff:ff:ff:ff, spoof checking off, link-state auto, trust on, query_rss off
@@ -618,8 +608,6 @@ The Bond-CNI plugin needs to be integrated with other multi-NIC and passthrough 
             vf 4     link/ether 00:00:00:00:00:00 brd ff:ff:ff:ff:ff:ff, spoof checking off, link-state auto, trust off, query_rss off
         ```
 
-
-
 ## Plugin Usage<a name="EN-US_TOPIC_0000002549765653"></a>
 
 ### SR-IOV NIC Passthrough<a name="EN-US_TOPIC_0000002518245900"></a>
@@ -628,7 +616,7 @@ When using this feature, add the following fields to the YAML file of the servic
 
 1. In `annotations` of the Pod, specify the network `k8s.v1.cni.cncf.io/networks: sriov-net1`. `sriov-net1` is configured by the `name` field in the `sriov-crd.yaml` file.
 
-    ```
+    ```yaml
     apiVersion: v1
     kind: Pod
     metadata:
@@ -639,7 +627,7 @@ When using this feature, add the following fields to the YAML file of the servic
 
 2. Add the `huawei.com/huawei_1822_netdevice: "1"` field to `resources` of the Pod. This field, specified by the `configMap.yaml` configuration file of the SR-IOV device plugin, follows the format of `resourcePrefix/resourceName: "1"`.
 
-    ```
+    ```yaml
     resources:
         requests:
            huawei.com/huawei_1822_netdevice: "1"
@@ -651,19 +639,19 @@ When using this feature, add the following fields to the YAML file of the servic
 
 3. Deploy a container, access the container, and check whether the network interface is successfully generated.
 
-    ```
+    ```shell
     docker exec -it 8ba9054e6de1 /bin/sh
     ```
 
     If it is created, you can see the net1 network interface in the output after executing the following command.
 
-    ```
+    ```shell
     ip a
     ```
 
     As shown in the following information, the net1 network interface is displayed, and the IP address belongs to the SR-IOV network. In this case, the network interface is created successfully.
 
-    ```
+    ```txt
     1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue qlen 1000
         link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
         inet 127.0.0.1/8 scope host lo
@@ -678,12 +666,11 @@ When using this feature, add the following fields to the YAML file of the servic
            valid_lft forever preferred_lft forever
     ```
 
-
 ### SR-IOV NIC Passthrough Bonding<a name="EN-US_TOPIC_0000002518405814"></a>
 
 When using the Bond-CNI plugin, add the following fields to the YAML file of the service application Pod. Use `k8s.v1.cni.cncf.io/networks:` in `annotations` to specify the network to be used, and specify the resource `huawei.com/huawei_bond_device: '1'` in the container declaration.
 
-```
+```yaml
 apiVersion: v1
 kind: Pod
 metadata:
@@ -708,8 +695,6 @@ spec:
         huawei.com/huawei_bond_device: "1"
 ```
 
-
-
 ## (Optional) Plugin Uninstallation<a name="EN-US_TOPIC_0000002518405806"></a>
 
 ### Uninstalling the SR-IOV Device Plugin<a name="EN-US_TOPIC_0000002549885651"></a>
@@ -721,7 +706,7 @@ You can uninstall the SR-IOV device plugin if it is no longer required.
 
 1. On the master node, run the following commands to go to the source code directory of the SR-IOV device plugin and uninstall it.
 
-    ```
+    ```shell
     cd /path/to/sriov-network-device-plugin
     kubectl delete -f deployments/configMap.yaml
     kubectl delete -f deployments/sriovdp-daemonset.yaml
@@ -729,13 +714,13 @@ You can uninstall the SR-IOV device plugin if it is no longer required.
 
 2. After the uninstallation, query the existing Pods in the current cluster.
 
-    ```
+    ```shell
     kubectl -n kube-system get pod
     ```
 
     If the Pod named `kube-sriov-device-plugin` has been deleted, the uninstallation is successful. The possible command output is as follows:
 
-    ```
+    ```txt
     NAME                              READY   STATUS    RESTARTS   AGE
     ```
 
@@ -748,7 +733,7 @@ You can uninstall the SR-IOV-CNI network plugin if it is no longer required.
 
 1. Delete YAML files in the reverse sequence of their deployments.
 
-    ```
+    ```shell
     kubectl delete -f sriov-cni-daemonset.yaml
     kubectl delete -f sriov-crd.yaml
     kubectl delete -f configMap.yaml
@@ -758,7 +743,7 @@ You can uninstall the SR-IOV-CNI network plugin if it is no longer required.
 
 2. Check whether the files are successfully deleted.
 
-    ```
+    ```shell
      kubectl get pods -owide -n kube-system
     ```
 
@@ -773,7 +758,7 @@ You can uninstall the Bond-CNI plugin if it is no longer required.
 
 1. Delete YAML files in the reverse sequence of their deployments.
 
-    ```
+    ```shell
     kubectl delete -f sriov-crd-bond.yaml
     kubectl delete -f sriov-crd-01.yaml
     kubectl delete -f sriov-crd-02.yaml
@@ -785,7 +770,7 @@ You can uninstall the Bond-CNI plugin if it is no longer required.
 
 2. Check whether the files are successfully deleted.
 
-    ```
+    ```shell
      kubectl get pods -owide -n kube-system
     ```
 

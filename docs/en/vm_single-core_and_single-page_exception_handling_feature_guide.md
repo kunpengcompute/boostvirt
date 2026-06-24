@@ -1,4 +1,4 @@
-# VM Single-Core and Single-Page Exception Handling Feature Guide<a name="EN-US_TOPIC_0000002552288799"></a>
+# VM Single-Core and Single-Page Exception Handling Feature Guide
 
 ## Feature Description<a name="EN-US_TOPIC_0000002544272171"></a>
 
@@ -42,7 +42,6 @@ This document provides guidance based on specific environments. Before performin
 |--|--|
 |Processor|New Kunpeng 920 processor model or Kunpeng 950 processor|
 
-
 **Firmware Version Requirements<a name="section4793193042413"></a>**
 
 [**Table 2**](#firmware-version-requirement) lists the firmware version requirement. You are advised to upgrade all firmware to the required versions.
@@ -52,7 +51,6 @@ This document provides guidance based on specific environments. Before performin
 |Item|Version|
 |--|--|
 |New Kunpeng 920 processor model|Basic computing unit (BCU) CPLD: later than 7.0.0|
-
 
 **OS and Software Requirements<a name="section153345522323"></a>**
 
@@ -89,7 +87,7 @@ Configure an online Yum repository. For details, see [Configuring a Yum Source](
 
 Install libvirt.
 
-```
+```shell
 yum install -y libvirt
 ```
 
@@ -99,13 +97,13 @@ Configure the VM XML file to enable the memory error injection function.
 
 1. Edit the VM XML file.
 
-    ```
+    ```shell
     virsh edit <vm name>
     ```
 
 2. Press `i` to enter the insert mode and add `<ras/>` under the `<features>` tag.
 
-    ```
+    ```txt
     <domain type='kvm'>
       ...
       <features>
@@ -119,8 +117,6 @@ Configure the VM XML file to enable the memory error injection function.
 
 3. Press `Esc` to exit the insert mode. Type `:wq!` and press `Enter` to save the file and exit.
 
-
-
 ## Function Tests<a name="EN-US_TOPIC_0000002544247337"></a>
 
 ### Installing Test Tools<a name="EN-US_TOPIC_0000002516419674"></a>
@@ -131,7 +127,7 @@ Before tests, install the test tools.
 
 Nginx is used only to verify service continuity during error injection. You can use any Nginx version. The following uses 1.24.0 as an example, which is the version provided by the Yum repository. Run the following command on the VM to install it:
 
-```
+```shell
 yum install -y nginx
 ```
 
@@ -139,7 +135,7 @@ yum install -y nginx
 
 wrk is an HTTP stress test tool. It is used to perform stress tests on Nginx to ensure that the service process is heavily-loaded when an error is injected. You can use any wrk version. The following uses 4.2.0 as an example, which is the version provided by the Yum repository. Run the following command on the physical machine to install it:
 
-```
+```shell
 yum install -y wrk
 ```
 
@@ -147,7 +143,7 @@ yum install -y wrk
 
 Rasdaemon is a daemon that records and prints error information when a RAS event occurs. Run the following command on the physical machine to install it:
 
-```
+```shell
 yum install -y rasdaemon
 ```
 
@@ -155,18 +151,19 @@ yum install -y rasdaemon
 
 Single-core CE injection is implemented using the einj module provided by the kernel.
 >![](public_sys-resources/icon-note.gif) **NOTE:**
+>
 >1. Single-core error injection takes effect only on physical cores. In hyper-threading scenarios, no matter which hyper-threads are selected for injection, the injection takes effect only on the first hyper-thread.
 >2. Single-core error isolation is provided by the host OS. In hyper-threading scenarios, the OS does not proactively isolate all hyper-threads. Users or software need to determine whether to isolate one or two hyper-threads when an error occurs. For security purposes, if one hyper-thread is isolated due to an error, users need to manually isolate the other hyper-thread.
 
 1. Load the error injection module.
 
-    ```
+    ```shell
     modprobe einj
     ```
 
 2. Modify the VM XML file and add the core binding information. Take a 4-core VM as an example. Add the following content:
 
-    ```
+    ```txt
     <cputune>
         <vcpupin vcpu='0' cpuset='10'/>
         <vcpupin vcpu='1' cpuset='11'/>
@@ -177,32 +174,32 @@ Single-core CE injection is implemented using the einj module provided by the ke
 
 3. Start the VM, run Nginx on the VM, and disable the firewall of the VM.
 
-    ```
+    ```shell
     systemctl stop firewalld
     systemctl start nginx
     ```
 
 4. Use wrk on the physical machine to perform a stress test on Nginx.
 
-    ```
+    ```shell
     wrk -t4 -c64 -d60s http://<VM IP address>/
     ```
 
 5. Configure the threshold for the RAS function to take effect.
 
-    ```
+    ```shell
     export CPU_ISOLATION_ENABLE=yes; export CPU_CE_THRESHOLD=4; export CPU_ISOLATION_CYCLE=24h; export CPU_ISOLATION_LIMIT=10
     ```
 
 6. Start the Rasdaemon service.
 
-    ```
+    ```shell
     rasdaemon -f -r
     ```
 
 7. Select a core, for example, CPU 10, and repeatedly run the following commands to inject errors multiple times.
 
-    ```
+    ```shell
     echo 0x1 > /sys/kernel/debug/apei/einj/error_type
     echo 10 > /sys/kernel/debug/apei/einj/param1
     echo 0xfffffffffffffff0 > /sys/kernel/debug/apei/einj/param2
@@ -216,13 +213,13 @@ Single-core CE injection is implemented using the einj module provided by the ke
 
 9. After the number of error injections reaches the threshold, run the following command to check whether the core where the errors are injected is offline and whether the vCPU binding relationship is changed:
 
-    ```
+    ```shell
     lscpu
     ```
 
     ![](figures/en-us_image_0000002546157397.png)
 
-    ```
+    ```shell
     virsh vcpuinfo <vm name>
     ```
 
@@ -230,7 +227,7 @@ Single-core CE injection is implemented using the einj module provided by the ke
 
 10. Check the Nginx running status on the VM.
 
-    ```
+    ```shell
     ps -ef | grep nginx
     ```
 
@@ -246,10 +243,9 @@ To solve this issue, you can perform the following operation:
 
 Reinstall the QEMU software.
 
-```
+```shell
 yum reinstall qemu
 ```
-
 
 #### Obtaining the Error Injection Address<a name="EN-US_TOPIC_0000002514439060"></a>
 
@@ -259,13 +255,13 @@ This section uses Nginx as an example to describe how to obtain the virtual addr
 
 1. Start Nginx on the VM.
 
-    ```
+    ```shell
     systemctl start nginx
     ```
 
 2. Obtain the Nginx process ID.
 
-    ```
+    ```shell
     ps -ef | grep nginx
     ```
 
@@ -273,7 +269,7 @@ This section uses Nginx as an example to describe how to obtain the virtual addr
 
 3. Select a worker process, obtain the process address space, and use an address within the heap segment in the address space as the guest virtual address (GVA) of error injection.
 
-    ```
+    ```shell
     cat /proc/<pid>/maps
     ```
 
@@ -281,14 +277,14 @@ This section uses Nginx as an example to describe how to obtain the virtual addr
 
 4. Compile and execute the following code to convert the virtual address to a physical address.
 
-    ```
+    ```shell
     gcc -o addr_trans addr_trans.c
     ./addr_trans
     ```
 
     The content of the `addr_trans.c` file is as follows. Modify the PID and the address to be translated based on the actual situation before executing the script.
 
-    ```
+    ```c
     // addr_trans.c
     #include <stdio.h>
     #include <stdlib.h>
@@ -348,26 +344,26 @@ This document uses the physical address applied by the kernel module as an examp
 
 1. Install the compilation dependencies.
 
-    ```
+    ```shell
     yum install -y kernel-devel-$(uname -r) kernel-headers-$(uname -r) gcc make elfutils-libelf-devel
     ```
 
 2. Write the kernel module.
     1. Create a module directory.
 
-        ```
+        ```shell
         mkdir kmem && cd kmem
         ```
 
     2. Create the `gva_to_gpa_demo.c` module file.
 
-        ```
+        ```shell
         vim gva_to_gpa_demo.c
         ```
 
     3. Press `i` to enter the insert mode and edit the file. The file content is as follows:
 
-        ```
+        ```c
         // gva_to_gpa_demo.c
         #include <linux/module.h>
         #include <linux/kernel.h>
@@ -458,13 +454,13 @@ This document uses the physical address applied by the kernel module as an examp
     4. Press `Esc` to exit the insert mode. Type `:wq!` and press `Enter` to save the file and exit.
     5. Create a `Makefile`.
 
-        ```
+        ```shell
         vim Makefile
         ```
 
     6. Press `i` to enter the insert mode and edit `Makefile`. The file content is as follows:
 
-        ```
+        ```txt
         # Makefile
         obj-m := gva_to_gpa_demo.o
         
@@ -485,7 +481,7 @@ This document uses the physical address applied by the kernel module as an examp
 
 3. Compile and install the module, and obtain the guest physical address (GPA). As shown in the following figure, the GPA is `0x106525000`.
 
-    ```
+    ```shell
     make
     insmod gva_to_gpa_demo.ko
     dmesg | tail
@@ -498,13 +494,13 @@ This document uses the physical address applied by the kernel module as an examp
 1. Obtain the physical address of the VM. For details, see [Obtaining the VM User-Space Address](#section7262191845011) and [Obtaining the VM Kernel-Space Physical Address](#section1813642420262).
 2. Obtain the QEMU PID.
 
-    ```
+    ```shell
     ps -ef | grep qemu
     ```
 
 3. Convert the GPA to the host virtual address (HVA).
 
-    ```
+    ```shell
     virsh qemu-monitor-command <vm name> --hmp "gpa2hva <GPA>"
     ```
 
@@ -515,7 +511,7 @@ This document uses the physical address applied by the kernel module as an examp
 
     - Run the following script to translate the HVA into a page number. Change the PID and the address to be translated based on the actual situation.
 
-        ```
+        ```txt
         pid=<PID>
         addr=<HVA>
         page_size=$(getconf PAGESIZE)
@@ -532,14 +528,14 @@ This document uses the physical address applied by the kernel module as an examp
 
     - Run the following code to translate the HVA into an HPA:
 
-        ```
+        ```shell
         gcc -o addr_trans addr_trans.c
         ./addr_trans
         ```
 
         The content of the `addr_trans.c` file is as follows. Modify the PID and the address to be translated based on the actual situation before executing the script.
 
-        ```
+        ```c
         // addr_trans.c
         #include <stdio.h>
         #include <stdlib.h>
@@ -599,20 +595,20 @@ The hwpoison_inject module is used to inject VM memory UEs.
 
 1. Load the module.
 
-    ```
+    ```shell
     modprobe hwpoison_inject
     ```
 
 2. Convert the GPA into the page number of a physical machine address as instructed in [Obtaining the Error Injection Address](#obtaining-the-error-injection-address).
 3. (Optional) If the error injection address is an Nginx process address, use wrk on the physical machine to perform a stress test on Nginx.
 
-    ```
+    ```shell
     wrk -t4 -c64 -d60s http://<VM IP address>/
     ```
 
 4. Inject an error.
 
-    ```
+    ```shell
     echo <pfn> > /sys/kernel/debug/hwpoison/corrupt-pfn
     ```
 
@@ -634,32 +630,32 @@ The einj module is used to inject VM memory CEs.
 
 1. Install the BusyBox tool.
 
-    ```
+    ```shell
     yum install busybox
     ```
 
 2. Load the module.
 
-    ```
+    ```shell
     modprobe einj
     ```
 
 3. Convert the GPA into an HPA as instructed in [Obtaining the Error Injection Address](#obtaining-the-error-injection-address).
 4. (Optional) If the error injection address is an Nginx process address, use wrk on the physical machine to perform a stress test on Nginx.
 
-    ```
+    ```shell
     wrk -t4 -c64 -d60s http://<VM IP address>/
     ```
 
 5. Start Rasdaemon.
 
-    ```
+    ```shell
     rasdaemon -r -f
     ```
 
 6. Inject errors.
 
-    ```
+    ```shell
     echo 0x8 > /sys/kernel/debug/apei/einj/error_type
     echo <HPA> > /sys/kernel/debug/apei/einj/param1
     echo 0xfffffffffffffff0 > /sys/kernel/debug/apei/einj/param2
@@ -673,9 +669,6 @@ The einj module is used to inject VM memory CEs.
 
     ![](figures/en-us_image_0000002547978385.png)
 
-
-
-
 ## Acronyms and Abbreviations<a name="EN-US_TOPIC_0000002516299116"></a>
 
 |Acronym/Abbreviation|Full Spelling|
@@ -688,8 +681,6 @@ The einj module is used to inject VM memory CEs.
 |HVA|host virtual address|
 |HPA|host physical address|
 |SEA|synchronous external abort|
-
-
 
 ## Change History<a name="EN-US_TOPIC_0000002544287789"></a>
 

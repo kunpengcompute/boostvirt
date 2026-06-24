@@ -1,4 +1,4 @@
-# vKAE Passthrough Live Migration Feature Guide<a name="EN-US_TOPIC_0000002521248820"></a>
+# vKAE Passthrough Live Migration Feature Guide
 
 ## Feature Description<a name="EN-US_TOPIC_0000002518686500"></a>
 
@@ -39,7 +39,6 @@ Before using the feature, ensure that the hardware and software requirements are
 |--|--|
 |Processor|Kunpeng 920 series processor or Kunpeng 950 processor|
 
-
 **OS and Software Requirements<a name="section1240364411598"></a>**
 
 [**Table 2**](#verified-os-and-software-versions) lists the OS and software requirements. The BIOS and firmware versions must be consistent between the migration source and target.
@@ -53,7 +52,6 @@ Before using the feature, ensure that the hardware and software requirements are
 |libvirt|6.2.0 <br> 9.10.0|Code repository: [Link](https://gitee.com/src-openeuler/libvirt/tree/openEuler-22.03-LTS-SP4/) <br> Install it using a Yum repository.|
 |KAE|2.0|Code repository: [Link](https://gitcode.com/boostkit/KAE)|
 
-
 ### Installing KAE<a name="EN-US_TOPIC_0000002550006357"></a>
 
 The KAE 2.0 source package contains the KAE kernel driver, UADK framework, KAEOpensslEngine, KAEZstd, KAELz4, and KAEZlib. The KAE kernel driver and UADK are mandatory, and the other modules are optional. This document uses the KAEOpensslEngine and KAEZlib as an example to verify the feature functions and performance. You can install the KAEOpensslEngine and KAEZlib as instructed in this section.
@@ -62,27 +60,27 @@ Install KAE on the physical machine and VM.
 
 1. Download the KAE 2.0 source package.
 
-    ```
+    ```shell
     git clone https://gitee.com/kunpengcompute/KAE.git -b kae2
     ```
 
 2. Install the dependencies. Before the installation, configure the Yum repository.
 
-    ```
+    ```shell
     yum -y install kernel-devel-$(uname -r) openssl-devel numactl-devel gcc make autoconf automake libtool patch
     ```
 
 3. Install the kernel driver in the KAE source code directory.
     - openEuler 22.03 LTS SP4
 
-        ```
+        ```shell
         cd KAE
         sh build.sh driver
         ```
 
     - openEuler 24.03 LTS SP3
 
-        ```
+        ```shell
         cd KAE
         sh build.sh driver_migration
         ```
@@ -91,13 +89,13 @@ Install KAE on the physical machine and VM.
 
     Check whether the accelerator engine file system exists in `/sys/class/uacce`.
 
-    ```
+    ```shell
     ll /sys/class/uacce/
     ```
 
     If the following information is displayed, the driver has been installed:
 
-    ```
+    ```txt
     lrwxrwxrwx. 1 root root 0 Aug 22 17:14 hisi_hpre-2 -> ../../devices/pci0000:78/0000:78:00.0/0000:79:00.0/uacce/hisi_hpre-2
     lrwxrwxrwx. 1 root root 0 Aug 22 17:14 hisi_hpre-3 -> ../../devices/pci0000:b8/0000:b8:00.0/0000:b9:00.0/uacce/hisi_hpre-3
     lrwxrwxrwx. 1 root root 0 Aug 22 17:14 hisi_sec2-0 -> ../../devices/pci0000:74/0000:74:01.0/0000:76:00.0/uacce/hisi_sec2-0
@@ -109,7 +107,7 @@ Install KAE on the physical machine and VM.
 5. Install the UADK framework.
     1. Run the following command to install the UADK framework:
 
-        ```
+        ```shell
         sh build.sh uadk
         ```
 
@@ -120,13 +118,13 @@ Install KAE on the physical machine and VM.
 
     2. Check whether the UADK framework is successfully installed.
 
-        ```
+        ```shell
         ll /usr/local/lib/libwd*
         ```
 
         The installation is successful if the following information is displayed:
 
-        ```
+        ```txt
         -rwxr-xr-x. 1 root root     961 Aug 22 17:23 /usr/local/lib/libwd_comp.la
         lrwxrwxrwx. 1 root root      19 Aug 22 17:23 /usr/local/lib/libwd_comp.so -> libwd_comp.so.2.5.0
         lrwxrwxrwx. 1 root root      19 Aug 22 17:23 /usr/local/lib/libwd_comp.so.2 -> libwd_comp.so.2.5.0
@@ -146,39 +144,39 @@ Install KAE on the physical machine and VM.
     - OpenSSL 1.1.1*x*:
         - Use OpenSSL in the default path.
 
-            ```
+            ```shell
             sh build.sh engine
             ```
 
         - Use OpenSSL in a custom path.
 
-            ```
+            ```shell
             sh build.sh engine /usr/local/ssl1_1_1w
             ```
 
     - OpenSSL 3.0.*x*:
         - Use OpenSSL in the default path.
 
-            ```
+            ```shell
             sh build.sh engine3
             ```
 
         - Use OpenSSL in a custom path.
 
-            ```
+            ```shell
             sh build.sh engine3 /usr/local/ssl3_0_14
             ```
 
     - Tongsuo:
         - Use Tongsuo in the default path.
 
-            ```
+            ```shell
             sh build.sh engine3_tongsuo
             ```
 
         - Use Tongsuo in a custom path.
 
-            ```
+            ```shell
             sh build.sh engine3_tongsuo /opt/tongsuo
             ```
 
@@ -188,25 +186,25 @@ Install KAE on the physical machine and VM.
 
     - OpenSSL 1.1.1*x*:
 
-        ```
+        ```shell
         ll /usr/local/lib/engines-1.1
         ```
 
     - OpenSSL 3.0.*x*:
 
-        ```
+        ```shell
         ll /usr/local/lib/engines-3.0
         ```
 
     - Tongsuo 8.4.0:
 
-        ```
+        ```shell
         ll /usr/local/tongsuo/lib/engines-3.0
         ```
 
     The installation is successful if the following information is displayed:
 
-    ```
+    ```txt
     total 5644
     -rw-r--r--. 1 root root 3846524 Aug 22 17:28 kae.a
     -rwxr-xr-x. 1 root root     995 Aug 22 17:28 kae.la
@@ -222,7 +220,7 @@ Install KAE on the physical machine and VM.
 
     1. Perform the compilation and installation.
 
-        ```
+        ```shell
         sh build.sh zlib
         ```
 
@@ -230,13 +228,13 @@ Install KAE on the physical machine and VM.
 
     2. Check whether the zlib compression library is successfully installed.
 
-        ```
+        ```shell
         ll /usr/local/kaezip/lib/
         ```
 
         The installation is successful if the following information is displayed:
 
-        ```
+        ```txt
         lrwxrwxrwx. 1 root root     40 Aug 29 10:20 libkaezip.so -> /usr/local/kaezip/lib/libkaezip.so.2.0.0
         lrwxrwxrwx. 1 root root     40 Aug 29 10:20 libkaezip.so.0 -> /usr/local/kaezip/lib/libkaezip.so.2.0.0
         -rwxr-xr-x. 1 root root 148096 Aug 29 10:20 libkaezip.so.2.0.0
@@ -249,7 +247,7 @@ Install KAE on the physical machine and VM.
 
     3. <a id="li20414340916"></a>Compile and install KAEGzip.
 
-        ```
+        ```shell
         sh build.sh gzip
         ```
 
@@ -257,22 +255,22 @@ Install KAE on the physical machine and VM.
 
     4. <a id="li5793114715813"></a>Check whether KAEGzip is successfully installed.
 
-        ```
+        ```shell
         ldd /usr/local/kaegzip/gzip
         ```
 
         The installation is successful if the following information is displayed:
 
-        ```
+        ```txt
         [root@localhost /]# ldd /usr/local/kaegzip/gzip 
-        	linux-vdso.so.1 (0x0000ffff7fbc1000)
-        	libz.so.1 => /usr/local/kaezip/lib/libz.so.1 (0x0000ffff7fb50000)
-        	libwd.so.2 => /usr/local/lib/libwd.so.2 (0x0000ffff7fae0000)
-        	libkaezip.so => /usr/local/kaezip/lib/libkaezip.so (0x0000ffff7fa90000)
-        	libc.so.6 => /usr/lib64/libc.so.6 (0x0000ffff7f8e0000)
-        	/lib/ld-linux-aarch64.so.1 (0x0000ffff7fb84000)
-        	libwd_comp.so.2 => /usr/local/lib/libwd_comp.so.2 (0x0000ffff7f8a0000)
-        	libnuma.so.1 => /usr/lib64/libnuma.so.1 (0x0000ffff7f870000)
+         linux-vdso.so.1 (0x0000ffff7fbc1000)
+         libz.so.1 => /usr/local/kaezip/lib/libz.so.1 (0x0000ffff7fb50000)
+         libwd.so.2 => /usr/local/lib/libwd.so.2 (0x0000ffff7fae0000)
+         libkaezip.so => /usr/local/kaezip/lib/libkaezip.so (0x0000ffff7fa90000)
+         libc.so.6 => /usr/lib64/libc.so.6 (0x0000ffff7f8e0000)
+         /lib/ld-linux-aarch64.so.1 (0x0000ffff7fb84000)
+         libwd_comp.so.2 => /usr/local/lib/libwd_comp.so.2 (0x0000ffff7f8a0000)
+         libnuma.so.1 => /usr/lib64/libnuma.so.1 (0x0000ffff7f870000)
         ```
 
 ### Enabling a Device<a name="EN-US_TOPIC_0000002518526590"></a>
@@ -282,14 +280,14 @@ This section uses the KAE ZIP device as an example to describe how to enable the
 1. Enable the drivers on the physical machine.
     - If the host OS is openEuler 22.03 LTS SP4, run the following commands to enable the drivers:
 
-        ```
+        ```shell
         modprobe hisi_zip pf_q_num=32
         modprobe hisi_migration
         ```
 
     - If the host OS is openEuler 24.03 LTS SP3, run the following commands to enable the drivers:
 
-        ```
+        ```shell
         insmod /lib/modules/`uname -r`/extra/uacce.ko
         insmod /lib/modules/`uname -r`/extra/hisi_qm.ko
         insmod /lib/modules/`uname -r`/extra/hisi_zip.ko
@@ -300,7 +298,7 @@ This section uses the KAE ZIP device as an example to describe how to enable the
 
 2. Query the BDF identifier of the ZIP device.
 
-    ```
+    ```shell
     lspci | grep ZIP
     ```
 
@@ -308,7 +306,7 @@ This section uses the KAE ZIP device as an example to describe how to enable the
 
 3. (Optional) Check the NUMA node where the ZIP device is located.
 
-    ```
+    ```shell
     lspci -s 31:00.0 -v
     ```
 
@@ -320,7 +318,7 @@ This section uses the KAE ZIP device as an example to describe how to enable the
 4. Set virtual functions (VFs) on the physical machine.
     - If the host OS is openEuler 22.03 LTS SP4, run the following commands to set VFs:
 
-        ```
+        ```shell
         echo 8 > /sys/bus/pci/devices/0000:31:00.0/sriov_numvfs
         echo 0000:31:00.1 > /sys/bus/pci/drivers/hisi_zip/unbind
         echo vfio-pci > /sys/devices/pci0000:30/0000:30:00.0/0000:31:00.1/driver_override
@@ -329,13 +327,12 @@ This section uses the KAE ZIP device as an example to describe how to enable the
 
     - If the host OS is openEuler 24.03 LTS SP3, run the following commands to set VFs:
 
-        ```
+        ```shell
         echo 8 > /sys/bus/pci/devices/0000:31:00.0/sriov_numvfs
         echo 0000:31:00.1 > /sys/bus/pci/drivers/hisi_zip/unbind
         echo hisi_acc_vfio_pci > /sys/devices/pci0000:30/0000:30:00.0/0000:31:00.1/driver_override
         echo 0000:31:00.1 > /sys/bus/pci/drivers_probe
         ```
-
 
 ### Configuring the VM XML File<a name="EN-US_TOPIC_0000002518526594"></a>
 
@@ -347,7 +344,7 @@ In the VM XML file, set the `migration` parameter of the KAE passthrough device 
 
 The XML configuration is as follows:
 
-```
+```xml
     ...
     <devices>
         ...
@@ -368,7 +365,7 @@ In the VM XML file, set the `migration` parameter of the KAE passthrough device 
 
 The XML configuration is as follows:
 
-```
+```xml
     ...
     <devices>
         ...
@@ -383,8 +380,6 @@ The XML configuration is as follows:
     ... 
 ```
 
-
-
 ## Feature Verification<a name="EN-US_TOPIC_0000002550006353"></a>
 
 ### Function Tests<a name="EN-US_TOPIC_0000002550126359"></a>
@@ -396,13 +391,13 @@ The function test only verifies whether the vKAE passthrough is successful and w
 
 1. Start the VM.
 
-    ```
+    ```shell
     virsh start <VM_name> --console
     ```
 
 2. Compile the test tool.
 
-    ```
+    ```shell
     export LD_LIBRARY_PATH=/usr/local/kaezip/lib:$ LD_LIBRARY_PATH
     cd KAEZlib/test/perftest
     make
@@ -413,20 +408,19 @@ The function test only verifies whether the vKAE passthrough is successful and w
 
 3. Use KAE to execute the compression task on the VM.
 
-    ```
+    ```shell
     ./kaezip_perf -m 6 -l 10240 -n 3000
     ```
 
 4. Perform VM live migration on the source physical machine.
 
-    ```
+    ```shell
     virsh migrate --live --unsafe <VM_name> qemu+ssh://<IP_address_of_the_target_physical_machine>/system tcp://<IP_address_of_the_target_physical_machine>
     ```
 
 5. After the migration is complete, log in to the target physical machine, and check whether the KAE compression task is complete.
 
     ![](figures/en-us_image_0000002550126363.png)
-
 
 ### Performance Tests<a name="EN-US_TOPIC_0000002518686502"></a>
 
@@ -436,13 +430,13 @@ The performance test verifies whether VMs can be live migrated after vKAE passth
 
 1. Open the file.
 
-    ```
+    ```shell
     virsh edit <VM_name>
     ```
 
 2. Press `i` to enter the insert mode, add the `qemu:commandline` tag to the end of the XML file, and enable the `all_vcpus_paused` and `all_vcpus_prepared` trace events.
 
-    ```
+    ```xml
     <domain type="kvm" xmlns:qemu='http://libvirt.org/schemas/domain/qemu/1.0'>
         ...
         <qemu:commandline>
@@ -455,25 +449,25 @@ The performance test verifies whether VMs can be live migrated after vKAE passth
 3. Press `Esc` to exit the insert mode. Type `:wq!` and press `Enter` to save the file and exit.
 4. Set the console log level to prevent KAE device driver logs from being printed to the serial port.
 
-    ```
+    ```shell
     sysctl -w kernel.printk="4 4 1 7"
     ```
 
 5. Synchronize the local time of the migration source and target.
 
-    ```
+    ```shell
     ntpdate <NTP_server_IP_address>
     ```
 
 6. Check whether the time is consistent.
 
-    ```
+    ```shell
     date +%Y-%m-%d\ %H:%M:%S.%3N
     ```
 
 7. Set `downtime-limit` to `100`.
 
-    ```
+    ```shell
     virsh migrate-setmaxdowntime <VM_name> 100
     ```
 
@@ -481,7 +475,7 @@ The performance test verifies whether VMs can be live migrated after vKAE passth
 
 1. Compile the test tool.
 
-    ```
+    ```shell
     export LD_LIBRARY_PATH=/usr/local/kaezip/lib:$ LD_LIBRARY_PATH
     cd KAEZlib/test/perftest
     make
@@ -492,7 +486,7 @@ The performance test verifies whether VMs can be live migrated after vKAE passth
 
 2. Use KAE to accelerate the compression task on the VM.
 
-    ```
+    ```shell
     ./kaezip_perf -m 6 -l 10240 -n 3000
     ```
 
@@ -506,7 +500,7 @@ The performance test verifies whether VMs can be live migrated after vKAE passth
 
 1. Perform VM live migration on the source physical machine.
 
-    ```
+    ```shell
     virsh migrate --live --unsafe <VM_name> qemu+ssh://<IP_address_of_the_target_physical_machine>/system tcp://<IP_address_of_the_target_physical_machine>
     ```
 
@@ -514,15 +508,13 @@ The performance test verifies whether VMs can be live migrated after vKAE passth
 
     View the logs.
 
-    ```
+    ```shell
     less /var/log/libvirt/qemu/<VM_name>.log
     ```
 
-    ![](figures/en-us_image_0000002518686508.png)
+    ![](figures/en-us_image_0000002518686508.png)<br>
 
     ![](figures/en-us_image_0000002550126365.png)
-
-
 
 ## Troubleshooting<a name="EN-US_TOPIC_0000002550126357"></a>
 
@@ -540,11 +532,10 @@ This issue is caused by the incompatibility of the accelerator driver built in o
 
 Uninstall the acceleration driver built in the OS and reload the manually compiled KAE. Alternatively, add the driver reloading command to the startup script `rc.local`. The following uses `hisi_sec2` as an example.
 
-```
+```shell
 rmmod hisi_sec2
 modprobe hisi_sec2
 ```
-
 
 ### No Device File Is Queried After the Device Is Restarted and a Driver Is Installed on a Physical Machine Running openEuler 24.03 LTS SP3<a name="EN-US_TOPIC_0000002550006355"></a>
 
@@ -560,7 +551,7 @@ This issue is caused by the incompatibility of the accelerator driver built in o
 
 Uninstall the acceleration driver built in the OS and reload the manually compiled KAE. Alternatively, add the driver reloading command to the startup script `rc.local`. The following uses `hisi_sec2` as an example.
 
-```
+```shell
 rmmod hisi_sec2
 insmod /lib/modules/`uname -r`/extra/hisi_sec2.ko
 ```

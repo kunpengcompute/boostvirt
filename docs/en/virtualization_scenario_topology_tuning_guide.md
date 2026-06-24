@@ -1,4 +1,4 @@
-# Virtualization Scenario Topology Optimization Guide<a name="EN-US_TOPIC_0000002521088822"></a>
+# Virtualization Scenario Topology Optimization Guide
 
 ## Optimization Overview<a name="EN-US_TOPIC_0000002518687258"></a>
 
@@ -7,10 +7,10 @@ This document describes how to adjust the virtualization parameters of Kunpeng s
 In virtualized environments, multiple VMs share CPU core resources on the same physical host, which can create resource contention that leads to performance bottlenecks and degrades VM performance. By binding VM vCPUs to specific physical CPU cores, resources can be allocated more effectively, preventing resource over-concentration or underutilization and enhancing overall system performance. In the server CPU architecture, each socket encompasses multiple CPU dies, with each CPU die containing multiple clusters. Consequently, the varying microarchitectures of the physical CPU cores to which VM vCPUs are bound will influence the scope of resources available to those vCPUs.
 
 >![](public_sys-resources/icon-note.gif) **NOTE:**
->-   A socket represents the physical packaging of a CPU, corresponding to a single, independent processor unit.
->-   A die refers to the core area of the CPU chip. It is a single piece of silicon containing the essential components of the CPU, such as the arithmetic units, cache, and control logic.
->-   A cluster is a logical grouping of several CPU cores on a chip, which share resources like cache.
-
+>
+>- A socket represents the physical packaging of a CPU, corresponding to a single, independent processor unit.
+>- A die refers to the core area of the CPU chip. It is a single piece of silicon containing the essential components of the CPU, such as the arithmetic units, cache, and control logic.
+>- A cluster is a logical grouping of several CPU cores on a chip, which share resources like cache.
 
 ## Environment Requirements<a name="EN-US_TOPIC_0000002550007099"></a>
 
@@ -29,7 +29,6 @@ This section describes the hardware and software requirements of the server to b
 |Memory|Populate one DIMM Per Channel (1DPC) to maximize the memory performance. That is, populate all DIMM 0 slots first.|
 |System drive|No special requirements|
 
-
 **Software Requirements<a name="section102619448716"></a>**
 
 [**Table 2**](#software-requirements) describes the software requirements.
@@ -42,8 +41,6 @@ This section describes the hardware and software requirements of the server to b
 |libvirt|9.10.0|Install it using a Yum repository.|
 |QEMU|8.2.0|Install it using a Yum repository.|
 
-
-
 ## Cluster Optimization Configuration for Four-NUMA-Node Scenarios<a name="EN-US_TOPIC_0000002518527338" id="cluster-optimization-configuration-for-four-numa-node-scenarios"></a>
 
 Optimize CPU cluster configurations by binding VM vCPUs to specific physical CPU cores and configuring the vCPU topology to ensure the optimal performance for VMs.
@@ -55,7 +52,7 @@ To enhance VM performance, it is standard practice to assign VM vCPUs to particu
 
 1. Find the name of the target VM.
 
-    ```
+    ```shell
     virsh list --all
     ```
 
@@ -63,13 +60,13 @@ To enhance VM performance, it is standard practice to assign VM vCPUs to particu
 
 2. Modify the VM XML file.
 
-    ```
+    ```shell
     virsh edit <VM_name>
     ```
 
     The following is a configuration example illustrating a cluster optimization policy. In this example, the `cputune` section establishes a 1:1 binding between vCPUs and physical CPU cores. In the `numatune` section, only one NUMA node is set for the VM, and `nodeset` points to the NUMA node where the physical CPU core is located. In the `cpu` section, configure one socket, one die, four clusters, with each cluster containing four vCPUs and a thread count of two per core.
 
-    ```
+    ```xml
     <domain type = 'KVM'>
     ...
       <vcpu placement='static'>32</vcpu>
@@ -121,7 +118,6 @@ To enhance VM performance, it is standard practice to assign VM vCPUs to particu
     <domain>
     ```
 
-
 ## CPU Optimization Configuration for Two-NUMA-Node Scenarios<a name="EN-US_TOPIC_0000002550127095"></a>
 
 ### Modifying BIOS Settings<a name="EN-US_TOPIC_0000002550127097"></a>
@@ -136,7 +132,6 @@ Enable `One Numa Per Socket` and `Die Interleaving` in the BIOS, as described in
 |--|--|--|
 |One Numa Per Socket|Enabled|`Advanced` > `Memory Configuration` > `One Numa Per Socket`|
 |Die Interleaving|Enabled|`Advanced` > `Memory Configuration` > `Die Interleaving`|
-
 
 Set the options based on the recommended settings in the preceding table.
 
@@ -154,7 +149,6 @@ Set the options based on the recommended settings in the preceding table.
 
 4. Press `F10` to save the BIOS configuration and restart the server.
 
-
 ### CPU Core Binding Optimization<a name="EN-US_TOPIC_0000002518527340"></a>
 
 In a virtualization scenario with two NUMA nodes, optimize VM performance by adjusting the binding of vCPUs to physical machine dies and configuring the vCPU topology.
@@ -170,7 +164,7 @@ The following is an example of CPU core binding optimization. In this example, t
 >![](public_sys-resources/icon-note.gif) **NOTE:**
 >This document uses a VM with 32 vCPUs and 64 GB memory as an example to describe how to optimize CPU core binding. Adjust the parameters based on the actual requirements and VM specifications.
 
-```
+```xml
 <domain type = 'KVM'>
 ...
   <vcpu placement='static'>32</vcpu>
@@ -221,8 +215,6 @@ The following is an example of CPU core binding optimization. In this example, t
 ...
 <domain>
 ```
-
-
 
 ## Acronyms and Abbreviations<a name="EN-US_TOPIC_0000002518687256"></a>
 

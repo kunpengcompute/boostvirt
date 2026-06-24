@@ -1,16 +1,26 @@
 # Change Notification
+
 - [2026-03-24]: Updated the overview of the BoostVirt SIG open-source projects.
+
 # Project Introduction<a name="EN-US_TOPIC_0000002535416437"></a>
+
 ## Overview
+
 BoostVirt is a virtualization acceleration suite launched by the Kunpeng BoostKit cloud computing team. It aims to use Kunpeng hardware to accelerate cloud native and virtualized applications, maximize computing performance, minimize network and storage I/O overhead, and optimize workload efficiency within VMs and containers, while providing open-source enablement for virtualization.
+
 ## Community Homepage
-BoostVirt homepage in the Kunpeng community: https://www.hikunpeng.com/boostkit/boost-x/virt
+
+BoostVirt homepage in the Kunpeng community: [Link](https://www.hikunpeng.com/boostkit/boost-x/virt)
+
 ## Open-Source Project Overview
+
 | Code Repository               | Description                                                                            | Address                                     |
 | ------------------ | --------------------------------------------------------------------------------- | ------------------------------------------ |
-| cloud-native       | This repository is a collection of Kunpeng cloud-native projects, including multiple cloud-native components optimized for Kunpeng processors. Based on Kubernetes, it provides cloud-native infrastructure and network and management plugins optimized for Kunpeng.               | https://gitcode.com/boostkit/cloud-native  |
-| cloud-virtual      | This repository is a collection of Kunpeng virtualization projects, including multiple virtualization components optimized for Kunpeng processors. It covers Kunpeng-affinity optimization features for core virtualization and I/O software stacks such as KVM, QEMU, libvirt, DPDK, and SPDK.| https://gitcode.com/boostkit/cloud-virtual |
+| cloud-native       | This repository is a collection of Kunpeng cloud-native projects, including multiple cloud-native components optimized for Kunpeng processors. Based on Kubernetes, it provides cloud-native infrastructure and network and management plugins optimized for Kunpeng.               | [Link](https://gitcode.com/boostkit/cloud-native)  |
+| cloud-virtual      | This repository is a collection of Kunpeng virtualization projects, including multiple virtualization components optimized for Kunpeng processors. It covers Kunpeng-affinity optimization features for core virtualization and I/O software stacks such as KVM, QEMU, libvirt, DPDK, and SPDK.| [Link](https://gitcode.com/boostkit/cloud-virtual)|
+
 # Feature Description<a name="EN-US_TOPIC_0000002535536613"></a>
+
 | Category      | Feature             | Description                                                                                                                                                 |
 | ---------- | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Virtualized CPU acceleration  | Interrupt passthrough             | Enables GICv4.1 direct virtual interrupt injection and direct vSGI injection on the new Kunpeng 920 processor model to significantly reduce interrupt response latency and boost throughput for network and I/O-intensive workloads.                                                                   |
@@ -23,8 +33,12 @@ BoostVirt homepage in the Kunpeng community: https://www.hikunpeng.com/boostkit/
 | Cloud native resource affinity and isolation| Kubernetes topology affinity plugin       | In Kubernetes overcommitment scenarios, the plugin dynamically senses the distribution of CPU and memory resources. By ensuring critical workloads run on the optimal NUMA nodes, it minimizes cross-node latency.                                                                   |
 |            | Kubernetes MPAM plugin       | Eliminates resource contention in hybrid deployments with MPAM-based resource isolation. By intelligently partitioning L3 cache and memory bandwidth, it protects critical services from interference by offline workloads.                                                                   |
 | Cloud native high-performance network  | SR-IOV device plugin       | Automatically manages and implements passthrough for SR-IOV devices using the Kubernetes device plugin mechanism.                                                                                                                |
+
 # Contributions, Suggestions, and Discussions<a name="EN-US_TOPIC_0000002503696628"></a>
-We welcome your contributions to the community. If you have any questions/suggestions or want to provide feedback on feature requirements and bug reports, you can submit [issues](en-us_topic_0000002535534673.md). For details, see the [contribution guideline](https://gitcode.com/boostkit/community/blob/master/docs/contributor/contributing.md). You are also welcome to share insights in the [Discussions](https://gitcode.com/boostkit/community/discussions). Thank you for your support.
+
+We welcome your contributions to the community. If you have any questions/suggestions or want to provide feedback on feature requirements and bug reports, you can submit issues. For details, see the [contribution guideline](https://gitcode.com/boostkit/community/blob/master/docs/contributor/contributing.md). You are also welcome to share insights in the [Discussions](https://gitcode.com/boostkit/community/discussions). Thank you for your support.
+
 # License<a name="EN-US_TOPIC_0000002535536615"></a>
+
 This project is licensed under Apache License 2.0. For details, see [LICENSE](https://gitcode.com/boostkit/cloud-virtual/blob/master/LICENSE).
 The documents of this project are licensed under CC-BY 4.0. For details, see [LICENSE](https://gitcode.com/boostkit/boostvirt/blob/master/docs/en/LICENSE).

@@ -1,4 +1,4 @@
-# Virtualization Scenario Topology Awareness User Guide<a name="EN-US_TOPIC_0000002552168793"></a>
+# Virtualization Scenario Topology Awareness User Guide
 
 ## Feature Description<a name="EN-US_TOPIC_0000002550128075"></a>
 
@@ -16,7 +16,6 @@ In an Arm-based virtual machine (VM) environment, a group of preset values are d
 
 This feature enhances the accuracy of the cache structure information in VMs and improves the performance of a single service for gaming.
 
-
 ## Feature Usage<a name="EN-US_TOPIC_0000002550008067"></a>
 
 ### Environment Requirements<a name="EN-US_TOPIC_0000002518688214"></a>
@@ -33,7 +32,6 @@ Before using the feature, ensure that the hardware and software requirements are
 |--|--|
 |Processor|Kunpeng 920 series|
 
-
 **OS and Software Requirements<a name="section1240364411598"></a>**
 
 [**Table 2**](#os-and-software-requirements) lists the OS and software requirements.
@@ -46,8 +44,6 @@ Before using the feature, ensure that the hardware and software requirements are
 |QEMU|6.2.0|Code repository: [Link](https://gitee.com/src-openeuler/qemu/tree/openEuler-22.03-LTS-SP4/)<br>Patch: [Link](https://gitee.com/openeuler/qemu/pulls/1449)|
 |libvirt|6.2.0|Code repository: [Link](https://gitee.com/src-openeuler/libvirt/tree/openEuler-22.03-LTS-SP4/)<br>Patch: [Link](https://gitee.com/openeuler/libvirt/pulls/315)|
 
-
-
 ### Enablement and Verification<a name="EN-US_TOPIC_0000002518528304"></a>
 
 #### Installing libvirt and QEMU<a name="EN-US_TOPIC_0000002550008069"></a>
@@ -58,13 +54,13 @@ Configure the VM XML file or configure the QEMU command to start the VM to send 
 
     Run the following command to obtain libvirt for openEuler 22.03 LTS SP4:
 
-    ```
+    ```shell
     git clone https://gitee.com/src-openeuler/libvirt.git -b openEuler-22.03-LTS-SP4
     ```
 
     Run the following command to obtain QEMU for openEuler 22.03 LTS SP4:
 
-    ```
+    ```shell
     git clone https://gitee.com/src-openeuler/qemu.git -b openEuler-22.03-LTS-SP4
     ```
 
@@ -73,13 +69,13 @@ Configure the VM XML file or configure the QEMU command to start the VM to send 
 
         libvirt patch name:
 
-        ```
+        ```txt
         libvirt-Support-specifying-the-cache-size-presented-.patch
         ```
 
         QEMU patch name:
 
-        ```
+        ```txt
         qapi-qom-Define-cache-enumeration-and-properties-for.patch
         hw-core-machine-smp-Initialize-caches_bitmap-before-.patch
         qemu-Support-specifying-the-cache-size-presented-to-.patch
@@ -100,18 +96,18 @@ Configure the VM XML file or configure the QEMU command to start the VM to send 
 5. Compile and install the dependency package.
 
     >![](public_sys-resources/icon-note.gif) **NOTE:**
-    >-   Compile libvirt and QEMU separately.
-    >-   Configure the Yum repository in advance.
+    >- Compile libvirt and QEMU separately.
+    >- Configure the Yum repository in advance.
 
     Compile and install related dependency package. Command for libvirt is as follows:
 
-    ```
+    ```shell
     yum-builddep -y /root/rpmbuild/SOURCES/libvirt.spec
     ```
 
     Command for QEMU is as follows:
 
-    ```
+    ```shell
     yum-builddep -y /root/rpmbuild/SOURCES/qemu.spec
     ```
 
@@ -119,13 +115,13 @@ Configure the VM XML file or configure the QEMU command to start the VM to send 
 
     Compile and install related dependency package. Command for libvirt is as follows:
 
-    ```
+    ```shell
     rpmbuild -ba /root/rpmbuild/SOURCES/libvirt.spec
     ```
 
     Command for QEMU is as follows:
 
-    ```
+    ```shell
     rpmbuild -ba /root/rpmbuild/SOURCES/qemu.spec
     ```
 
@@ -133,14 +129,14 @@ Configure the VM XML file or configure the QEMU command to start the VM to send 
 
     Compile and install related dependency package. Commands for libvirt are as follows:
 
-    ```
+    ```shell
     cd /root/rpmbuild/RPMS/aarch64
     rpm -ivh libvirt* --nodeps --force
     ```
 
     Commands for QEMU are as follows:
 
-    ```
+    ```shell
     cd /root/rpmbuild/RPMS/aarch64
     rpm -ivh qemu* --nodeps --force
     ```
@@ -149,12 +145,11 @@ Configure the VM XML file or configure the QEMU command to start the VM to send 
 
     Run the following command to query the libvirt and QEMU versions:
 
-    ```
+    ```shell
     virsh version
     ```
 
     ![](figures/en-us_image_0000002550128081.png)
-
 
 #### Configuring the VM Cache<a name="EN-US_TOPIC_0000002550128077" id="configuring-the-vm-cache"></a>
 
@@ -169,7 +164,7 @@ To start a VM using libvirt, you need to modify the cache configuration in the X
 
 - If the L1 cache uses the instruction-data separation structure (for example, the Arm architecture), the configuration is as follows:
 
-    ```
+    ```xml
         ... 
         <cpu mode='host-passthrough'>
             <cacheinfo cache='l1d' size='<l1d cache_size>'/> //Example 32768
@@ -182,7 +177,7 @@ To start a VM using libvirt, you need to modify the cache configuration in the X
 
 - If the L1 cache uses the unified cache structure, the configuration is as follows:
 
-    ```
+    ```xml
       ... 
         <cpu mode='host-passthrough'>
             <cacheinfo cache='l1' size='<l1 cache_size>'/> //Example 32768
@@ -198,7 +193,7 @@ If the QEMU command or device tree is used to start a VM, you need to modify the
 
 - If the L1 cache uses the instruction-data separation structure (for example, the Arm architecture), the configuration is as follows:
 
-    ```
+    ```txt
     -machine virt,\
     smp-cache.0.cache=l1i,smp-cache.0.size=<l1i cache_size>,\ //Example 32768
     smp-cache.1.cache=l1d,smp-cache.1.size=<l1d cache_size>,\ //Example 32768
@@ -208,7 +203,7 @@ If the QEMU command or device tree is used to start a VM, you need to modify the
 
 - If the L1 cache uses the unified cache structure, the configuration is as follows:
 
-    ```
+    ```txt
     -machine virt,\
     smp-cache.0.cache=l1,smp-cache.0.size=<l1 cache_size>,\ //Example 32768
     smp-cache.2.cache=l2,smp-cache.2.size=<l2 cache_size>,\ //Example 1048576
@@ -216,10 +211,10 @@ If the QEMU command or device tree is used to start a VM, you need to modify the
     ```
 
 >![](public_sys-resources/icon-note.gif) **NOTE:**
->-   The `l1i cache_size`, `l1d cache_size`, `l2 cache_size`, and `l3 cache_size` are the cache sizes displayed on the VM. To ensure accuracy, ensure that the cache sizes are the same as those used by the VM.
->-   If the L1 cache uses the instruction-data separation structure, configure `l1d` and `l1i`. Otherwise, configure `l1`.
->-   The cache size must be greater than 0.
-
+>
+>- The `l1i cache_size`, `l1d cache_size`, `l2 cache_size`, and `l3 cache_size` are the cache sizes displayed on the VM. To ensure accuracy, ensure that the cache sizes are the same as those used by the VM.
+>- If the L1 cache uses the instruction-data separation structure, configure `l1d` and `l1i`. Otherwise, configure `l1`.
+>- The cache size must be greater than 0.
 
 #### Testing the VM Cache<a name="EN-US_TOPIC_0000002518528302"></a>
 
@@ -233,13 +228,13 @@ Before you modify the VM cache, the cache size displayed on the VM is the defaul
 
     - Use libvirt to start the VM.
 
-        ```
+        ```shell
         virsh start <VM_name>
         ```
 
     - Run the following QEMU commands to start the VM:
 
-        ```
+        ```shell
         qemu-kvm \
         -blockdev '{"driver":"file","filename":"<EFI_file_path>","node-name":"libvirt-pflash0-storage","auto-read-only":true,"discard":"unmap"}' \
         -blockdev '{"node-name":"libvirt-pflash0-format","read-only":true,"driver":"raw","file":"libvirt-pflash0-storage"}' \
@@ -256,7 +251,7 @@ Before you modify the VM cache, the cache size displayed on the VM is the defaul
 
     - Run the following commands to start the VM in device tree mode:
 
-        ```
+        ```shell
         qemu-kvm \
         -kernel <Kernel_image>
         -smp <Number_of_vCPUs>\
@@ -273,7 +268,7 @@ Before you modify the VM cache, the cache size displayed on the VM is the defaul
 
     Run the following command on the VM:
 
-    ```
+    ```shell
     lscpu
     ```
 
@@ -288,7 +283,7 @@ Before you modify the VM cache, the cache size displayed on the VM is the defaul
 4. Verify that the configurations have taken effect.
     1. Run the following command on the VM:
 
-        ```
+        ```shell
         lscpu
         ```
 
@@ -298,7 +293,7 @@ Before you modify the VM cache, the cache size displayed on the VM is the defaul
 
     2. Run the following command on the physical machine:
 
-        ```
+        ```shell
         virsh dumpxml cachesize_test | grep cacheinfo
         ```
 

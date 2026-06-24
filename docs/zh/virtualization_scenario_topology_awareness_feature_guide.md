@@ -16,7 +16,6 @@
 
 本特性能够增强虚拟机内缓存结构信息的精确度，有助于提升游戏类业务的单业务性能。
 
-
 ## 特性使用<a name="ZH-CN_TOPIC_0000002550008067"></a>
 
 ### 环境要求<a name="ZH-CN_TOPIC_0000002518688214"></a>
@@ -33,7 +32,6 @@
 |--|--|
 |处理器|鲲鹏920系列处理器|
 
-
 **操作系统和软件要求<a name="section1240364411598"></a>**
 
 操作系统和软件要求如[**表 2** 操作系统与软件要求](#操作系统与软件要求)所示。
@@ -46,8 +44,6 @@
 |QEMU|6.2.0|代码仓：[获取链接](https://gitee.com/src-openeuler/qemu/tree/openEuler-22.03-LTS-SP4/)<br>补丁：[获取链接](https://gitee.com/openeuler/qemu/pulls/1449)|
 |libvirt|6.2.0|代码仓：[获取链接](https://gitee.com/src-openeuler/libvirt/tree/openEuler-22.03-LTS-SP4/)<br>补丁：[获取链接](https://gitee.com/openeuler/libvirt/pulls/315)|
 
-
-
 ### 使能与验证<a name="ZH-CN_TOPIC_0000002518528304"></a>
 
 #### 安装libvirt与QEMU<a name="ZH-CN_TOPIC_0000002550008069"></a>
@@ -58,13 +54,13 @@
 
     获取针对openEuler 22.03 LTS SP4的libvirt，命令如下。
 
-    ```
+    ```shell
     git clone https://gitee.com/src-openeuler/libvirt.git -b openEuler-22.03-LTS-SP4
     ```
 
     获取针对openEuler 22.03 LTS SP4的QEMU，命令如下。
 
-    ```
+    ```shell
     git clone https://gitee.com/src-openeuler/qemu.git -b openEuler-22.03-LTS-SP4
     ```
 
@@ -73,13 +69,13 @@
 
         libvirt补丁名称：
 
-        ```
+        ```txt
         libvirt-Support-specifying-the-cache-size-presented-.patch
         ```
 
         QEMU补丁名称：
 
-        ```
+        ```txt
         qapi-qom-Define-cache-enumeration-and-properties-for.patch
         hw-core-machine-smp-Initialize-caches_bitmap-before-.patch
         qemu-Support-specifying-the-cache-size-presented-to-.patch
@@ -100,18 +96,18 @@
 5. 编译安装依赖包。
 
     >![](public_sys-resources/icon-note.gif) **说明：** 
-    >-   libvirt与QEMU需要分开单独编译。
-    >-   需要提前配置好Yum源。
+    >- libvirt与QEMU需要分开单独编译。
+    >- 需要提前配置好Yum源。
 
     编译安装相关的依赖包，libvirt的命令如下。
 
-    ```
+    ```shell
     yum-builddep -y /root/rpmbuild/SOURCES/libvirt.spec
     ```
 
     QEMU的命令如下。
 
-    ```
+    ```shell
     yum-builddep -y /root/rpmbuild/SOURCES/qemu.spec
     ```
 
@@ -119,13 +115,13 @@
 
     编译安装相关的依赖包，libvirt的命令如下。
 
-    ```
+    ```shell
     rpmbuild -ba /root/rpmbuild/SOURCES/libvirt.spec
     ```
 
     QEMU的命令如下。
 
-    ```
+    ```shell
     rpmbuild -ba /root/rpmbuild/SOURCES/qemu.spec
     ```
 
@@ -133,14 +129,14 @@
 
     编译安装相关的依赖包，libvirt的命令如下。
 
-    ```
+    ```shell
     cd /root/rpmbuild/RPMS/aarch64
     rpm -ivh libvirt* --nodeps --force
     ```
 
     QEMU的命令如下。
 
-    ```
+    ```shell
     cd /root/rpmbuild/RPMS/aarch64
     rpm -ivh qemu* --nodeps --force
     ```
@@ -149,12 +145,11 @@
 
     执行以下命令，查询libvirt与QEMU的版本。
 
-    ```
+    ```shell
     virsh version
     ```
 
     ![](figures/zh-cn_image_0000002550128081.png)
-
 
 #### 配置虚拟机缓存<a name="ZH-CN_TOPIC_0000002550128077" id="配置虚拟机缓存"></a>
 
@@ -169,7 +164,7 @@
 
 - l1缓存为指令-数据分离结构时（比如ARM架构），配置如下。
 
-    ```
+    ```xml
         ... 
         <cpu mode='host-passthrough'>
             <cacheinfo cache='l1d' size='<l1d缓存大小>'/> //示例 32768
@@ -182,7 +177,7 @@
 
 - l1缓存为统一缓存结构时，配置如下。
 
-    ```
+    ```xml
       ... 
         <cpu mode='host-passthrough'>
             <cacheinfo cache='l1' size='<l1缓存大小>'/> //示例 32768
@@ -198,7 +193,7 @@
 
 - l1缓存为指令-数据分离结构时（比如ARM架构），配置如下。
 
-    ```
+    ```xml
     -machine virt,\
     smp-cache.0.cache=l1i,smp-cache.0.size=<l1i缓存大小>,\ //示例 32768
     smp-cache.1.cache=l1d,smp-cache.1.size=<l1d缓存大小>,\ //示例 32768
@@ -208,7 +203,7 @@
 
 - l1缓存为统一缓存结构时，配置如下。
 
-    ```
+    ```xml
     -machine virt,\
     smp-cache.0.cache=l1,smp-cache.0.size=<l1缓存大小>,\ //示例 32768
     smp-cache.2.cache=l2,smp-cache.2.size=<l2缓存大小>,\ //示例 1048576
@@ -216,10 +211,10 @@
     ```
 
 >![](public_sys-resources/icon-note.gif) **说明：** 
->-   此处配置的l1i缓存大小、l1d缓存大小、l2缓存大小和l3缓存大小为虚拟机中看到的缓存大小。为了保证准确，需要确认与虚拟机实际使用的缓存大小一致。
->-   如果l1缓存为指令-数据分离结构，应配置“l1d”和“l1i”，否则配置“l1”。
->-   设置缓存的大小必须大于0。
-
+>
+>- 此处配置的l1i缓存大小、l1d缓存大小、l2缓存大小和l3缓存大小为虚拟机中看到的缓存大小。为了保证准确，需要确认与虚拟机实际使用的缓存大小一致。
+>- 如果l1缓存为指令-数据分离结构，应配置“l1d”和“l1i”，否则配置“l1”。
+>- 设置缓存的大小必须大于0。
 
 #### 测试虚拟机缓存<a name="ZH-CN_TOPIC_0000002518528302"></a>
 
@@ -233,13 +228,13 @@
 
     - 使用libvirt启动虚拟机。
 
-        ```
+        ```shell
         virsh start <虚拟机名称>
         ```
 
     - 使用QEMU命令启动虚拟机，可参考以下命令。
 
-        ```
+        ```shell
         qemu-kvm \
         -blockdev '{"driver":"file","filename":"<EFI文件路径>","node-name":"libvirt-pflash0-storage","auto-read-only":true,"discard":"unmap"}' \
         -blockdev '{"node-name":"libvirt-pflash0-format","read-only":true,"driver":"raw","file":"libvirt-pflash0-storage"}' \
@@ -256,7 +251,7 @@
 
     - 以Device Tree的方式启动虚拟机，可参考以下命令。
 
-        ```
+        ```shell
         qemu-kvm \
         -kernel <kernel 镜像>
         -smp <vcpu个数> \
@@ -273,7 +268,7 @@
 
     在虚拟机中执行以下命令。
 
-    ```
+    ```shell
     lscpu
     ```
 
@@ -288,7 +283,7 @@
 4. 确认配置生效。
     1. 在虚拟机中执行以下命令。
 
-        ```
+        ```shell
         lscpu
         ```
 
@@ -298,15 +293,10 @@
 
     2. 在物理机中执行以下命令。
 
-        ```
+        ```shell
         virsh dumpxml cachesize_test | grep cacheinfo
         ```
 
         可以看到运行中的虚拟机生成的xml中缓存大小与设置大小一致。
 
         ![](figures/zh-cn_image_0000002518688216.png)
-
-
-
-
-
