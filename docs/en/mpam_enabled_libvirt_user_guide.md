@@ -193,7 +193,7 @@ yum install -y lmbench
 
 **Limiting the Memory Bandwidth<a name="section6695756134"></a>**
 
-1. Edit the VM XML file. Replace *<vm name>* with the actual VM name.
+1. Edit the VM XML file. Replace `<vm name>` with the actual VM name.
 
     ```shell
     virsh edit <vm name>

@@ -82,7 +82,7 @@ vCPU热插拔技术可以在虚拟机运行状态下增加或减少vCPU数量，
 >
 >- placement的值必须是static。
 >- m为虚拟机当前CPU数目，即虚拟机启动后默认的CPU数目。n为虚拟机支持热插到的最大CPU数目，该值不能超过Hypervisor支持的虚拟机最大CPU规格及GuestOS支持的最大CPU规格，n≥m。
->- 通过virt-install命令创建虚拟机的场景下，默认虚拟机创建完成后，其xml配置文件中不含以上vcpu节点。通过virsh edit <vm name>命令进行动态添加时，该节点不会即时生效，因此添加操作完成后需自行重启虚拟机，才能进行后续的vCPU热插拔操作。
+>- 通过virt-install命令创建虚拟机的场景下，默认虚拟机创建完成后，其xml配置文件中不含以上vcpu节点。通过`virsh edit <vm name>`命令进行动态添加时，该节点不会即时生效，因此添加操作完成后需自行重启虚拟机，才能进行后续的vCPU热插拔操作。
 
 openEuler 24.03 LTS版本中，该特性默认开启，系统安装即使能。非openEuler内核需要自行合入并适配如下功能补丁。
 

@@ -783,7 +783,7 @@ vKAE可以应用于虚拟化和云原生场景。
 
             >![](public_sys-resources/icon-note.gif) **说明：** 
             >- 相当于把VF地址**0000:79:00.1**进行拆分，domain域使用**0000**部分，bus域使用**79**部分，slot域使用**00**部分，function使用末位的**1**。
-            >- 如果当前虚拟机已存在该address，为避免address冲突导致虚拟机启动失败，需要删除</source>之后的address一行。重启虚拟机后，系统会自动生成新的address。
+            >- 如果当前虚拟机已存在该address，为避免address冲突导致虚拟机启动失败，需要删除`</source>`之后的address一行。重启虚拟机后，系统会自动生成新的address。
 
         3. 按“Esc”键，输入 **:wq!**，按“Enter”保存并退出编辑。
         4. 重启虚拟机，使KAE设备VF直通虚拟机生效。
