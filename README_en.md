@@ -36,7 +36,7 @@ BoostVirt homepage in the Kunpeng community: [Link](https://www.hikunpeng.com/bo
 
 # Contributions, Suggestions, and Discussions<a name="EN-US_TOPIC_0000002503696628"></a>
 
-We welcome your contributions to the community. If you have any questions/suggestions or want to provide feedback on feature requirements and bug reports, you can submit [issues](en-us_topic_0000002535534673.md). For details, see the [contribution guideline](https://gitcode.com/boostkit/community/blob/master/docs/contributor/contributing.md). You are also welcome to share insights in the [Discussions](https://gitcode.com/boostkit/community/discussions). Thank you for your support.
+We welcome your contributions to the community. If you have any questions/suggestions or want to provide feedback on feature requirements and bug reports, you can submit issues. For details, see the [contribution guideline](https://gitcode.com/boostkit/community/blob/master/docs/contributor/contributing.md). You are also welcome to share insights in the [Discussions](https://gitcode.com/boostkit/community/discussions). Thank you for your support.
 
 # License<a name="EN-US_TOPIC_0000002535536615"></a>
 
