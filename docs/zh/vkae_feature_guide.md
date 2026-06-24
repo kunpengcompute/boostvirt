@@ -1012,7 +1012,7 @@ vKAE可以应用于虚拟化和云原生场景。
 
     3. 验证KAE性能。<br>配置OpenSSL以使用KAE，并通过执行 **openssl speed** 命令来比较开启和未开启KAE时RSA加密解密的性能差异。
 
-    - 使能KAE前的性能值。
+        使能KAE前的性能值。
 
         ```shell
         openssl speed -elapsed rsa2048
@@ -1020,7 +1020,7 @@ vKAE可以应用于虚拟化和云原生场景。
 
         ![](figures/zh-cn_image_0000002026651516.png)
 
-    - 使能KAE后的性能值。
+        使能KAE后的性能值。
 
         ```shell
         export OPENSSL_CONF=/home/openssl.cnf
