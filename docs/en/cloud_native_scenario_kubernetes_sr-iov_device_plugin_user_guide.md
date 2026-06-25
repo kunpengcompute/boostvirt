@@ -14,7 +14,7 @@ Beyond enabling SR-IOV VF passthrough for containers, the Bond-CNI plugin suppor
 
 The SR-IOV device plugin runs on compute nodes in a Kubernetes cluster and is deployed in the Pods defined by DaemonSet.
 
-- The software architecture of the SR-IOV device plugin shows in [**Figure 1**](#software-architecture-of-the-sr-iov-device-plugin) shows 
+- The software architecture of the SR-IOV device plugin shows in [**Figure 1**](#software-architecture-of-the-sr-iov-device-plugin).
 - The software architecture of the SR-IOV-CNI network plugin shows in [**Figure 2**](#software-architecture-of-the-sr-iov-cni-network-plugin).
 - The software architecture of the Bond-CNI plugin shows in [**Figure 3**](#software-architecture-of-the-bond-cni-plugin).
 - The functions of each module in the architecture shows in [**Table 1**](#module-functions).
