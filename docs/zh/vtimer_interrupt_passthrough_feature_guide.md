@@ -10,7 +10,7 @@
 
 vtimer中断透传特性允许虚拟机的timer中断直接注入，免去中断注入时的陷入陷出，从而减少中断注入时延，适用于鲲鹏920新型号及鲲鹏950处理器。
 
->由于实现原因，vtimer直通时不提供active、pending状态。若虚拟机内部依赖timer的active、pending状态做特殊处理，可通过在libvirt配置开启vtimer status状态模拟，该特性需要Guest OS支持。
+>由于实现原因，vtimer中断直通时不提供active、pending状态。若虚拟机内部依赖timer中断的active、pending状态做特殊处理，可通过在libvirt配置开启vtimer中断status状态模拟，该特性需要Guest OS支持。
 
 ### 可获得性<a name="ZH-CN_TOPIC_0000002105901570"></a>
 
@@ -21,8 +21,8 @@ vtimer中断透传特性允许虚拟机的timer中断直接注入，免去中断
 ### 约束与限制<a name="ZH-CN_TOPIC_0000002070341631"></a>
 
 - 仅支持鲲鹏920新型号及鲲鹏950处理器。
-- vtimer直通时不提供active、pending状态，若虚拟机内部依赖timer的active、pending状态做特殊处理，需开启vtimer status状态模拟。
-- vtimer status状态模拟特性需要Guest OS支持。
+- vtimer中断直通时不提供active、pending状态，若虚拟机内部依赖timer中断的active、pending状态做特殊处理，需开启vtimer中断status状态模拟。
+- vtimer中断status状态模拟特性需要Guest OS支持。
 
 ### 应用场景<a name="ZH-CN_TOPIC_0000002105901594"></a>
 
@@ -54,7 +54,7 @@ vtimer中断透传特性允许虚拟机的timer中断直接注入，免去中断
 |项目|版本|获取方法|
 |--|--|--|
 |Host OS|openEuler 24.03 LTS SP4及以上版本|[获取链接](https://www.openeuler.openatom.cn/zh/download/?archive=true)|
-|Guest OS|openEuler 24.03 LTS SP4及以上版本（开启vtimer status状态模拟时需要）|[获取链接](https://www.openeuler.openatom.cn/zh/download/?archive=true)|
+|Guest OS|openEuler 24.03 LTS SP4及以上版本（开启vtimer中断status状态模拟时需要）|[获取链接](https://www.openeuler.openatom.cn/zh/download/?archive=true)|
 |libvirt|9.10.0及以上均可|yum install libvirt|
 |QEMU|8.2.0及以上均可|yum install qemu|
 
@@ -74,12 +74,12 @@ vtimer中断透传特性允许虚拟机的timer中断直接注入，免去中断
     reboot
     ```
 
-#### 使能vtimer status状态模拟<a name="section_vtimer_status_enable"></a>
+#### 使能vtimer中断status状态模拟<a name="section_vtimer_status_enable"></a>
 
 >![](public_sys-resources/icon-notice.gif) **须知：**
->vtimer status状态模拟特性需要Guest OS支持。请在确认Guest OS支持该特性后再进行以下配置。
+>vtimer中断status状态模拟特性需要Guest OS支持。请在确认Guest OS支持该特性后再进行以下配置。
 
-若虚拟机内部依赖timer的active、pending状态做特殊处理，需要在虚拟机libvirt XML配置文件中添加如下配置：
+若虚拟机内部依赖timer中断的active、pending状态做特殊处理，需要在虚拟机libvirt XML配置文件中添加如下配置：
 
 ```xml
 <features>
@@ -105,9 +105,9 @@ cat /sys/module/kvm_arm/parameters/vtimer_irqbypass
 
 若回显为1，说明vtimer中断透传特性已使能。
 
-#### 验证vtimer status状态模拟
+#### 验证vtimer中断status状态模拟
 
-在虚拟机内部执行如下命令，确认vtimer status状态模拟特性是否生效：
+在虚拟机内部执行如下命令，确认vtimer中断status状态模拟特性是否生效：
 
 ```shell
 dmesg | grep vtimer
