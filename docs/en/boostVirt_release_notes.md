@@ -1,76 +1,174 @@
-# BoostVirt Release Notes
+# 版本说明书
+
+## 2026-06-30
+
+### 修改记录
+
+| 文档版本 | 发布日期       | 修改说明                                                                                                                                 |
+| ---- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| 01   | 2026-06-30 |- 首次发布鲲鹏混部调优插件，重构K8s MPAM插件，支持MPAM访存隔离和控制功能，新增SMT Qos接口。<br>- 首次针对鲲鹏服务器内存减配虚拟化场景发布性能优化解决方案，通过支持ZRAM压缩内存、大页内存回收和冷热页交换实现内存超分时性能下降小于15%。<br>- 首次发布大规格虚拟机IPI时延优化特性，通过优化SGI分发路径和虚拟机缓存，从而降低大规格虚拟机的IPI时延，提高虚拟机多核通信性能。<br>- 首次针对AI沙箱方案Kata和E2B发布鲲鹏适配指导，支持在鲲鹏服务器上进行kata和E2B的沙箱部署。 |
+
+### 版本配套说明
+
+#### 产品版本信息
+
+| 产品名称      | 产品版本     |
+| --------- | -------- |
+| BoostVirt | 26.1.RC1 |
+
+#### 软件版本配套说明
+
+| 特性名称          | 软件类型          | 版本                                      |
+| ------------- | ------------- | ----------------------------------------- |
+| 鲲鹏在离线混部插件      | - OS <br>- Kubernates <br>- Containerd           | - openEuler 24.03 LTS SP4 <br>- 1.28.X <br>- 1.7.X                    |
+| 大页内存减配优化   | - OS<br>- libvirt<br>- QEMU | - openEuler 24.03 LTS SP3 (OLK 6.6内核)<br>- 9.10.0 <br>- 8.2.0 |
+| 大规格虚拟机IPI时延优化 | - OS<br>- libvirt<br>- QEMU | - openEuler 24.03 LTS SP3 (OLK 6.6内核6.6.0-135)<br>- 9.10.0 <br>- 8.2.0 |
+| 多ITS负载均衡    | - OS<br>- libvirt<br>- QEMU<br>- BIOS | - openEuler 24.03 LTS SP3 (OLK 6.6内核6.6.0-133)<br>- 9.10.0 <br>- 8.2.0<br> - 10.79 |
+
+#### 硬件版本配套说明
+
+| 特性名称          | 硬件项目          | 要求说明                                      |
+| ------------- | ------------- | ----------------------------------------- |
+| 鲲鹏在离线混部插件      | 处理器           | - 鲲鹏920系列处理器<br>- 鲲鹏950处理器                    |
+| 大页内存减配优化   | 处理器 | 鲲鹏920新型号处理器<br> |
+| 大规格虚拟机IPI时延优化 | 处理器           | - 鲲鹏920系列处理器<br>- 鲲鹏950处理器                             |
+| 多ITS负载均衡    | 处理器           | 鲲鹏950处理器                    |
+
+#### 病毒扫描结果
+
+不涉及软件包发布，不涉及病毒扫描。
+
+### 版本使用注意事项
+
+无
+
+### 版本说明
+
+#### 更新说明
+
+##### 鲲鹏在离线混部插件
+
+**新增功能：**
+
+- 重构MPAM插件，兼容MPAM插件的访存隔离和控制功能。
+- 新增SMT Qos接口，配置使能后能通过xint中断向离线业务插入空闲指令，向在线业务让出流水线资源，降低离线业务对在线业务的干扰率。
+
+##### 大页内存减配优化
+
+首次发布大页内存减配优化特性，利用ZRAM模块对虚拟机冷页内存进行压缩存储，并结合KAE硬件加速技术提升压缩效率，同时解决大页内存不支持swap的问题，实现内存资源的高效利用，从而在有限物理内存下部署更多虚拟机。
+
+##### 大规格虚拟机IPI时延优化
+
+首次发布大规格虚拟机IPI时延优化特性
+
+- 在VM首次运行时预计算MPIDR到vCPU索引的压缩映射表（kvm_mpidr_data），将SGI分发路径从O(n)遍历优化为O(1)直接查找，显著降低SGI投递延迟
+- 通过设置虚拟机缓存信息，向虚拟机中透传详细缓存信息，使得虚拟机OS内核能够正确识别CCL级别调度域，改善内核调度效率。
+
+##### 多ITS负载均衡
+
+首次发布多ITS负载均衡特性，在支持多个ITS的服务器平台上，物理PCI设备PF下创建的虚拟PCI设备VF默认通常沿用IORT/PCI的设备中断域解析路径。该默认路径迫使VF设备只能选择与PF设备相同的ITS，当PF设备所使用的ITS压力过大时，会导致VF设备性能受到影响。该特性通过允许PF配置ITS设备并支持VF使用，从而内核可以根据PF使用的ITS设备、平台拓扑规则以及芯片能力白名单确定VF使用的ITS设备，实现ITS的负载均衡。
+
+#### 已解决的问题
+
+无
+
+#### 遗留问题
+
+无
+
+### 版本配套文档
+
+|文档名称|内容简介|交付形式|
+|--|--|--|
+|《在离线混部插件 用户指南》|本文档提供在离线混部插件的编译、部署及使用指导。|开源仓|
+|《虚拟机大页内存减配优化 特性指南》|本文档介绍如何在鲲鹏服务器中部署和使用虚拟机大页内存减配优化特性。|开源仓|
+|《SGI注入亲和性优化 用户指南》<br> 《虚拟机缓存信息配置 用户指南》|本文档提供大规格虚拟机IPI时延优化解决方案的两个核心技术的环境要求和特性使能指导。|开源仓|
+|《VF设备选择ITS 用户指南》|本文档提供多ITS负载均衡特性的环境要求、特性使能指导。|开源仓|
+|《E2B部署指南》|本文档提供鲲鹏服务器上的E2B沙箱部署指导。|开源仓|
+|《Kata部署指南》|本文档提供鲲鹏服务器上的Kata沙箱部署指导。|开源仓|
 
 ## 2026-03-30
 
-### Change History
+### 修改记录
 
-| Issue| Release Date      | Description                                                                                                                                |
+| 文档版本 | 发布日期       | 修改说明                                                                                                                                 |
 | ---- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| 01   | 2026-03-30 | Added the NRI mode and a cluster affinity policy to the Kunpeng Topology Affinity Plugin (Kunpeng TAP).<br>Released the KAE-enabled Envoy feature to improve the gateway encryption and decryption performance.<br>Released the solution to handling single-core and single-page exceptions in VM scenarios.<br>Released the GICv4.1 overcommitment optimization solution to improve VM service performance in GICv4.1 overcommitment scenarios.|
+| 01   | 2026-03-30 |- 鲲鹏拓扑亲和插件KP-TAP新增支持NRI模式和Cluster亲和策略。<br>- 首次发布Envoy使能KAE特性，提高网关加解密性能。<br>- 首次发布鲲鹏虚拟机单核单页异常处理方案。<br>- 首次发布GICv4.1超分性能优化方案，提高GICv4.1超分场景虚拟机内业务性能。 |
 
-### Version Requirements
+### 版本配套说明
 
-#### Product Version
+#### 产品版本信息
 
-| Product Name     | Version     |
+| 产品名称      | 产品版本     |
 | --------- | -------- |
 | BoostVirt | 26.0.RC1 |
 
-#### Software Versions
+#### 软件版本配套说明
 
-| Feature         | Software Type                                                             | Version                                                                                                                                 |
+| 特性名称          | 软件类型                                                              | 版本                                                                                                                                  |
 | ------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| Kunpeng TAP     | OS<br>Golang<br>Kubernetes<br>Docker<br>containerd<br>Kunpeng TAP | openEuler 20.03 LTS SP3/openEuler 22.03 LTS SP4/openEuler 24.03 LTS SP3<br>1.25<br>1.23.6/1.25.16<br>1.6.8/1.7.0<br>release-0.3 |
-| KAE-enabled Envoy   | OS <br>Docker <br>KAE                                             | openEuler 24.03 LTS SP2 <br>20.10.13 or later, with the Docker Compose function supported<br>2.0                                                                 |
-| VM single-core and single-page exception handling  | OS<br>libvirt<br>QEMU<br>Nginx<br>wrk                            | openEuler 24.03 LTS SP3<br>9.10.0-26.oe2403sp3 or later<br>8.2.0<br>1.24.0<br>4.2.0                                                     |
-| GICv4.1 overcommitment optimization| OS<br>Kernel<br>libvirt<br>QEMU                                   | openEuler 24.03 LTS SP3<br>OLK 6.6<br>9.10.0<br>8.2.0                                                                               |
+| 鲲鹏拓扑亲和插件      | - OS<br>- Golang<br>- Kubernetes<br>- Docker<br>- Containerd<br>- Kunpeng TAP | - openEuler 20.03 LTS SP3 / openEuler 22.03 LTS SP4 / openEuler 24.03 LTS SP3<br>- 1.25<br>- 1.23.6 / 1.25.16<br>- 20.10.14<br>- 1.6.8 / 1.7.0<br>- release-0.3 |
+| Envoy使能KAE    | - OS <br>- Docker <br>- KAE                                             | - openEuler 24.03 LTS SP2 <br>- 不低于20.10.13，且需支持Docker Compose功能<br>- 2.0                                                                 |
+| 虚拟机单核单页异常处理   | - OS<br>- libvirt<br>- QEMU<br>- Nginx<br>- Wrk                             | - openEuler 24.03 LTS SP3<br>- 9.10.0-26.oe2403sp3及以上版本<br>- 8.2.0<br>- 1.24.0<br>- 4.2.0                                                     |
+| GICv4.1超分性能优化 | - OS<br>- kernel<br>- libvirt<br>- QEMU                                   | - openEuler 24.03 LTS SP3<br>- OLK 6.6<br>- 9.10.0<br>- 8.2.0                                                                               |
 
-#### Hardware Versions
+#### 硬件版本配套说明
 
-| Feature         | Item         | Description                                     |
+| 特性名称          | 硬件项目          | 要求说明                                      |
 | ------------- | ------------- | ----------------------------------------- |
-| Kunpeng TAP     | Processor          | Kunpeng 920 series<br>Kunpeng 950                   |
-| KAE-enabled Envoy   | Processor          | Kunpeng 920 series<br>Kunpeng 950                   |
-| VM single-core and single-page exception handling  | Processor<br><br>Firmware| New Kunpeng 920 processor model<br>Kunpeng 950<br>Basic computing unit (BCU) CPLD: later than 7.0.0|
-| GICv4.1 overcommitment optimization| Processor          | New Kunpeng 920 processor model                              |
+| 鲲鹏拓扑亲和插件      | 处理器           | - 鲲鹏920系列处理器<br>- 鲲鹏950处理器                    |
+| Envoy使能KAE    | 处理器           | - 鲲鹏920系列处理器<br>- 鲲鹏950处理器                    |
+| 虚拟机单核单页异常处理   | - 处理器<br>- 固件 | - 鲲鹏920新型号处理器<br>- 鲲鹏950处理器<br>- 基础板CPLD大于7.0.0 |
+| GICv4.1超分性能优化 | 处理器           | 鲲鹏920新型号处理器                               |
 
-#### Virus Scan Results
+#### 病毒扫描结果
 
-Virus scanning is not involved because no software package is released.
+不涉及软件包发布，不涉及病毒扫描。
 
-### Important Notes
+### 版本使用注意事项
 
-None
+无
 
-### Release Notes
+### 版本说明
 
-#### Change Description
+#### 更新说明
 
-##### Kunpeng TAP
+##### 鲲鹏拓扑亲和插件
 
-**New functions:**
+**新增功能：**
 
-- Added a new cluster affinity policy. The cluster affinity policy is implemented by extending the existing topology-aware framework. It introduces cluster-level topology awareness to achieve topology-based container resource allocation. In addition, the Kunpeng processor model can be detected to automatically select the optimal affinity policy.
-- Added the NRI mode. Kunpeng TAP can seamlessly integrate with containerd v1.7.0 or later through the standard NRI interface. This mode replaces the conventional proxy mode and eliminates the need to modify container runtime configurations.
+- 支持新的Cluster亲和策略。Cluster 亲和策略通过扩展现有的 topology-aware 框架实现，在资源分配决策中引入 Cluster 粒度的拓扑感知，基于拓扑进行容器资源的分配。并能够检测鲲鹏处理器型号，根据处理器型号自动选择亲和策略。
+- 新增NRI模式部署，通过 NRI 标准接口与 containerd ≥ v1.7.0 无缝集成，替代传统的代理模式，无需修改容器运行时配置。
 
-##### KAE-enabled Envoy
+##### Envoy使能KAE
 
-Released the KAE-enabled Envoy feature in Kunpeng cloud native scenarios. This feature introduces a KAE private key provider to offload time-consuming encryption and decryption operations from the CPU to KAE. This accelerates encryption and decryption while releasing CPU computing power for other service workloads.
+首次发布鲲鹏云原生场景Envoy使能KAE特性，通过在Envoy中新增Kae Private Key Provider，将耗时的加密运算从CPU卸载到鲲鹏KAE加速器上，在加速加解密的同时也为其他业务负载释放CPU算力。
 
-##### VM single-core and single-page exception handling
+##### 虚拟机单核单页异常处理
 
-Released the VM single-core and single-page exception handling feature. With this feature enabled, single-core corrected errors (CEs) can be isolated online on Kunpeng servers without affecting service running; uncorrected errors (UEs) in a single page of memory affect only one process in a VM, preventing the VM from going offline.
+首次发布鲲鹏虚拟机单核单页异常处理特性，可以在鲲鹏系列服务器上实现单核CE（Corrected Error）故障在线隔离，不影响业务的运行；单页内存UE（Uncorrected Error）故障只影响虚拟机内一个进程，避免虚拟机直接下线。
 
-##### GICv4.1 overcommitment optimization
+##### GICv4.1超分性能优化
 
-Released the GICv4.1 overcommitment optimization feature for VM scenarios. This solution allows the GIC to skip VMOVP instructions when vCPUs are migrated between CPUs that share the same virtual processing element (vPE) table, thus improving VM service performance in overcommitment scenarios.
+首次发布鲲鹏虚拟机GICv4.1超分性能优化特性，通过支持vCPU在共享同一个vpe表的CPU间迁移的时候可以跳过VMOVP指令，从而提高超分场景下的虚拟机业务性能。
 
-#### Resolved Issues
+#### 已解决的问题
 
-None
+无
 
-#### Known Issues
+#### 遗留问题
 
-None
+无
 
-### Related Documentation
+### 版本配套文档
+
+|文档名称|内容简介|交付形式|
+|--|--|--|
+|《鲲鹏拓扑亲和插件 用户指南》|本文档提供K8s拓扑亲和插件的编译、部署及使用指导。|开源仓|
+|《Envoy使能KAE 用户指南》|本文档提供Envoy使能KAE设备的操作指导。|开源仓|
+|《虚拟机单核单页异常处理 特性指南》|本文档提供虚拟机单核单页异常处理特性的环境要求、特性使能指导。|开源仓|
+|《GICv4.1超分性能优化 特性指南》|本文档提供GIC超分优化特性的环境要求、特性使能指导。|开源仓|
+
+### 获取文档的方法<a name="ZH-CN_TOPIC_0000002544372643"></a>
+
+您可以通过访问[开源仓](https://gitcode.com/boostkit/boostvirt/tree/master/docs/zh)浏览和获取相关文档。
