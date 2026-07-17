@@ -89,7 +89,7 @@ None
 
 ## 2026-03-30
 
-### Change History
+### 修改记录
 
 | Version| Date      | Description                                                                                                                                |
 | ---- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------ |
@@ -121,44 +121,44 @@ None
 | VM single-core and single-page exception handling  | - Processor<br>- Firmware| - New Kunpeng 920 processor model<br>- Kunpeng 950<br>- Basic computing unit (BCU) CPLD: later than 7.0.0|
 | GICv4.1 overcommitment optimization| Processor          | New Kunpeng 920 processor model                              |
 
-#### Virus Scan Results
+#### 病毒扫描结果
 
-Virus scanning is not involved because no software package is released.
+不涉及软件包发布，不涉及病毒扫描。
 
-### Important Notes
+### 版本使用注意事项
 
-None
+无
 
-### Release Notes
+### 版本说明
 
-#### Change Description
+#### 更新说明
 
-##### Kunpeng TAP
+##### 鲲鹏拓扑亲和插件
 
-**New functions:**
+**新增功能：**
 
 - A new cluster affinity policy is added. The cluster affinity policy is implemented by extending the existing topology-aware framework. It introduces cluster-level topology awareness to achieve topology-based container resource allocation. In addition, the Kunpeng processor model can be detected to automatically select the optimal affinity policy.
 - The NRI mode is added. Kunpeng TAP can seamlessly integrate with containerd v1.7.0 or later through the standard NRI interface. This mode replaces the conventional proxy mode and eliminates the need to modify container runtime configurations.
 
-##### KAE-enabled Envoy
+##### Envoy使能KAE
 
 The KAE-enabled Envoy feature in Kunpeng cloud native scenarios is released. This feature introduces a KAE private key provider to offload time-consuming encryption and decryption operations from the CPU to KAE. This accelerates encryption and decryption while releasing CPU computing power for other service workloads.
 
-##### VM single-core and single-page exception handling
+##### 虚拟机单核单页异常处理
 
 The VM single-core and single-page exception handling feature is released. With this feature enabled, single-core corrected errors (CEs) can be isolated online on Kunpeng servers without affecting service running; uncorrected errors (UEs) in a single page of memory affect only one process in a VM, preventing the VM from going offline.
 
-##### GICv4.1 overcommitment optimization
+##### GICv4.1超分性能优化
 
 The GICv4.1 overcommitment optimization feature for Kunpeng VM scenarios is released. This solution allows the GIC to skip VMOVP instructions when vCPUs are migrated between CPUs that share the same virtual processing element (vPE) table, thus improving VM service performance in overcommitment scenarios.
 
-#### Resolved Issues
+#### 已解决的问题
 
-None
+无
 
-#### Known Issues
+#### 遗留问题
 
-None
+无
 
 ### Related Documentation
 
