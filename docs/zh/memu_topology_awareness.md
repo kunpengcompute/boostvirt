@@ -6,3 +6,4 @@
 - [虚拟机死锁检测 特性指南](./deadlock_detection_feature_guide.md)<br>
 - [虚拟化场景拓扑感知 特性指南](./virtualization_scenario_topology_awareness_feature_guide.md)
 - [虚拟机缓存信息配置 用户指南](https://gitcode.com/boostkit/cloud-virtual/blob/master/docs/zh/kunpeng_950_cacheinfo_configuration_user_guide.md)
+- [UBS virt-awaresched用户指南](https://gitcode.com/openeuler/ubs-virt/blob/master/docs/zh/virt_awaresched/virt_awaresched_user_guide.md)
