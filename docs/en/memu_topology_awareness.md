@@ -6,3 +6,4 @@
 - [Deadlock Detection Feature Guide](./deadlock_detection_feature_guide.md)<br>
 - [Virtualization Scenario Topology Awareness Feature Guide](./virtualization_scenario_topology_awareness_feature_guide.md)
 - [VM Cache Information Configuration User Guide](https://gitcode.com/boostkit/cloud-virtual/blob/master/docs/en/kunpeng_950_cacheinfo_configuration_user_guide.md)
+- [UBS Virt-awaresched User Guide](https://gitcode.com/openeuler/ubs-virt/blob/master/docs/en/virt_awaresched/virt_awaresched_user_guide.md)
