@@ -501,9 +501,9 @@ XML配置内容如下所示。
 
 **（可选）添加业务压力（Nginx任务）<a name="section163529918256"></a>**
 
-1. 在虚拟机中部署Nginx，部署流程请参见《vKAE 特性指南》的[在虚拟机部署Nginx](https://www.hikunpeng.com/document/detail/zh/kunpengcpfs/basicAccelFeatures/comAccel/kunpengvkae_20_016.html)章节。
-2. 在客户端部署HTTPress，部署流程请参见《vKAE 特性指南》的[在客户端部署HTTPress](https://www.hikunpeng.com/document/detail/zh/kunpengcpfs/basicAccelFeatures/comAccel/kunpengvkae_20_017.html)章节。
-3. 在客户端使用HTTPress对Nginx进行压测，操作流程请参见《vKAE 特性指南》的[在Nginx应用场景中使用HTTPress对vKAE进行性能测试](https://www.hikunpeng.com/document/detail/zh/kunpengcpfs/basicAccelFeatures/comAccel/kunpengvkae_20_020.html)章节。
+1. 在虚拟机中部署Nginx，部署流程请参见《vKAE 特性指南》的[在虚拟机部署Nginx](https://www.hikunpeng.com/document/detail/zh/boostvirt/virtioacc/hardwareaccelerator/docs/zh/vkae_feature_guide.md#%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%83%A8%E7%BD%B2nginx)章节。
+2. 在客户端部署HTTPress，部署流程请参见《vKAE 特性指南》的[在客户端部署HTTPress](https://www.hikunpeng.com/document/detail/zh/boostvirt/virtioacc/hardwareaccelerator/docs/zh/vkae_feature_guide.md#%E5%9C%A8%E5%AE%A2%E6%88%B7%E7%AB%AF%E9%83%A8%E7%BD%B2httpress)章节。
+3. 在客户端使用HTTPress对Nginx进行压测，操作流程请参见《vKAE 特性指南》的[在Nginx应用场景中使用HTTPress对vKAE进行性能测试](https://www.hikunpeng.com/document/detail/zh/boostvirt/virtioacc/hardwareaccelerator/docs/zh/vkae_feature_guide.md#%E5%9C%A8nginx%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%E4%B8%AD%E4%BD%BF%E7%94%A8httpress%E5%AF%B9vkae%E8%BF%9B%E8%A1%8C%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95)章节。
 
 **执行迁移测试<a name="section1344823416258"></a>**
 

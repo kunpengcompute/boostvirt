@@ -492,9 +492,9 @@ The performance test verifies whether VMs can be live migrated after vKAE passth
 
 **(Optional) Adding Service Pressure (Nginx Task)<a name="section163529918256"></a>**
 
-1. Deploy Nginx on the VM. For details, see section [Deploying Nginx on a VM](https://www.hikunpeng.com/document/detail/en/kunpengcpfs/basicAccelFeatures/comAccel/kunpengvkae_20_016.html) in the *vKAE Feature Guide*.
-2. Deploy httpress on the client. For details, see section [Deploying httpress on the Client](https://www.hikunpeng.com/document/detail/en/kunpengcpfs/basicAccelFeatures/comAccel/kunpengvkae_20_017.html) in the *vKAE Feature Guide*.
-3. On the client, use httpress to perform pressure tests on Nginx. For details, see [Testing the vKAE Performance Using httpress in the Nginx Application Scenario](https://www.hikunpeng.com/document/detail/en/kunpengcpfs/basicAccelFeatures/comAccel/kunpengvkae_20_020.html) in the *vKAE Feature Guide*.
+1. Deploy Nginx on the VM. For details, see section [Deploying Nginx on a VM](https://www.hikunpeng.com/document/detail/en/boostvirt/virtioacc/hardwareaccelerator/docs/en/vkae_feature_guide.md#deploying-nginx-on-a-vm) in the *vKAE Feature Guide*.
+2. Deploy httpress on the client. For details, see section [Deploying httpress on the Client](https://www.hikunpeng.com/document/detail/en/boostvirt/virtioacc/hardwareaccelerator/docs/en/vkae_feature_guide.md#deploying-httpress-on-the-client) in the *vKAE Feature Guide*.
+3. On the client, use httpress to perform pressure tests on Nginx. For details, see [Testing the vKAE Performance Using httpress in the Nginx Application Scenario](https://www.hikunpeng.com/document/detail/en/boostvirt/virtioacc/hardwareaccelerator/docs/en/vkae_feature_guide.md#testing-the-vkae-performance-using-httpress-in-the-nginx-application-scenario) in the *vKAE Feature Guide*.
 
 **Performing the Migration Test<a name="section1344823416258"></a>**
 
