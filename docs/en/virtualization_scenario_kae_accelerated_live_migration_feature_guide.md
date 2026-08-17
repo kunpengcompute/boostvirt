@@ -163,7 +163,7 @@ The KAE driver mentioned in this document is of the KAE 2.0 version. The source 
 >- The `root` account is required for KAE installation.
 >- Both `root` and non-`root` accounts can run KAE. A non-`root` account needs to obtain permissions for related devices (`/dev/hisi_*`) and files (`/var/log/kae.*`).
 >- The KAE driver must be installed on both the source and target physical hosts.
->- For details, see [KAE User Guide](https://www.hikunpeng.com/document/detail/en/kunpengaccel/kae/usermanual/kunpengaccel_16_0002.html).
+>- For details, see [KAE(Kunpeng Acceleration Engine)](https://www.hikunpeng.com/document/detail/en/kunpengaccel/kae/kae/README_EN.md).
 
 1. Download the KAE 2.0 source package from the [website](https://gitee.com/kunpengcompute/KAE/tree/kae2/) or use `git clone` to download it.
 

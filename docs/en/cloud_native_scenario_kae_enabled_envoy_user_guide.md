@@ -26,7 +26,7 @@ This document provides guidance based on specific environments. Before performin
 |--|--|--|
 |OS|openEuler 24.03 LTS SP2|[Link](https://www.openeuler.org/en/download/#openEuler%2024.03%20LTS%20SP2)|
 |Docker|20.10.13 or later, with the Docker Compose function supported|[Link](https://download.docker.com/linux/static/stable/aarch64/)|
-|KAE|2.0|[Link](https://www.hikunpeng.com/document/detail/en/kunpengaccel/kae/usermanual/kunpengaccel_06_0012.html)|
+|KAE|2.0|Download command: `git clone https://gitcode.com/boostkit/KAE.git -b kae2`|
 
 ## Compiling Envoy<a name="EN-US_TOPIC_0000002511738428"></a>
 

@@ -28,7 +28,7 @@ Envoy是一款专为现代云原生架构设计的高性能网络代理与通信
 |--|--|--|
 |OS|openEuler 24.03 LTS SP2|[获取链接](https://www.openeuler.org/en/download/#openEuler%2024.03%20LTS%20SP2)|
 |Docker|不低于20.10.13，且需支持Docker Compose功能|[获取链接](https://download.docker.com/linux/static/stable/aarch64/)|
-|KAE|2.0|[获取链接](https://www.hikunpeng.com/document/detail/zh/kunpengaccel/kae/usermanual/kunpengaccel_06_0012.html)|
+|KAE|2.0|下载命令：`git clone https://gitcode.com/boostkit/KAE.git -b kae2`|
 
 ## 获取Envoy<a name="ZH-CN_TOPIC_0000002511738428"></a>
 
