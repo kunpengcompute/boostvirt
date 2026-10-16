@@ -1,5 +1,164 @@
 # 版本说明书
 
+## 2026-09-30
+
+### 修改记录
+
+| 文档版本 | 发布日期       | 修改说明                                                                                                                                 |
+| ---- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| 01   | 2026-09-30 |- 首次发布鲲鹏容器性能指标监控插件（Kunpeng Perf Monitor），支持鲲鹏950处理器指标采集和可视化。<br> - 首次发布鲲鹏物理拓扑绑核插件（Kunpeng TAP Pcore Binding）首个版本，支持容器只绑物理核。<br> - 鲲鹏正式支持CubeSandbox沙箱部署并提供优化指南。|
+
+### 版本配套说明
+
+#### 产品版本信息
+
+| 产品名称      | 产品版本     |
+| --------- | -------- |
+| BoostVirt | 26.2.RC1 |
+
+#### 软件版本配套说明
+
+| 特性名称          | 软件类型          | 版本                                      |
+| ------------- | ------------- | ----------------------------------------- |
+| 鲲鹏性能指标监控插件      | - OS <br>- Kubernates <br>- Containerd <br> - Go <br> - docker <br> - kube-prometheus        | - openEuler 24.03 LTS SP3 <br>- 1.28.X <br>- 1.7.X <br> - 1.25.0 <br> - 18.09.0 <br> - release-0.16                 |
+| 鲲鹏物理拓扑绑核插件   | - OS <br> - Kubernates <br> - Containerd | - openEuler 24.03 LTS SP3 <br> - 1.34.7 <br>- 2.1.7 |
+| CubeSandbox 鲲鹏适配和优化用户指南 | - OS <br> - CubeSandbox | - openEuler 24.03 LTS SP3 6.6.0-145.3.34.165及以上内核 <br> - 0.5.1 |
+
+#### 硬件版本配套说明
+
+| 特性名称          | 硬件项目          | 要求说明                                      |
+| ------------- | ------------- | ----------------------------------------- |
+| 鲲鹏性能指标监控插件      | 处理器           | 鲲鹏950处理器                    |
+| 鲲鹏物理拓扑绑核插件   | 处理器 | 鲲鹏950处理器<br> |
+| CubeSandbox 鲲鹏适配和优化用户指南 | 处理器           | - 鲲鹏920新型号处理器<br>- 鲲鹏950处理器                             |
+
+#### 病毒扫描结果
+
+不涉及软件包发布，不涉及病毒扫描。
+
+### 版本使用注意事项
+
+无
+
+### 版本说明
+
+#### 更新说明
+
+##### 鲲鹏性能指标监控插件
+
+首次发布鲲鹏性能指标监控插件 Kunpeng-Perf-Monitor，该插件作为面向鲲鹏服务器的Prometheus Exporter，以DaemonSet方式部署在Kubernetes集群每个节点上，能够支持采集节点级的硬件与内核性能指标并支持配置接入Prometheus，实现相关指标的可视化检测。
+
+##### 鲲鹏物理拓扑绑核插件
+
+首次发布鲲鹏物理拓扑绑核插件，在鲲鹏拓扑亲和插件Kunpeng-TAP的基础上，针对Kata Pod提供更细粒度的物理核绑定能力，通过NRI接入containerd，将符合白名单条件的Pod的2个逻辑CPU收敛到同一个物理核心的SMT sibling pair。
+
+##### CubeSandbox 鲲鹏适配和优化用户指南
+
+鲲鹏首次发布CubeSandbox 鲲鹏适配和优化用户指南，正式支持CubeSandbox沙箱在鲲鹏服务器上部署并提供优化指导，实现沙箱极速启动
+
+#### 已解决的问题
+
+无
+
+#### 遗留问题
+
+无
+
+### 版本配套文档
+
+|文档名称|内容简介|交付形式|
+|--|--|--|
+|[《kunpeng-perf-monitor 用户指南》](https://gitcode.com/boostkit/cloud-native/blob/master/docs/zh/kunpeng_perf_monitor_devkit_collector_user_guide.md)|本文档介绍如何安装部署和使用鲲鹏性能指标监控插件。|开源仓|
+|[《Kunpeng-TAP Pcore Binding插件 用户指南》](https://gitcode.com/boostkit/cloud-native/blob/master/docs/zh/kunpeng_tap_pcore_binding_user_guide.md)|本文档提供鲲鹏物理拓扑绑核插件安装部署和使用指导。|开源仓|
+|[《CubeSandbox鲲鹏适配和优化 用户指南》](https://gitcode.com/boostkit/cloud-native/blob/master/docs/zh/cubesandbox_deployment_user_guide.md)|本文档提供鲲鹏服务器上的CubeSandbox沙箱部署指导。|开源仓|
+
+## 2026-06-30
+
+### 修改记录
+
+| 文档版本 | 发布日期       | 修改说明                                                                                                                                 |
+| ---- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| 01   | 2026-06-30 |- 首次发布鲲鹏混部调优插件，重构K8s MPAM插件，支持MPAM访存隔离和控制功能，新增SMT Qos接口。<br>- 首次针对鲲鹏服务器内存减配虚拟化场景发布性能优化解决方案，通过支持ZRAM压缩内存、大页内存回收和冷热页交换实现内存超分时性能下降小于15%。<br>- 首次发布大规格虚拟机IPI时延优化特性，通过优化SGI分发路径和虚拟机缓存，从而降低大规格虚拟机的IPI时延，提高虚拟机多核通信性能。<br>- 首次针对AI沙箱方案Kata和E2B发布鲲鹏适配指导，支持在鲲鹏服务器上进行kata和E2B的沙箱部署。 |
+
+### 版本配套说明
+
+#### 产品版本信息
+
+| 产品名称      | 产品版本     |
+| --------- | -------- |
+| BoostVirt | 26.1.RC1 |
+
+#### 软件版本配套说明
+
+| 特性名称          | 软件类型          | 版本                                      |
+| ------------- | ------------- | ----------------------------------------- |
+| 鲲鹏在离线混部插件      | - OS <br>- Kubernates <br>- Containerd           | - openEuler 24.03 LTS SP4 <br>- 1.28.X <br>- 1.7.X                    |
+| 大页内存减配优化   | - OS<br>- libvirt<br>- QEMU | - openEuler 24.03 LTS SP3 (OLK 6.6内核)<br>- 9.10.0 <br>- 8.2.0 |
+| 大规格虚拟机IPI时延优化 | - OS<br>- libvirt<br>- QEMU | - openEuler 24.03 LTS SP3 (OLK 6.6内核6.6.0-135)<br>- 9.10.0 <br>- 8.2.0 |
+| 多ITS负载均衡    | - OS<br>- libvirt<br>- QEMU<br>- BIOS | - openEuler 24.03 LTS SP3 (OLK 6.6内核6.6.0-133)<br>- 9.10.0 <br>- 8.2.0<br> - 10.79 |
+
+#### 硬件版本配套说明
+
+| 特性名称          | 硬件项目          | 要求说明                                      |
+| ------------- | ------------- | ----------------------------------------- |
+| 鲲鹏在离线混部插件      | 处理器           | - 鲲鹏920系列处理器<br>- 鲲鹏950处理器                    |
+| 大页内存减配优化   | 处理器 | 鲲鹏920新型号处理器<br> |
+| 大规格虚拟机IPI时延优化 | 处理器           | - 鲲鹏920系列处理器<br>- 鲲鹏950处理器                             |
+| 多ITS负载均衡    | 处理器           | 鲲鹏950处理器                    |
+
+#### 病毒扫描结果
+
+不涉及软件包发布，不涉及病毒扫描。
+
+### 版本使用注意事项
+
+无
+
+### 版本说明
+
+#### 更新说明
+
+##### 鲲鹏在离线混部插件
+
+**新增功能：**
+
+- 重构MPAM插件，兼容MPAM插件的访存隔离和控制功能。
+- 新增SMT Qos接口，配置使能后能通过xint中断向离线业务插入空闲指令，向在线业务让出流水线资源，降低离线业务对在线业务的干扰率。
+
+##### 大页内存减配优化
+
+首次发布大页内存减配优化特性，利用ZRAM模块对虚拟机冷页内存进行压缩存储，并结合KAE硬件加速技术提升压缩效率，同时解决大页内存不支持swap的问题，实现内存资源的高效利用，从而在有限物理内存下部署更多虚拟机。
+
+##### 大规格虚拟机IPI时延优化
+
+首次发布大规格虚拟机IPI时延优化特性
+
+- 在VM首次运行时预计算MPIDR到vCPU索引的压缩映射表（kvm_mpidr_data），将SGI分发路径从O(n)遍历优化为O(1)直接查找，显著降低SGI投递延迟
+- 通过设置虚拟机缓存信息，向虚拟机中透传详细缓存信息，使得虚拟机OS内核能够正确识别CCL级别调度域，改善内核调度效率。
+
+##### 多ITS负载均衡
+
+首次发布多ITS负载均衡特性，在支持多个ITS的服务器平台上，物理PCI设备PF下创建的虚拟PCI设备VF默认通常沿用IORT/PCI的设备中断域解析路径。该默认路径迫使VF设备只能选择与PF设备相同的ITS，当PF设备所使用的ITS压力过大时，会导致VF设备性能受到影响。该特性通过允许PF配置ITS设备并支持VF使用，从而内核可以根据PF使用的ITS设备、平台拓扑规则以及芯片能力白名单确定VF使用的ITS设备，实现ITS的负载均衡。
+
+#### 已解决的问题
+
+无
+
+#### 遗留问题
+
+无
+
+### 版本配套文档
+
+|文档名称|内容简介|交付形式|
+|--|--|--|
+|[《在离线混部插件 用户指南》](https://gitcode.com/boostkit/cloud-native/blob/master/docs/zh/cloud_native_scenario_kunpeng_qos_controller_user_guide.md)|本文档提供在离线混部插件的编译、部署及使用指导。|开源仓|
+|[《虚拟机大页内存减配优化 特性指南》](https://gitcode.com/boostkit/cloud-virtual/blob/master/docs/zh/optimization_guide_for_reducing_VM_memory_configurations.md)|本文档介绍如何在鲲鹏服务器中部署和使用虚拟机大页内存减配优化特性。|开源仓|
+|《SGI注入亲和性优化 用户指南》<br> 《虚拟机缓存信息配置 用户指南》|本文档提供大规格虚拟机IPI时延优化解决方案的两个核心技术的环境要求和特性使能指导。|[开源仓](https://gitcode.com/boostkit/cloud-virtual/blob/master/docs/zh/kunpeng_950_optimize_sgi_injection_user_guide.md)|
+|[《VF设备选择ITS 用户指南》](https://gitcode.com/boostkit/cloud-virtual/blob/master/docs/zh/kunpeng_950_vf_its_usage_gude.md)|本文档提供多ITS负载均衡特性的环境要求、特性使能指导。|开源仓|
+|[《E2B部署指南》](https://gitcode.com/boostkit/cloud-native/blob/master/docs/zh/E2B_user_guide.md)|本文档提供鲲鹏服务器上的E2B沙箱部署指导。|开源仓|
+|[《Kata部署指南》](https://gitcode.com/boostkit/cloud-native/blob/master/docs/zh/Kata_user_guide.md)|本文档提供鲲鹏服务器上的Kata沙箱部署指导。|开源仓|
+
 ## 2026-03-30
 
 ### 修改记录
@@ -20,7 +179,7 @@
 
 | 特性名称          | 软件类型                                                              | 版本                                                                                                                                  |
 | ------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| 鲲鹏拓扑亲和插件      | - OS<br>- Golang<br>- Kubernetes<br>- Docker<br>- Containerd<br>- Kunpeng TAP | - openEuler 20.03 LTS SP3 / openEuler 22.03 LTS SP4 / openEuler 24.03 SP3<br>- 1.25<br>- 1.23.6 / 1.25.16<br>- 1.6.8 / 1.7.0<br>- release-0.3 |
+| 鲲鹏拓扑亲和插件      | - OS<br>- Golang<br>- Kubernetes<br>- Docker<br>- Containerd<br>- Kunpeng TAP | - openEuler 20.03 LTS SP3 / openEuler 22.03 LTS SP4 / openEuler 24.03 LTS SP3<br>- 1.25<br>- 1.23.6 / 1.25.16<br>- 20.10.14<br>- 1.6.8 / 1.7.0<br>- release-0.3 |
 | Envoy使能KAE    | - OS <br>- Docker <br>- KAE                                             | - openEuler 24.03 LTS SP2 <br>- 不低于20.10.13，且需支持Docker Compose功能<br>- 2.0                                                                 |
 | 虚拟机单核单页异常处理   | - OS<br>- libvirt<br>- QEMU<br>- Nginx<br>- Wrk                             | - openEuler 24.03 LTS SP3<br>- 9.10.0-26.oe2403sp3及以上版本<br>- 8.2.0<br>- 1.24.0<br>- 4.2.0                                                     |
 | GICv4.1超分性能优化 | - OS<br>- kernel<br>- libvirt<br>- QEMU                                   | - openEuler 24.03 LTS SP3<br>- OLK 6.6<br>- 9.10.0<br>- 8.2.0                                                                               |
@@ -77,10 +236,10 @@
 
 |文档名称|内容简介|交付形式|
 |--|--|--|
-|《鲲鹏拓扑亲和插件 用户指南》|本文档提供K8s拓扑亲和插件的编译、部署及使用指导。|开源仓|
-|《Envoy使能KAE 用户指南》|本文档提供Envoy使能KAE设备的操作指导。|开源仓|
-|《虚拟机单核单页异常处理 特性指南》|本文档提供虚拟机单核单页异常处理特性的环境要求、特性使能指导。|开源仓|
-|《GICv4.1超分性能优化 特性指南》|本文档提供GIC超分优化特性的环境要求、特性使能指导。|开源仓|
+|[《鲲鹏拓扑亲和插件 用户指南》](https://gitcode.com/boostkit/cloud-native/blob/master/docs/zh/kubernetes_topology_affinity_plugin_user_guide.md)|本文档提供K8s拓扑亲和插件的编译、部署及使用指导。|开源仓|
+|[《Envoy使能KAE 用户指南》](https://gitcode.com/boostkit/boostvirt/blob/master/docs/zh/cloud_native_scenario_kae_enabled_envoy_user_guide.md)|本文档提供Envoy使能KAE设备的操作指导。|开源仓|
+|[《虚拟机单核单页异常处理 特性指南》](https://gitcode.com/boostkit/boostvirt/blob/master/docs/zh/vm_single-core_and_single-page_exception_handling_feature_guide.md)|本文档提供虚拟机单核单页异常处理特性的环境要求、特性使能指导。|开源仓|
+|[《GICv4.1超分性能优化 特性指南》](https://gitcode.com/boostkit/boostvirt/blob/master/docs/zh/kunpeng_virtualization_gicv4.1_oversubscription_optimization_features_guide.md)|本文档提供GIC超分优化特性的环境要求、特性使能指导。|开源仓|
 
 ### 获取文档的方法<a name="ZH-CN_TOPIC_0000002544372643"></a>
 
