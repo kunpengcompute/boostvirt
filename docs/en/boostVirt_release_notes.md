@@ -1,18 +1,92 @@
 # Release Notes
 
+<!-- md-trans-meta sourceCommit=018b81addca2fcd991de9b1f328f6c98174d7aa1 translatedAt=2026-10-16T07:10:21.087Z pushedAt=2026-10-19T03:10:07.622Z -->
+
+## 2026-09-30
+
+### Change History
+
+| Version | Date       | Description                                                                                                                                 |
+| ---- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| 01   | 2026-09-30 |- Released the kunpeng-perf-monitor plugin, which supports metric collection and visualization on Kunpeng 950 processors.<br> - Released the Kunpeng-TAP Pcore Binding plugin, which supports containers binding only to physical cores.<br> - Added official support for CubeSandbox deployment on Kunpeng and provided tuning guidance.|
+
+### Version Mapping
+
+#### Product Version Information
+
+| Product Name      | Version     |
+| --------- | -------- |
+| BoostVirt | 26.2.RC1 |
+
+#### Software Version Mapping
+
+| Feature          | Software Type          | Version                                      |
+| ------------- | ------------- | ----------------------------------------- |
+| kunpeng-perf-monitor plugin      | - OS <br>- Kubernetes <br>- containerd <br> - Go <br> - Docker <br> - kube-prometheus        | - openEuler 24.03 LTS SP3 <br>- 1.28.*X* <br>- 1.7.*X* <br> - 1.25.0 <br> - 18.09.0 <br> - release-0.16                 |
+| Kunpeng-TAP Pcore Binding plugin   | - OS <br> - Kubernetes <br> - containerd | - openEuler 24.03 LTS SP3 <br> - 1.34.7 <br>- 2.1.7 |
+| User Guide for CubeSandbox Adaptation and Optimization on Kunpeng | - OS <br> - CubeSandbox | - openEuler 24.03 LTS SP3 (kernel 6.6.0-145.3.34.165 or later) <br> - 0.5.1 |
+
+#### Hardware Version Mapping
+
+| Feature          | Item          | Requirement                                      |
+| ------------- | ------------- | ----------------------------------------- |
+| kunpeng-perf-monitor plugin      | Processor           | Kunpeng 950 processor                    |
+| Kunpeng-TAP Pcore Binding plugin   | Processor | Kunpeng 950 processor<br> |
+| User Guide for CubeSandbox Adaptation and Optimization on Kunpeng | Processor           | - New Kunpeng 920 processor model<br>- Kunpeng 950 processor                             |
+
+#### Virus Scan Results
+
+Virus scanning is not involved because no software package is released.
+
+### Important Notes
+
+None
+
+### Release Notes
+
+#### Change Description
+
+##### kunpeng-perf-monitor Plugin
+
+The kunpeng-perf-monitor plugin is released for the first time. It is a Prometheus Exporter for Kunpeng servers. This plugin is deployed in DaemonSet mode on each node in a Kubernetes cluster. It supports the collection of node-level hardware and kernel performance metrics and can be connected to Prometheus through configuration to implement visualized monitoring of related metrics.
+
+##### Kunpeng-TAP Pcore Binding Plugin
+
+The Kunpeng-TAP Pcore Binding plugin is released for the first time. Built on the Kunpeng-TAP, this plugin provides finer-grained physical core binding for Kata Pods. It connects to containerd through the NRI, and consolidates the two logical CPUs of each Pod that meets the trustlist conditions onto the SMT sibling pair of a single physical core.
+
+##### User Guide for CubeSandbox Adaptation and Optimization on Kunpeng
+
+The *User Guide for CubeSandbox Adaptation and Optimization on Kunpeng* is released for the first time, which marks the official support for CubeSandbox deployment on Kunpeng servers and provides tuning guidance to achieve ultra-fast sandbox startup.
+
+#### Resolved Issues
+
+None
+
+#### Known Issues
+
+None
+
+### Related Documentation
+
+|Document|Description|Delivery Method|
+|--|--|--|
+|[*kunpeng-perf-monitor User Guide*](https://gitcode.com/boostkit/cloud-native/blob/master/docs/en/kunpeng_perf_monitor_devkit_collector_user_guide.md)|Describes how to install, deploy, and use the kunpeng-perf-monitor plugin.|Open-source repository|
+|[*Kunpeng-TAP Pcore Binding Plugin User Guide*](https://gitcode.com/boostkit/cloud-native/blob/master/docs/en/kunpeng_tap_pcore_binding_user_guide.md)|Describes how to install, deploy, and use the Kunpeng-TAP Pcore Binding plugin.|Open-source repository|
+|[*User Guide for CubeSandbox Adaptation and Optimization on Kunpeng*](https://gitcode.com/boostkit/cloud-native/blob/master/docs/en/cubesandbox_deployment_user_guide.md)|Provides guidance on how to deploy CubeSandbox on Kunpeng servers.|Open-source repository|
+
 ## 2026-06-30
 
 ### Change History
 
 | Version| Date      | Description                                                                                                                                |
 | ---- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| 01   | 2026-06-30 |- Released Kunpeng QoS Controller developed through the reconstruction of the Kubernetes MPAM plugin. It supports MPAM memory access isolation and control, and is added with the SMT QoS interface.<br>- Released the performance optimization solution based on memory configuration reduction on Kunpeng servers in virtualization scenarios. The solution supports ZRAM-based memory compression, huge-page memory reclamation, and cold and hot page swapping, ensuring that the performance deterioration is less than 15% when memory overcommitment is enabled.<br>- Released the IPI latency optimization feature for high-specification VMs. This feature optimizes the SGI distribution path and VM cache to reduce the IPI latency of high-specification VMs and improve the VM multi-core communication performance.<br>- Released the Kunpeng adaptation guides for the AI sandbox solutions Kata and English2Bits (E2B). The Kata and E2B sandboxes can be deployed on Kunpeng servers.|
+| 01   | 2026-06-30 |- Released Kunpeng QoS Controller developed through the refactoring of the Kubernetes MPAM plugin. It supports MPAM memory access isolation and control, and adds the SMT QoS interface.<br>- Released the performance optimization solution based on memory configuration reduction on Kunpeng servers in virtualization scenarios. The solution supports ZRAM-based memory compression, huge-page memory reclamation, and cold and hot page swapping, ensuring that the performance degradation is less than 15% when memory overcommitment is enabled.<br>- Released the IPI latency optimization feature for high-specification VMs. This feature optimizes the SGI distribution path and VM cache to reduce the IPI latency of high-specification VMs and improve the multi-core communication performance of VMs.<br>- Released the Kunpeng adaptation guides for the AI sandbox solutions Kata and English2Bits (E2B). The Kata and E2B sandboxes can be deployed on Kunpeng servers.|
 
 ### Version Mapping
 
 #### Product Version Information
 
-| Product Name     | Version    |
+| Product Name      | Version     |
 | --------- | -------- |
 | BoostVirt | 26.1.RC1 |
 
@@ -32,7 +106,7 @@
 | Kunpeng QoS Controller     | Processor          | - Kunpeng 920 series<br>- Kunpeng 950                   |
 | Huge-page memory configuration reduction  | Processor| New Kunpeng 920 processor model<br>|
 | IPI latency optimization for high-specification VMs| Processor          | - Kunpeng 920 series<br>- Kunpeng 950                            |
-| Multi-ITS load balancing   | Processor          | Kunpeng 950 processor                   |
+| Multi-ITS load balancing   | Processor          | Kunpeng 950                  |
 
 #### Virus Scan Results
 
@@ -50,18 +124,18 @@ None
 
 **New functions:**
 
-- Through the reconstruction of the MPAM plugin, Kunpeng QoS Controller is compatible with the memory access isolation and control functions.
-- The SMT QoS interface is added. After this interface is configured and enabled, idle instructions can be inserted to offline services through xint interrupts, and pipeline resources can be released to online services, reducing the interference of offline services to online services.
+- Through the refactoring of the MPAM plugin, Kunpeng QoS Controller is compatible with the memory access isolation and control functions.
+- The SMT QoS interface is added. After this interface is configured and enabled, idle instructions can be inserted into offline services through xint interrupts, and pipeline resources can be yielded to online services, reducing interference with online services caused by offline workloads.
 
 ##### Huge-Page Memory Configuration Reduction
 
-The huge-page memory configuration reduction feature is released. This feature uses the ZRAM module to compress and store the cold-page memory of VMs, and uses the Kunpeng Accelerator Engine (KAE) to improve the compression efficiency. In addition, this feature allows huge-page memory to be swappable. This implements efficient utilization of memory resources, so that more VMs can be deployed with limited physical memory.
+The huge-page memory configuration reduction feature is released. This feature uses the ZRAM module to compress and store the cold-page memory of VMs, and uses the Kunpeng Accelerator Engine (KAE) to improve the compression efficiency. In addition, this feature allows huge-page memory to be swappable. This enables efficient utilization of memory resources, so that more VMs can be deployed with limited physical memory.
 
 ##### IPI Latency Optimization for High-Specification VMs
 
 The IPI latency optimization feature for high-specification VMs is released.
 
-- This feature pre-calculates a compressed mapping table (`kvm_mpidr_data`) from MPIDR values to vCPU indexes when a VM runs for the first time. This feature transforms SGI distribution path traversal (O(n)) to direct search (O(1)), significantly reducing the SGI delivery latency.
+- This feature pre-calculates a compressed mapping table (`kvm_mpidr_data`) from MPIDR values to vCPU indexes when a VM runs for the first time. This feature converts SGI distribution path traversal (O(n)) into direct search (O(1)), significantly reducing the SGI delivery latency.
 - After the VM cache information is set, the detailed cache information can be injected into the VM so that the VM OS kernel can correctly identify the core cluster level (CCL) scheduling domain, improving the kernel scheduling efficiency.
 
 ##### Multi-ITS Load Balancing
@@ -80,26 +154,26 @@ None
 
 |Document|Description|Delivery Method|
 |--|--|--|
-|*Kunpeng QoS Controller User Guide*|Describes how to compile, deploy, and use Kunpeng QoS Controller.|Open-source repository|
-|*VM Huge-Page Memory Configuration Reduction Feature Guide*|Describes how to deploy and use the VM huge-page memory configuration reduction feature on Kunpeng servers.|Open-source repository|
-|*SGI Injection Affinity Optimization User Guide*<br> *VM Cache Information Configuration User Guide*|Describes the environment requirements and provides guidance on enabling the two core technologies of the IPI latency optimization solution for high-specification VMs.|Open-source repository|
-|*VF ITS Selection User Guide*|Describes the environment requirements and provides guidance on enabling the multi-ITS load balancing feature.|Open-source repository|
-|*E2B Deployment Guide*|Provides guidance on deploying the E2B sandbox on Kunpeng servers.|Open-source repository|
-|*Kata Deployment Guide*|Provides guidance on deploying the Kata sandbox on Kunpeng servers.|Open-source repository|
+|[Kunpeng QoS Controller User Guide](https://gitcode.com/boostkit/cloud-native/blob/master/docs/en/cloud_native_scenario_kunpeng_qos_controller_user_guide.md)|Describes how to compile, deploy, and use Kunpeng QoS Controller.|Open-source repository|
+|[VM Huge-Page Memory Configuration Reduction Feature Guide](https://gitcode.com/boostkit/cloud-virtual/blob/master/docs/en/optimization_guide_for_reducing_VM_memory_configurations.md)|Describes how to deploy and use the VM huge-page memory configuration reduction feature on Kunpeng servers.|Open-source repository|
+|*SGI Injection Affinity Optimization User Guide*<br> *VM Cache Information Configuration User Guide*|Describes the environment requirements and provides guidance on enabling the two core technologies of the IPI latency optimization solution for high-specification VMs.|[Open-source repository](https://gitcode.com/boostkit/cloud-virtual/blob/master/docs/en/kunpeng_950_optimize_sgi_injection_user_guide.md)|
+|[VF ITS Selection User Guide](https://gitcode.com/boostkit/cloud-virtual/blob/master/docs/en/kunpeng_950_vf_its_usage_gude.md)|Describes the environment requirements and provides guidance on enabling the multi-ITS load balancing feature.|Open-source repository|
+|[E2B Deployment Guide](https://gitcode.com/boostkit/cloud-native/blob/master/docs/en/E2B_user_guide.md)|Provides guidance on deploying the E2B sandbox on Kunpeng servers.|Open-source repository|
+|[Kata Deployment Guide](https://gitcode.com/boostkit/cloud-native/blob/master/docs/en/Kata_user_guide.md)|Provides guidance on deploying the Kata sandbox on Kunpeng servers.|Open-source repository|
 
 ## 2026-03-30
 
-### 修改记录
+### Change History
 
-| Version| Date      | Description                                                                                                                                |
+| Version | Date       | Description                                                                                                                                 |
 | ---- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| 01   | 2026-03-30 |- Added the NRI mode and a cluster affinity policy to the Kunpeng Topology Affinity Plugin (Kunpeng TAP).<br>- Released the KAE-enabled Envoy feature to improve the gateway encryption and decryption performance.<br>- Released the solution to handling single-core and single-page exceptions in VM scenarios.<br>- Released the GICv4.1 overcommitment optimization solution to improve VM service performance in GICv4.1 overcommitment scenarios.|
+| 01   | 2026-03-30 |- Added the NRI mode and a cluster affinity policy to the Kunpeng Topology Affinity Plugin (Kunpeng TAP).<br>- Released the KAE-enabled Envoy feature to improve the gateway encryption and decryption performance.<br>- Released the solution for handling single-core and single-page exceptions in VM scenarios.<br>- Released the GICv4.1 overcommitment optimization solution to improve VM service performance in GICv4.1 overcommitment scenarios. |
 
 ### Version Mapping
 
 #### Product Version Information
 
-| Product Name     | Version    |
+| Product Name      | Version     |
 | --------- | -------- |
 | BoostVirt | 26.0.RC1 |
 
@@ -121,53 +195,53 @@ None
 | VM single-core and single-page exception handling  | - Processor<br>- Firmware| - New Kunpeng 920 processor model<br>- Kunpeng 950<br>- Basic computing unit (BCU) CPLD: later than 7.0.0|
 | GICv4.1 overcommitment optimization| Processor          | New Kunpeng 920 processor model                              |
 
-#### 病毒扫描结果
+#### Virus Scan Results
 
-不涉及软件包发布，不涉及病毒扫描。
+Virus scanning is not involved because no software package is released.
 
-### 版本使用注意事项
+### Important Notes
 
-无
+None
 
-### 版本说明
+### Release Notes
 
-#### 更新说明
+#### Change Description
 
-##### 鲲鹏拓扑亲和插件
+##### Kunpeng TAP
 
-**新增功能：**
+**New functions:**
 
-- A new cluster affinity policy is added. The cluster affinity policy is implemented by extending the existing topology-aware framework. It introduces cluster-level topology awareness to achieve topology-based container resource allocation. In addition, the Kunpeng processor model can be detected to automatically select the optimal affinity policy.
+- A new cluster affinity policy is added. The cluster affinity policy is implemented by extending the existing topology-aware framework. It introduces cluster-level topology awareness to achieve topology-based container resource allocation. In addition, the plugin can detect the Kunpeng processor model and automatically select the optimal affinity policy.
 - The NRI mode is added. Kunpeng TAP can seamlessly integrate with containerd v1.7.0 or later through the standard NRI interface. This mode replaces the conventional proxy mode and eliminates the need to modify container runtime configurations.
 
-##### Envoy使能KAE
+##### KAE-enabled Envoy
 
-The KAE-enabled Envoy feature in Kunpeng cloud native scenarios is released. This feature introduces a KAE private key provider to offload time-consuming encryption and decryption operations from the CPU to KAE. This accelerates encryption and decryption while releasing CPU computing power for other service workloads.
+The KAE-enabled Envoy feature in Kunpeng cloud-native scenarios is released. This feature introduces a KAE private key provider to offload time-consuming encryption and decryption operations from the CPU to KAE. This accelerates encryption and decryption while freeing up CPU computing resources for other service workloads.
 
-##### 虚拟机单核单页异常处理
+##### VM single-core and single-page exception handling
 
 The VM single-core and single-page exception handling feature is released. With this feature enabled, single-core corrected errors (CEs) can be isolated online on Kunpeng servers without affecting service running; uncorrected errors (UEs) in a single page of memory affect only one process in a VM, preventing the VM from going offline.
 
-##### GICv4.1超分性能优化
+##### GICv4.1 overcommitment optimization
 
 The GICv4.1 overcommitment optimization feature for Kunpeng VM scenarios is released. This solution allows the GIC to skip VMOVP instructions when vCPUs are migrated between CPUs that share the same virtual processing element (vPE) table, thus improving VM service performance in overcommitment scenarios.
 
-#### 已解决的问题
+#### Resolved Issues
 
-无
+None
 
-#### 遗留问题
+#### Known Issues
 
-无
+None
 
 ### Related Documentation
 
 |Document|Description|Delivery Method|
 |--|--|--|
-|*Kunpeng Topology Affinity Plugin User Guide*|Describes how to compile, deploy, and use the Kubernetes topology affinity plugin.|Open-source repository|
-|*KAE-enabled Envoy User Guide*|Provides operation instructions for KAE-enabled Envoy.|Open-source repository|
-|*VM Single-Core and Single-Page Exception Handling Feature Guide*|Describes the environment requirements and provides guidance on enabling the VM single-core and single-page exception handling feature.|Open-source repository|
-|*GICv4.1 Overcommitment Optimization Feature Guide*|Describes the environment requirements and provides guidance on enabling the GIC overcommitment optimization feature.|Open-source repository|
+|[Kunpeng Topology Affinity Plugin User Guide](https://gitcode.com/boostkit/cloud-native/blob/master/docs/en/kubernetes_topology_affinity_plugin_user_guide.md)|Describes how to compile, deploy, and use the Kubernetes topology affinity plugin.|Open-source repository|
+|[KAE-enabled Envoy User Guide](https://gitcode.com/boostkit/boostvirt/blob/master/docs/en/cloud_native_scenario_kae_enabled_envoy_user_guide.md)|Provides operation instructions for KAE-enabled Envoy.|Open-source repository|
+|[VM Single-Core and Single-Page Exception Handling Feature Guide](https://gitcode.com/boostkit/boostvirt/blob/master/docs/en/vm_single-core_and_single-page_exception_handling_feature_guide.md)|Describes the environment requirements and provides guidance on enabling the VM single-core and single-page exception handling feature.|Open-source repository|
+|[GICv4.1 Overcommitment Optimization Feature Guide](https://gitcode.com/boostkit/boostvirt/blob/master/docs/en/kunpeng_virtualization_gicv4.1_oversubscription_optimization_features_guide.md)|Describes the environment requirements and provides guidance on enabling the GIC overcommitment optimization feature.|Open-source repository|
 
 ### Obtaining Documentation<a name="EN-US_TOPIC_0000002544372643"></a>
 
