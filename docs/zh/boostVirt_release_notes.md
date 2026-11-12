@@ -14,7 +14,7 @@
 
 | 产品名称      | 产品版本     |
 | --------- | -------- |
-| BoostVirt | 26.2.RC1 |
+| Kunpeng BoostKit | 26.2.RC1 |
 
 #### 软件版本配套说明
 
@@ -68,9 +68,9 @@
 
 |文档名称|内容简介|交付形式|
 |--|--|--|
-|[《kunpeng-perf-monitor 用户指南》](https://gitcode.com/boostkit/cloud-native/blob/master/docs/zh/kunpeng_perf_monitor_devkit_collector_user_guide.md)|本文档介绍如何安装部署和使用鲲鹏性能指标监控插件。|开源仓|
-|[《Kunpeng-TAP Pcore Binding插件 用户指南》](https://gitcode.com/boostkit/cloud-native/blob/master/docs/zh/kunpeng_tap_pcore_binding_user_guide.md)|本文档提供鲲鹏物理拓扑绑核插件安装部署和使用指导。|开源仓|
-|[《CubeSandbox鲲鹏适配和优化 用户指南》](https://gitcode.com/boostkit/cloud-native/blob/master/docs/zh/cubesandbox_deployment_user_guide.md)|本文档提供鲲鹏服务器上的CubeSandbox沙箱部署指导。|开源仓|
+|《[鲲鹏性能指标监控插件 用户指南](https://gitcode.com/boostkit/cloud-native/blob/master/docs/zh/kunpeng_perf_monitor_devkit_collector_user_guide.md)》|本文档介绍如何安装部署和使用鲲鹏性能指标监控插件。|开源仓|
+|《[鲲鹏物理核拓扑绑核插件 用户指南](https://gitcode.com/boostkit/cloud-native/blob/master/docs/zh/kunpeng_tap_pcore_binding_user_guide.md)》|本文档提供鲲鹏物理拓扑绑核插件安装部署和使用指导。|开源仓|
+|《[CubeSandbox鲲鹏适配和优化 用户指南](https://gitcode.com/boostkit/cloud-native/blob/master/docs/zh/cubesandbox_deployment_user_guide.md)》|本文档提供鲲鹏服务器上的CubeSandbox沙箱部署指导。|开源仓|
 
 ## 2026-06-30
 
@@ -86,7 +86,7 @@
 
 | 产品名称      | 产品版本     |
 | --------- | -------- |
-| BoostVirt | 26.1.RC1 |
+| Kunpeng BoostKit | 26.1.RC1 |
 
 #### 软件版本配套说明
 
@@ -152,12 +152,12 @@
 
 |文档名称|内容简介|交付形式|
 |--|--|--|
-|[《在离线混部插件 用户指南》](https://gitcode.com/boostkit/cloud-native/blob/master/docs/zh/cloud_native_scenario_kunpeng_qos_controller_user_guide.md)|本文档提供在离线混部插件的编译、部署及使用指导。|开源仓|
-|[《虚拟机大页内存减配优化 特性指南》](https://gitcode.com/boostkit/cloud-virtual/blob/master/docs/zh/optimization_guide_for_reducing_VM_memory_configurations.md)|本文档介绍如何在鲲鹏服务器中部署和使用虚拟机大页内存减配优化特性。|开源仓|
-|《SGI注入亲和性优化 用户指南》<br> 《虚拟机缓存信息配置 用户指南》|本文档提供大规格虚拟机IPI时延优化解决方案的两个核心技术的环境要求和特性使能指导。|[开源仓](https://gitcode.com/boostkit/cloud-virtual/blob/master/docs/zh/kunpeng_950_optimize_sgi_injection_user_guide.md)|
-|[《VF设备选择ITS 用户指南》](https://gitcode.com/boostkit/cloud-virtual/blob/master/docs/zh/kunpeng_950_vf_its_usage_gude.md)|本文档提供多ITS负载均衡特性的环境要求、特性使能指导。|开源仓|
-|[《E2B部署指南》](https://gitcode.com/boostkit/cloud-native/blob/master/docs/zh/E2B_user_guide.md)|本文档提供鲲鹏服务器上的E2B沙箱部署指导。|开源仓|
-|[《Kata部署指南》](https://gitcode.com/boostkit/cloud-native/blob/master/docs/zh/Kata_user_guide.md)|本文档提供鲲鹏服务器上的Kata沙箱部署指导。|开源仓|
+|《[在离线混部插件 用户指南](https://gitcode.com/boostkit/cloud-native/blob/master/docs/zh/cloud_native_scenario_kunpeng_qos_controller_user_guide.md)》|本文档提供在离线混部插件的编译、部署及使用指导。|开源仓|
+|《[虚拟机大页内存减配优化 特性指南](https://gitcode.com/boostkit/cloud-virtual/blob/master/docs/zh/optimization_guide_for_reducing_VM_memory_configurations.md)》|本文档介绍如何在鲲鹏服务器中部署和使用虚拟机大页内存减配优化特性。|开源仓|
+|《[SGI注入亲和性优化 用户指南](https://gitcode.com/boostkit/cloud-virtual/blob/master/docs/zh/kunpeng_950_optimize_sgi_injection_user_guide.md)》<br> 《[虚拟机缓存信息配置 用户指南](https://gitcode.com/boostkit/cloud-virtual/blob/master/docs/zh/kunpeng_950_cacheinfo_configuration_user_guide.md)》|本文档提供大规格虚拟机IPI时延优化解决方案的两个核心技术的环境要求和特性使能指导。|开源仓|
+|《[VF设备选择ITS 用户指南](https://gitcode.com/boostkit/cloud-virtual/blob/master/docs/zh/kunpeng_950_vf_its_usage_gude.md)》|本文档提供多ITS负载均衡特性的环境要求、特性使能指导。|开源仓|
+|《[E2B部署指南](https://gitcode.com/boostkit/cloud-native/blob/master/docs/zh/E2B_user_guide.md)》|本文档提供鲲鹏服务器上的E2B沙箱部署指导。|开源仓|
+|《[Kata部署指南](https://gitcode.com/boostkit/cloud-native/blob/master/docs/zh/Kata_user_guide.md)》|本文档提供鲲鹏服务器上的Kata沙箱部署指导。|开源仓|
 
 ## 2026-03-30
 
@@ -173,7 +173,7 @@
 
 | 产品名称      | 产品版本     |
 | --------- | -------- |
-| BoostVirt | 26.0.RC1 |
+| Kunpeng BoostKit | 26.0.RC1 |
 
 #### 软件版本配套说明
 
@@ -236,11 +236,11 @@
 
 |文档名称|内容简介|交付形式|
 |--|--|--|
-|[《鲲鹏拓扑亲和插件 用户指南》](https://gitcode.com/boostkit/cloud-native/blob/master/docs/zh/kubernetes_topology_affinity_plugin_user_guide.md)|本文档提供K8s拓扑亲和插件的编译、部署及使用指导。|开源仓|
-|[《Envoy使能KAE 用户指南》](https://gitcode.com/boostkit/boostvirt/blob/master/docs/zh/cloud_native_scenario_kae_enabled_envoy_user_guide.md)|本文档提供Envoy使能KAE设备的操作指导。|开源仓|
-|[《虚拟机单核单页异常处理 特性指南》](https://gitcode.com/boostkit/boostvirt/blob/master/docs/zh/vm_single-core_and_single-page_exception_handling_feature_guide.md)|本文档提供虚拟机单核单页异常处理特性的环境要求、特性使能指导。|开源仓|
-|[《GICv4.1超分性能优化 特性指南》](https://gitcode.com/boostkit/boostvirt/blob/master/docs/zh/kunpeng_virtualization_gicv4.1_oversubscription_optimization_features_guide.md)|本文档提供GIC超分优化特性的环境要求、特性使能指导。|开源仓|
+|《[鲲鹏拓扑亲和插件 用户指南](https://gitcode.com/boostkit/cloud-native/blob/master/docs/zh/kubernetes_topology_affinity_plugin_user_guide.md)》|本文档提供K8s拓扑亲和插件的编译、部署及使用指导。|开源仓|
+|《[Envoy使能KAE 用户指南](https://gitcode.com/boostkit/boostvirt/blob/master/docs/zh/cloud_native_scenario_kae_enabled_envoy_user_guide.md)》|本文档提供Envoy使能KAE设备的操作指导。|开源仓|
+|《[虚拟机单核单页异常处理 特性指南](https://gitcode.com/boostkit/boostvirt/blob/master/docs/zh/vm_single-core_and_single-page_exception_handling_feature_guide.md)》|本文档提供虚拟机单核单页异常处理特性的环境要求、特性使能指导。|开源仓|
+|《[GICv4.1超分性能优化 特性指南](https://gitcode.com/boostkit/boostvirt/blob/master/docs/zh/kunpeng_virtualization_gicv4.1_oversubscription_optimization_features_guide.md)》|本文档提供GIC超分优化特性的环境要求、特性使能指导。|开源仓|
 
 ### 获取文档的方法<a name="ZH-CN_TOPIC_0000002544372643"></a>
 
-您可以通过访问[开源仓](https://gitcode.com/boostkit/boostvirt/tree/master/docs/zh)浏览和获取相关文档。
+您可以通过访问[开源仓](https://gitcode.com/boostkit/boostvirt/tree/master/docs)浏览和获取相关文档。
