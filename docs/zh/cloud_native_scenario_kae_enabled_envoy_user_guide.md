@@ -1,5 +1,7 @@
 # 云原生场景Envoy使能KAE 用户指南
 
+本文档介绍在使用openEuler操作系统的鲲鹏处理器中让Envoy使能KAE的操作方法，包括环境要求、获取Envoy、配置KAE Private Key Provider启动Envoy及性能验证，适用于需要在微服务场景中降低TLS加解密CPU消耗的用户。
+
 ## 简介<a name="ZH-CN_TOPIC_0000002511547578"></a>
 
 本文主要介绍如何在使用openEuler操作系统的服务器中让Envoy使能KAE设备。
@@ -26,8 +28,8 @@ Envoy是一款专为现代云原生架构设计的高性能网络代理与通信
 
 |软件|版本|获取地址|
 |--|--|--|
-|OS|openEuler 24.03 LTS SP2|[获取链接](https://www.openeuler.org/en/download/#openEuler%2024.03%20LTS%20SP2)|
-|Docker|不低于20.10.13，且需支持Docker Compose功能|[获取链接](https://download.docker.com/linux/static/stable/aarch64/)|
+|OS|openEuler 24.03 LTS SP2|[openEuler 24.03 LTS SP2下载页面](https://www.openeuler.org/en/download/#openEuler%2024.03%20LTS%20SP2)|
+|Docker|不低于20.10.13，且需支持Docker Compose功能|[Docker静态二进制包下载页面](https://download.docker.com/linux/static/stable/aarch64/)|
 |KAE|2.0|下载命令：`git clone https://gitcode.com/boostkit/KAE.git -b kae2`|
 
 ## 获取Envoy<a name="ZH-CN_TOPIC_0000002511738428"></a>
@@ -84,7 +86,7 @@ chmod +x envoy-contrib
 
     编译完成后可以在“/_your-build-path_/envoy-docker-build/envoy/arm64/bin”（默认是“/tmp/envoy-docker-build/envoy/arm64/bin”，可通过ENVOY\_DOCKER\_BUILD\_DIR环境变量配置）目录下找到已经编译完成的release包release.tar.zst。
 
-    ![](figures/zh-cn_image_0000002549474499.png)
+    ![编译Envoy后在envoy-docker-build/envoy/arm64/bin目录下查看release.tar.zst包的界面截图](figures/zh-cn_image_0000002549474499.png)
 
 3. 将获取的Envoy的包解压，得到Envoy的二进制文件envoy-contrib。
 
@@ -93,7 +95,7 @@ chmod +x envoy-contrib
     chmod +x envoy-contrib
     ```
 
-    ![](figures/zh-cn_image_0000002518074172.png)
+    ![执行unzstd解压release.tar.zst并解包后查看生成的envoy-contrib二进制文件的界面截图](figures/zh-cn_image_0000002518074172.png)
 
 ## Envoy使能KAE<a name="ZH-CN_TOPIC_0000002543218379"></a>
 
@@ -174,7 +176,7 @@ chmod +x envoy-contrib
 
     启动之后可能的回显如下，提示KAE private key provider已经初始化，说明Envoy已经成功使能KAE。
 
-    ![](figures/zh-cn_image_0000002549495291.png)
+    ![启动Envoy后终端回显KAE private key provider初始化成功的日志截图](figures/zh-cn_image_0000002549495291.png)
 
 3. （可选）通过[k6 Benchmark](https://github.com/grafana/k6/releases)进行测试可以得到Envoy使能KAE前后的性能提升效果。
 
@@ -187,7 +189,7 @@ chmod +x envoy-contrib
         ```
 
         **图 1** Envoy使能KAE前的性能结果<a name="fig10843125831516"></a><a id="Envoy使能KAE前的性能结果"></a>
-        ![](figures/Envoy使能KAE前的性能结果.png "Envoy使能KAE前的性能结果")
+        ![k6压测未使能KAE的Envoy得到的性能指标结果，作为使能前对比基线](figures/Envoy使能KAE前的性能结果.png)
 
     2. 在Envoy使能KAE后执行如下命令，得到性能效果如[**图 2** Envoy使能KAE后的性能结果](#Envoy使能KAE后的性能结果)所示。
 
@@ -198,7 +200,7 @@ chmod +x envoy-contrib
         ```
 
         **图 2** Envoy使能KAE后的性能结果<a name="fig189951242151717"></a><a id="Envoy使能KAE后的性能结果"></a>
-        ![](figures/Envoy使能KAE后的性能结果.png "Envoy使能KAE后的性能结果")
+        ![k6压测Envoy使能KAE后得到的性能指标结果，rps较使能前明显上升](figures/Envoy使能KAE后的性能结果.png)
 
     3. 对比Envoy使能KAE前后的性能结果，可以看到http的rps性能有明显上升。
 
@@ -267,6 +269,6 @@ chmod +x envoy-contrib
 
 ## 修订记录<a name="ZH-CN_TOPIC_0000002513179182"></a>
 
-|发布日期|修订记录|
-|--|--|
-|2026-03-30|第一次正式发布。|
+|文档版本|发布日期|修改说明|
+|--|--|--|
+|01|2026-03-30|第一次正式发布。|

@@ -1,8 +1,10 @@
 # 虚拟化场景拓扑感知 用户指南
 
+本文档介绍虚拟化场景拓扑感知特性，说明如何在使用openEuler操作系统的鲲鹏处理器上安装libvirt与QEMU、配置虚拟机缓存并验证配置是否生效，适用于需要使用该特性的用户。
+
 ## 特性描述<a name="ZH-CN_TOPIC_0000002550128075"></a>
 
-本文主要介绍如何在使用openEuler操作系统的鲲鹏服务器上部署和使能虚拟化场景拓扑感知特性。
+本文主要介绍如何在使用openEuler操作系统的鲲鹏处理器上部署和使能虚拟化场景拓扑感知特性。
 
 在ARM架构的虚拟机环境中，查看缓存大小通常会默认显示一组预设值，这些默认值无法准确反映虚拟机实际使用的缓存大小。这种情况下，虚拟机中的应用程序和操作系统优化可能会受到影响。为了解决这个问题，本特性提供了一种在libvirt的虚拟机XML配置或QEMU启动虚拟机的命令中，明确指定缓存大小的方式。通过采用这种特性，虚拟机可以精确地反映其使用的缓存大小，来获取更精确的缓存结构信息，从而更好地优化虚拟机中的应用程序性能。该特性由QEMU和libvirt的补丁提供。
 
@@ -40,9 +42,9 @@
 
 |软件名称|版本|获取方法|
 |--|--|--|
-|物理机与虚拟机操作系统|已经验证的版本：openEuler 22.03 LTS SP4|[获取链接](https://mirrors.huaweicloud.com/openeuler/openEuler-22.03-LTS-SP4/ISO/aarch64/openEuler-22.03-LTS-SP4-everything-aarch64-dvd.iso)|
-|QEMU|6.2.0|代码仓：[获取链接](https://gitee.com/src-openeuler/qemu/tree/openEuler-22.03-LTS-SP4/)<br>补丁：[获取链接](https://gitee.com/openeuler/qemu/pulls/1449)|
-|libvirt|6.2.0|代码仓：[获取链接](https://gitee.com/src-openeuler/libvirt/tree/openEuler-22.03-LTS-SP4/)<br>补丁：[获取链接](https://gitee.com/openeuler/libvirt/pulls/315)|
+|物理机与虚拟机操作系统|已经验证的版本：openEuler 22.03 LTS SP4|[openEuler-22.03-LTS-SP4代码仓库](https://mirrors.huaweicloud.com/openeuler/openEuler-22.03-LTS-SP4/ISO/aarch64/openEuler-22.03-LTS-SP4-everything-aarch64-dvd.iso)|
+|QEMU|6.2.0|代码仓：[qemu仓库（openEuler-22.03-LTS-分支）](https://gitee.com/src-openeuler/qemu/tree/openEuler-22.03-LTS-SP4/)<br>补丁：[qemu代码仓库](https://gitee.com/openeuler/qemu/pulls/1449)|
+|libvirt|6.2.0|代码仓：[libvirt仓库（openEuler-22.03-LTS-分支）](https://gitee.com/src-openeuler/libvirt/tree/openEuler-22.03-LTS-SP4/)<br>补丁：[libvirt代码仓库](https://gitee.com/openeuler/libvirt/pulls/315)|
 
 ### 使能与验证<a name="ZH-CN_TOPIC_0000002518528304"></a>
 
@@ -87,7 +89,7 @@
 
     修改对应的spec文件，以libvirt.spec文件为例。在libvirt.spec文件的Patch清单最后，加上前文所下载的libvirt Email Patch的名称。QEMU的操作类似。
 
-    ![](figures/zh-cn_image_0000002550008071.png)
+    ![libvirt.spec文件的Patch清单示例，在清单末尾新增一行所下载的libvirt Email Patch名称](figures/zh-cn_image_0000002550008071.png)
 
 4. <a id="li101064218395"></a>拷贝文件。
 
@@ -149,7 +151,7 @@
     virsh version
     ```
 
-    ![](figures/zh-cn_image_0000002550128081.png)
+    ![执行virsh version命令后的参数回显，列出已安装的libvirt与QEMU版本信息](figures/zh-cn_image_0000002550128081.png)
 
 #### 配置虚拟机缓存<a name="ZH-CN_TOPIC_0000002550128077" id="配置虚拟机缓存"></a>
 
@@ -253,7 +255,7 @@
 
         ```shell
         qemu-kvm \
-        -kernel <kernel 镜像>
+        -kernel <kernel镜像> \
         -smp <vcpu个数> \
         -m <内存大小> \
         -accel kvm \
@@ -274,7 +276,7 @@
 
     可以看到虚拟机的缓存大小，应显示为默认值（l1d: 64KiB, l1i: 64KiB, l2: 512KiB, l3: 32MiB）。
 
-    ![](figures/zh-cn_image_0000002550128079.png)
+    ![虚拟机中执行lscpu命令的缓存信息回显，l1d、l1i、l2、l3均显示为默认缓存大小](figures/zh-cn_image_0000002550128079.png)
 
 3. 配置缓存大小。
 
@@ -289,7 +291,7 @@
 
         能看到缓存大小与设置一致。
 
-        ![](figures/zh-cn_image_0000002518528306.png)
+        ![修改配置后虚拟机中再次执行lscpu的回显，缓存信息已显示为所设置的缓存大小](figures/zh-cn_image_0000002518528306.png)
 
     2. 在物理机中执行以下命令。
 
@@ -299,4 +301,10 @@
 
         可以看到运行中的虚拟机生成的xml中缓存大小与设置大小一致。
 
-        ![](figures/zh-cn_image_0000002518688216.png)
+        ![物理机中执行virsh dumpxml并筛选cacheinfo的回显，显示虚拟机xml中的缓存配置项](figures/zh-cn_image_0000002518688216.png)
+  
+## 修订记录
+
+| 文档版本 | 发布日期 | 修改说明 |
+|--|--|--|
+|01 | 2026-06-30 | 第一次正式发布。 |

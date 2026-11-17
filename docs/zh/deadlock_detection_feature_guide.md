@@ -1,5 +1,7 @@
 # 虚拟机死锁检测 特性指南
 
+本文档介绍虚拟机死锁检测特性，通过NMI Watchdog在虚拟机中实时监测中断响应以检测硬死锁，适用于在鲲鹏处理器上使用openEuler部署虚拟机的用户。
+
 ## 特性描述<a name="ZH-CN_TOPIC_0000002070338474"></a>
 
 ### 简介<a name="ZH-CN_TOPIC_0000002105898409"></a>
@@ -11,7 +13,7 @@
 在Linux系统中，死锁检测功能通常依赖于Watchdog机制来实现。传统的Watchdog机制主要依赖于时钟中断来监测系统是否陷入挂死状态。然而，在特定的系统执行阶段，如中断处理过程中或中断被明确禁用的代码段（即原子上下文），时钟中断的处理可能会被阻塞，从而导致Watchdog的检测功能无法有效发挥作用。相比之下，NMI Watchdog机制则利用了NMI（即不可屏蔽中断）这一特性来进行检测。NMI中断具有在原子上下文中触发并得到处理的能力，因此它能够有效地捕捉到那些在原子上下文中发生的系统挂死情况，为系统提供了更为全面和可靠的挂死检测保障。
 
 **图 1** 虚拟机死锁检测特性架构图<a name="fig762914904419"></a><a id="虚拟机死锁检测特性架构图"></a><br>
-![](figures/虚拟机死锁检测特性架构图.png "虚拟机死锁检测特性架构图")
+![虚拟机死锁检测特性架构图：虚拟机内核中SDEI与PMU两种NMI Watchdog方案检测硬死锁的层次关系](figures/虚拟机死锁检测特性架构图.png)
 
 **原理描述<a name="section18127132914911"></a>**
 
@@ -72,7 +74,7 @@ NMI Watchdog是一种专门用于检测Linux系统中硬死锁（hard lockup）�
 
 |项目|版本|获取方法|
 |--|--|--|
-|OS|openEuler 22.03 LTS SP2本特性对物理机、虚拟机的操作系统均要求以上版本|[获取链接](https://mirrors.pku.edu.cn/openeuler/openEuler-22.03-LTS-SP2/ISO/aarch64/openEuler-22.03-LTS-SP2-everything-aarch64-dvd.iso)|
+|OS|openEuler 22.03 LTS SP2（本特性对物理机、虚拟机的操作系统均要求以上版本）|[openEuler-22.03-LTS-SP2代码仓库](https://mirrors.pku.edu.cn/openeuler/openEuler-22.03-LTS-SP2/ISO/aarch64/openEuler-22.03-LTS-SP2-everything-aarch64-dvd.iso)|
 |libvirt|6.2.0及以上均可|利用Yum工具直接安装。|
 |QEMU|6.2.0及以上均可|利用Yum工具直接安装。|
 
@@ -116,19 +118,19 @@ dmesg | grep "NMI watchdog"
 
 - 如果已加载SDEI Watchdog，且已加载成功，回显中应包含以下内容。
 
-    ```txt
+    ```output
     SDEI NMI watchdog: SDEI Watchdog registered successfully
     ```
 
 - 虚拟化场景下，默认加载SDEI Watchdog，且加载必然失败，将回显如下内容。
 
-    ```txt
+    ```output
     SDEI NMI watchdog: Disable SDEI NMI Watchdog in VM
     ```
 
 - 如果已加载基于PMC（PMU）中断的NMI Watchdog（虚拟化场景下的唯一可行方案），且已加载成功，回显中应包含以下内容。
 
-    ```txt
+    ```output
     NMI watchdog: Enabled. Permanently consumes one hw-PMU counter.
     ```
 
@@ -150,3 +152,9 @@ echo 10 > /proc/sys/kernel/watchdog_thresh
 |PMC|Performance Monitoring Counter|性能监控计数器|
 |PMU|Performance Monitoring Unit|性能监控单元|
 |SDEI|Software Delegated Exception Interface|软件委托异常接口|
+
+## 修订记录
+
+| 文档版本 | 发布日期 | 修改说明 |
+|--|--|--|
+|01 | 2026-03-30 | 第一次正式发布。 |

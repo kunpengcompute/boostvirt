@@ -1,5 +1,7 @@
 # vKAE 特性指南
 
+本文档介绍openEuler操作系统鲲鹏处理器上vKAE特性的部署与使能方法，涵盖环境配置、物理机与虚拟机中的KAE安装、Nginx与HTTPress部署、性能测试及常见故障排除，适用于需要在虚拟化和云原生场景中使用vKAE加速HTTPS加解密处理的用户。
+
 ## 特性描述<a name="ZH-CN_TOPIC_0000002005411138"></a>
 
 ### 简介<a name="ZH-CN_TOPIC_0000002005252850"></a>
@@ -23,7 +25,7 @@ vKAE的加速流程与在物理机上使用KAE设备进行RSA算法加解密硬�
 vKAE特性架构图如[**图 1** vKAE特性架构图](#vKAE特性架构图)所示，各模块功能如[**表 1** vKAE特性各模块功能](#vKAE特性各模块功能)所示。
 
 **图 1** vKAE特性架构图<a name="fig138061989173"></a><a id="vKAE特性架构图"></a>
-![](figures/vKAE特性架构图.png "vKAE特性架构图")
+![vKAE特性架构图：物理机HPRE设备创建VF直通虚拟机，Guest OS经KAE Engine调用硬件加速](figures/vKAE特性架构图.png)
 
 **表 1** vKAE特性各模块功能<a id="vKAE特性各模块功能"></a>
 
@@ -100,7 +102,7 @@ vKAE可以应用于虚拟化和云原生场景。
 使用25Ge或10Ge的光模块，服务端和客户端直连或通过交换机连接。
 
 **图 1** 测试组网<a name="fig178513213315"></a><a id="测试组网"></a><br>
-![](figures/测试组网.png "测试组网")
+![测试组网图：服务端与客户端通过25Ge或10Ge光模块直连或经交换机连接的组网方式](figures/测试组网.png)
 
 **硬件要求<a name="section967416146301"></a>**
 
@@ -120,7 +122,7 @@ vKAE可以应用于虚拟化和云原生场景。
 
 |项目|版本|获取方式|
 |--|--|--|
-|OS|openEuler 22.03 LTS SP3、openEuler 24.03 LTS SP3|openEuler 22.03 LTS SP3 ISO镜像：[获取链接](https://repo.openeuler.org/openEuler-22.03-LTS-SP3/ISO/aarch64/)<br>openEuler 24.03 LTS SP3 ISO镜像：[获取链接](https://repo.openeuler.org/openEuler-24.03-LTS-SP3/ISO/aarch64/)|
+|OS|openEuler 22.03 LTS SP3、openEuler 24.03 LTS SP3|openEuler 22.03 LTS SP3 ISO镜像：[openEuler 22.03 LTS SP3 ISO镜像下载页面](https://repo.openeuler.org/openEuler-22.03-LTS-SP3/ISO/aarch64/)<br>openEuler 24.03 LTS SP3 ISO镜像：[openEuler 24.03 LTS SP3 ISO镜像下载页面](https://repo.openeuler.org/openEuler-24.03-LTS-SP3/ISO/aarch64/)|
 |QEMU|6.2.0、8.2.0|通过配置Yum源的方式安装|
 |libvirt|6.2.0、9.10.0|通过配置Yum源的方式安装|
 |Nginx|1.21.5|通过配置Yum源的方式安装|
@@ -149,7 +151,7 @@ vKAE可以应用于虚拟化和云原生场景。
 
     再将“Smmu Work Around”设置为“Enabled”。
 
-    ![](figures/zh-cn_image_0000002403280897.png)
+    ![BIOS中Advanced-MISC Config下Support Smmu与Smmu Work Around均设置为Enabled的界面](figures/zh-cn_image_0000002403280897.png)
 
 3. 按**F10**保存BIOS设置，并重启服务器。
 
@@ -171,7 +173,7 @@ vKAE可以应用于虚拟化和云原生场景。
         * hard      nofile      102400
         ```
 
-        ![](figures/zh-cn_image_0000002016265442.png)
+        ![limits.conf文件中新增soft与hard两行nofile均为102400后的文件内容截图](figures/zh-cn_image_0000002016265442.png)
 
     3. 按“Esc”键，输入 **:wq!**，按“Enter”保存并退出编辑。
     4. 退出SSH终端。
@@ -199,14 +201,14 @@ vKAE可以应用于虚拟化和云原生场景。
 
         1. 执行如下命令修改配置文件，关闭SELinux。
 
-            ```xml
+            ```ini
             sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
             cat /etc/selinux/config
             ```
 
             如下图所示，显示“**SELINUX=disabled**”即表示修改成功。
 
-            ![](figures/zh-cn_image_0000002034205106.png)
+            ![执行sed命令并cat配置文件后回显显示SELINUX=disabled表示修改成功](figures/zh-cn_image_0000002034205106.png)
 
         2. 关闭SELinux后，重启服务器，在虚拟机中也需要关闭SELinux，修改完成后需要重启虚拟机。
 
@@ -219,7 +221,7 @@ vKAE可以应用于虚拟化和云原生场景。
 
     2. 按“i”进入编辑模式，在对应操作系统版本的内核启动命令行中新增“audit=0”，修改后如下图所示。
 
-        ![](figures/zh-cn_image_0000002065271161.png)
+        ![grub.cfg中对应操作系统版本的内核启动命令行新增audit=0后的编辑界面截图](figures/zh-cn_image_0000002065271161.png)
 
     3. 按“Esc”键，输入 **:wq!**，按“Enter”保存并退出编辑。
     4. 重启服务器，使配置生效。
@@ -240,7 +242,7 @@ vKAE可以应用于虚拟化和云原生场景。
         ethtool -i enp7s0
         ```
 
-        ![](figures/zh-cn_image_0000002052437293.png)
+        ![执行ethtool -i enp7s0后回显中显示网卡bus-info信息的截图](figures/zh-cn_image_0000002052437293.png)
 
     3. 查询网卡node的NUMA亲和性。
 
@@ -250,7 +252,7 @@ vKAE可以应用于虚拟化和云原生场景。
 
         可以看到，该物理网卡亲和NUMA node0。
 
-        ![](figures/zh-cn_image_0000002090226029.png)
+        ![执行cat numa_node后回显显示物理网卡亲和NUMA node0的截图](figures/zh-cn_image_0000002090226029.png)
 
         >![](public_sys-resources/icon-note.gif) **说明：** 
         >查询网卡node的NUMA亲和性，还可以通过以下命令：
@@ -260,7 +262,7 @@ vKAE可以应用于虚拟化和云原生场景。
         >```
 >
         >可以看到，该物理网卡亲和NUMA node0。
-        >![](figures/zh-cn_image_0000002090673913.png)
+        >![执行lspci -vvv -s 07:00.0 | grep NUMA后回显网卡亲和NUMA node0的截图](figures/zh-cn_image_0000002090673913.png)
 
         查看NUMA node0所在的CPU核编号。
 
@@ -270,7 +272,7 @@ vKAE可以应用于虚拟化和云原生场景。
 
         可以看到，NUMA node0对应的CPU核在编号**0-31**。
 
-        ![](figures/zh-cn_image_0000002016159808.png)
+        ![执行ls cpu后列出NUMA node0对应CPU核编号为0-31的目录列表截图](figures/zh-cn_image_0000002016159808.png)
 
     1. 物理网卡创建了3个VF之后，查看物理网卡和虚拟网卡的bus信息。
 
@@ -280,7 +282,7 @@ vKAE可以应用于虚拟化和云原生场景。
         ls
         ```
 
-        ![](figures/zh-cn_image_0000002016152896.png)
+        ![物理网卡创建了3个VF之后的操作界面截图](figures/zh-cn_image_0000002016152896.png)
 
         查看virtfn2的NUMA亲和性。
 
@@ -291,7 +293,7 @@ vKAE可以应用于虚拟化和云原生场景。
 
         可以看到网卡VF的NUMA亲和性和创建VF的物理网卡节点一致，都亲和NUMA node0。
 
-        ![](figures/zh-cn_image_0000002052493921.png)
+        ![物理网卡创建了3个VF之后的操作界面截图（图2）](figures/zh-cn_image_0000002052493921.png)
 
     2. 查看网卡VF的PCI编号。
         - 方式一：
@@ -301,21 +303,21 @@ vKAE可以应用于虚拟化和云原生场景。
             realpath .
             ```
 
-            ![](figures/zh-cn_image_0000002052430921.png)
+            ![查看网卡VF的PCI编号的操作界面截图](figures/zh-cn_image_0000002052430921.png)
 
             ```shell
             cd virtfn1
             realpath .
             ```
 
-            ![](figures/zh-cn_image_0000002052273961.png)
+            ![查看网卡VF的PCI编号的操作界面截图（图2）](figures/zh-cn_image_0000002052273961.png)
 
             ```shell
             cd virtfn2
             realpath .
             ```
 
-            ![](figures/zh-cn_image_0000002016155540.png)
+            ![查看网卡VF的PCI编号的操作界面截图（图3）](figures/zh-cn_image_0000002016155540.png)
 
         - 方式二：
 
@@ -323,19 +325,19 @@ vKAE可以应用于虚拟化和云原生场景。
             ethtool -i enp7s0v0
             ```
 
-            ![](figures/zh-cn_image_0000002052435865.png)
+            ![查看网卡VF的PCI编号的操作界面截图（图4）](figures/zh-cn_image_0000002052435865.png)
 
             ```shell
             ethtool -i enp7s0v1
             ```
 
-            ![](figures/zh-cn_image_0000002016316276.png)
+            ![查看网卡VF的PCI编号的操作界面截图（图5）](figures/zh-cn_image_0000002016316276.png)
 
             ```shell
             ethtool -i enp7s0v2
             ```
 
-            ![](figures/zh-cn_image_0000002052435817.png)
+            ![执行ethtool -i enp7s0v2后回显显示该VF网卡PCI编号的截图](figures/zh-cn_image_0000002052435817.png)
 
             可以发现其PCI编号是按照规律进行递增的。
 
@@ -345,7 +347,7 @@ vKAE可以应用于虚拟化和云原生场景。
         ip a
         ```
 
-        ![](figures/zh-cn_image_0000002016311604.png)
+        ![通过ip a可以查看创建出来的3个网卡VF的操作界面截图](figures/zh-cn_image_0000002016311604.png)
 
     4. 关闭虚拟机。
 
@@ -514,7 +516,7 @@ vKAE可以应用于虚拟化和云原生场景。
     git clone https://gitee.com/kunpengcompute/KAE.git -b kae2
     ```
 
-    ![](figures/zh-cn_image_0000002015460694.png)
+    ![获取KAE2.0源码包的操作界面截图](figures/zh-cn_image_0000002015460694.png)
 
 4. 通过源码安装KAE。
 
@@ -528,7 +530,7 @@ vKAE可以应用于虚拟化和云原生场景。
         sh build.sh cleanup
         ```
 
-        ![](figures/zh-cn_image_0000002015620594.png)
+        ![build.sh截图，进入KAE源码目录](figures/zh-cn_image_0000002015620594.png)
 
     2. 一键式安装KAE。
 
@@ -536,7 +538,7 @@ vKAE可以应用于虚拟化和云原生场景。
         sh build.sh all
         ```
 
-        ![](figures/zh-cn_image_0000002051623329.png)
+        ![build.sh截图，一键式安装KAE](figures/zh-cn_image_0000002051623329.png)
 
 5. 验证KAE是否安装成功。
     1. 检查“/sys/bus/pci/drivers”目录下是否有相关的PCI驱动。
@@ -547,7 +549,7 @@ vKAE可以应用于虚拟化和云原生场景。
 
         如果有类似hisi\_hpre、hisi\_sec2、hisi\_zip的文件（hisi\_rde当前还未实现），则表示相关驱动已成功安装。
 
-        ![](figures/zh-cn_image_0000002015626782.png)
+        ![执行ls /sys/bus/pci/drivers后回显中列出hisi_hpre、hisi_sec2等驱动目录的截图](figures/zh-cn_image_0000002015626782.png)
 
     2. 检查KAE驱动内是否有虚拟化设备。这里以查看hisi\_sec2是否有虚拟化设备为例。
 
@@ -557,7 +559,7 @@ vKAE可以应用于虚拟化和云原生场景。
 
         如果有对应的设备文件列出，则表示hisi\_sec2驱动已经成功关联到了PCI设备。
 
-        ![](figures/zh-cn_image_0000002051508805.png)
+        ![检查KAE驱动内是否有虚拟化设备的执行回显](figures/zh-cn_image_0000002051508805.png)
 
     3. 查看kae.so，判断KAE是否安装成功。
 
@@ -567,7 +569,7 @@ vKAE可以应用于虚拟化和云原生场景。
 
         预期结果：
 
-        ![](figures/zh-cn_image_0000002051650309.png)
+        ![查看kae.so的执行回显](figures/zh-cn_image_0000002051650309.png)
 
         至此，则说明KAE已安装成功。
 
@@ -586,7 +588,7 @@ vKAE可以应用于虚拟化和云原生场景。
         lspci |grep RDE
         ```
 
-        ![](figures/zh-cn_image_0000002051777713.png)
+        ![查看kae.so的执行回显（图2）](figures/zh-cn_image_0000002051777713.png)
 
         如果查找不到hisi\_zip、hisi\_sec2、hisi\_hpre等KAE设备，可以重启服务器后再次检查KAE是否安装成功。
 
@@ -600,7 +602,7 @@ vKAE可以应用于虚拟化和云原生场景。
         ls -al /sys/class/uacce
         ```
 
-        ![](figures/zh-cn_image_0000002051780037.png)
+        ![重启服务器后执行ls -al /sys/class/uacce回显中列出KAE加速器设备的截图](figures/zh-cn_image_0000002051780037.png)
 
 6. 验证KAE特性的加速能力。
     1. 通过修改OpenSSL配置文件来使用KAE。
@@ -631,7 +633,7 @@ vKAE可以应用于虚拟化和云原生场景。
             openssl speed -elapsed rsa2048
             ```
 
-            ![](figures/zh-cn_image_0000002051658225.png)
+            ![通过执行openssl speed命令来比较开启和未开启的操作界面截图](figures/zh-cn_image_0000002051658225.png)
 
         - 使能KAE后的性能值。
 
@@ -640,7 +642,7 @@ vKAE可以应用于虚拟化和云原生场景。
             openssl speed -engine kae -elapsed rsa2048
             ```
 
-            ![](figures/zh-cn_image_0000002015503616.png)
+            ![通过执行openssl speed命令来比较开启和未开启的操作界面截图（图2）](figures/zh-cn_image_0000002015503616.png)
 
         可以看到，使能KAE前后的性能值分别是774.2、3184.8，性能约提升了300%。
 
@@ -657,7 +659,7 @@ vKAE可以应用于虚拟化和云原生场景。
 
         在虚拟机中安装依赖时，需要安装patch，否则安装KAE过程中会报错，如下图所示。
 
-        ![](figures/zh-cn_image_0000002015527556.png)
+        ![安装依赖的执行回显](figures/zh-cn_image_0000002015527556.png)
 
     2. 获取KAE2.0源码包。
 
@@ -665,7 +667,7 @@ vKAE可以应用于虚拟化和云原生场景。
         git clone https://gitee.com/kunpengcompute/KAE.git -b kae2
         ```
 
-        ![](figures/zh-cn_image_0000002026613254.png)
+        ![获取KAE2.0源码包的操作界面截图（图2）](figures/zh-cn_image_0000002026613254.png)
 
     3. 通过源码安装KAE。
 
@@ -679,7 +681,7 @@ vKAE可以应用于虚拟化和云原生场景。
             sh build.sh cleanup
             ```
 
-            ![](figures/zh-cn_image_0000002054326692.png)
+            ![build.sh截图，进入KAE源码目录（图2）](figures/zh-cn_image_0000002054326692.png)
 
         2. 一键式安装KAE。
 
@@ -687,11 +689,11 @@ vKAE可以应用于虚拟化和云原生场景。
             sh build.sh all
             ```
 
-            ![](figures/zh-cn_image_0000002090485465.png)
+            ![build.sh截图，一键式安装KAE（图2）](figures/zh-cn_image_0000002090485465.png)
 
             预期结果如下，表示安装KAE成功。
 
-            ![](figures/zh-cn_image_0000002026454840.png)
+            ![一键式安装KAE的执行回显](figures/zh-cn_image_0000002026454840.png)
 
 2. 使用vKAE前，需要在服务器KAE设备上创建VF，然后将VF直通到虚拟机中，才可以让虚拟机使能vKAE进行加速。需要使用HPRE加速器使能加解密加速。
 
@@ -701,11 +703,11 @@ vKAE可以应用于虚拟化和云原生场景。
     ls /sys/class/uacce
     ```
 
-    ![](figures/zh-cn_image_0000002015687916.png)
+    ![一键式安装KAE的执行回显（图2）](figures/zh-cn_image_0000002015687916.png)
 
     >![](public_sys-resources/icon-note.gif) **说明：** 
     >本步骤中的回显仅为举例。不同服务器包含的加速器数量也不尽相同。例如：
-    >![](figures/zh-cn_image_0000002015529728.png)
+    >![一键式安装KAE的执行回显（图3）](figures/zh-cn_image_0000002015529728.png)
 
 3. 查看hisi\_hpre-1加速器设备的实际路径和PCI编号。
 
@@ -714,7 +716,7 @@ vKAE可以应用于虚拟化和云原生场景。
     realpath .
     ```
 
-    ![](figures/zh-cn_image_0000002051688437.png)
+    ![查看hisi\_hpre-1加速器设备的实际路径和PCI的操作界面截图](figures/zh-cn_image_0000002051688437.png)
 
 4. 以hisi\_hpre-1为例，使用hisi\_hpre-1加速器创建3个KAE设备VF直通虚拟机。
 
@@ -739,7 +741,7 @@ vKAE可以应用于虚拟化和云原生场景。
     >ls
     >```
     >
-    >![](figures/zh-cn_image_0000002051807481.png)
+    >![以hisi\_hpre-1为例的操作界面截图](figures/zh-cn_image_0000002051807481.png)
 
 5. 创建3个KAE设备VF之后，可以看到hisi\_hpre-1加速器列表中存在三个虚拟机加速设备：virtfn0、virtfn1和virtfn2。
 
@@ -750,21 +752,21 @@ vKAE可以应用于虚拟化和云原生场景。
     realpath .
     ```
 
-    ![](figures/zh-cn_image_0000002015687924.png)
+    ![以hisi\_hpre-1为例的操作界面截图（图2）](figures/zh-cn_image_0000002015687924.png)
 
     ```shell
     cd virtfn1
     realpath .
     ```
 
-    ![](figures/zh-cn_image_0000002015529732.png)
+    ![执行cd virtfn1与realpath .后回显virtfn1实际路径及PCI编号的截图](figures/zh-cn_image_0000002015529732.png)
 
     ```shell
     cd virtfn2
     realpath .
     ```
 
-    ![](figures/zh-cn_image_0000002051688445.png)
+    ![执行cd virtfn2与realpath .后回显virtfn2实际路径及PCI编号的截图](figures/zh-cn_image_0000002051688445.png)
 
 6. 修改虚拟机的配置文件，配置KAE设备VF直通虚拟机。
     - 给虚拟机配置1个KAE设备VF。
@@ -792,7 +794,7 @@ vKAE可以应用于虚拟化和云原生场景。
             reboot
             ```
 
-            ![](figures/zh-cn_image_0000002051807485.png)
+            ![重启虚拟机的执行回显](figures/zh-cn_image_0000002051807485.png)
 
             上述的配置完成后，KAE设备VF直通虚拟机成功。
 
@@ -986,9 +988,9 @@ vKAE可以应用于虚拟化和云原生场景。
 
         回显中显示HPRE Engine和kae.so文件，表示KAE设备安装成功。
 
-        ![](figures/zh-cn_image_0000002042402040.png)
+        ![在虚拟机内查看KAE设备是否安装成功的执行回显](figures/zh-cn_image_0000002042402040.png)
 
-        ![](figures/zh-cn_image_0000002015689596.png)
+        ![在虚拟机内查看KAE设备是否安装成功的执行回显（图2）](figures/zh-cn_image_0000002015689596.png)
 
     2. 查看VF是否成功挂载到虚拟机上。
 
@@ -998,7 +1000,7 @@ vKAE可以应用于虚拟化和云原生场景。
 
         如果直通的VF设备在物理机上不再显示，说明直通成功。
 
-        ![](figures/zh-cn_image_0000002051807797.png)
+        ![查看VF是否成功挂载到虚拟机上的执行回显](figures/zh-cn_image_0000002051807797.png)
 
         查看VF使用的地址。
 
@@ -1008,7 +1010,7 @@ vKAE可以应用于虚拟化和云原生场景。
         ls
         ```
 
-        ![](figures/zh-cn_image_0000002041328398.png)
+        ![查看VF是否成功挂载到虚拟机上的操作界面截图](figures/zh-cn_image_0000002041328398.png)
 
     3. 验证KAE性能。<br>配置OpenSSL以使用KAE，并通过执行 **openssl speed** 命令来比较开启和未开启KAE时RSA加密解密的性能差异。
 
@@ -1018,7 +1020,7 @@ vKAE可以应用于虚拟化和云原生场景。
         openssl speed -elapsed rsa2048
         ```
 
-        ![](figures/zh-cn_image_0000002026651516.png)
+        ![查看VF是否成功挂载到虚拟机上的操作界面截图（图2）](figures/zh-cn_image_0000002026651516.png)
 
         使能KAE后的性能值。
 
@@ -1027,7 +1029,7 @@ vKAE可以应用于虚拟化和云原生场景。
         openssl speed -engine kae -elapsed rsa2048
         ```
 
-        ![](figures/zh-cn_image_0000002051692101.png)
+        ![查看VF是否成功挂载到虚拟机上的操作界面截图（图3）](figures/zh-cn_image_0000002051692101.png)
 
     4. 检查加载模块是否加载。
 
@@ -1037,7 +1039,7 @@ vKAE可以应用于虚拟化和云原生场景。
 
         预期结果如下，表示加载模块已经加载。
 
-        ![](figures/zh-cn_image_0000002015533000.png)
+        ![检查加载模块是否加载的执行回显](figures/zh-cn_image_0000002015533000.png)
 
 ### 在虚拟机部署Nginx<a name="ZH-CN_TOPIC_0000002051811469"></a>
 
@@ -1200,7 +1202,7 @@ vKAE可以应用于虚拟化和云原生场景。
 
         回显中显示Nginx线程，表示Nginx已经启动。
 
-        ![](figures/zh-cn_image_0000002052021169.png)
+        ![运行Nginx开源版本的执行回显](figures/zh-cn_image_0000002052021169.png)
 
         可以看到，nginx.conf配置文件中指定worker\_processes为auto，创建的Nginx线程数量为8个，刚好等于8C16G虚拟机的总核数，worker\_processes数量也可以根据实际情况进行设置。
 
@@ -1239,7 +1241,7 @@ vKAE可以应用于虚拟化和云原生场景。
 
     2. 按“i”键进入编辑模式，将以下内容复制到Nginx配置文件中。
 
-        以下为配置KAE使能 + Nginx同步模式的Nginx配置文件nginx.conf的内容，此配置已进行Nginx参数调优。
+        以下为配置KAE使能 + Nginx同步模式的Nginx配置文件nginx_kae.conf的内容，此配置已进行Nginx参数调优。
 
         ```xml
         user  root;
@@ -1375,7 +1377,7 @@ vKAE可以应用于虚拟化和云原生场景。
 
     3. 按“i”键进入编辑模式，将以下内容复制到nginx\_kae\_async.conf文件中。
 
-        以下为配置KAE使能 + Nginx异步模式的Nginx配置文件nginx.conf的内容，此配置已进行Nginx参数调优，并启用KAE。其中Nginx线程数可以根据实际需求进行更改，使用 **auto**一般会占满虚拟机的所有核。http占用端口号为 **10000**，https占用端口号为 **20000**。
+        以下为配置KAE使能 + Nginx异步模式的Nginx配置文件nginx_kae_async.conf的内容，此配置已进行Nginx参数调优，并启用KAE。其中Nginx线程数可以根据实际需求进行更改，使用 **auto**一般会占满虚拟机的所有核。http占用端口号为 **10000**，https占用端口号为 **20000**。
 
         ```xml
         # For more information on configuration, see:
@@ -1551,7 +1553,7 @@ vKAE可以应用于虚拟化和云原生场景。
 
     可以看到已安装的HTTPress为目标版本。
 
-    ![](figures/zh-cn_image_0000002052160813.png)
+    ![配置并检查HTTPress是否安装成功的操作界面截图](figures/zh-cn_image_0000002052160813.png)
 
 ## 测试<a name="ZH-CN_TOPIC_0000002041371065"></a>
 
@@ -1977,3 +1979,9 @@ unable to find 'distinguished_name' in config
 |UACCE|Unified/User-space-access-intended Accelerator Framework|用户态加速器框架|
 |UADK|User-space Accelerator Development Kit|用户态加速器开发包|
 |vKAE|virtual Kunpeng Accelerator Engine|虚拟鲲鹏加速引擎|
+
+## 修订记录
+
+| 文档版本 | 发布日期 | 修改说明 |
+|--|--|--|
+|01 | 2025-12-30 | 第一次正式发布。 |

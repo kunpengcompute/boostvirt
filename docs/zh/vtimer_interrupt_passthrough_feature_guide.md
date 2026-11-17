@@ -1,16 +1,18 @@
 # vtimer中断透传 特性指南
 
+本文档介绍vtimer中断透传特性，通过使能该特性降低虚拟机timer中断注入时延，适用于使用openEuler操作系统的鲲鹏920新型号及鲲鹏950处理器用户。
+
 ## 特性描述<a name="ZH-CN_TOPIC_0000002043771630"></a>
 
 ### 简介<a name="ZH-CN_TOPIC_0000002070181890"></a>
 
-本文主要介绍如何在使用openEuler操作系统的鲲鹏服务器上使能vtimer中断透传特性以降低虚拟机timer中断注入时延。
+本文主要介绍如何在使用openEuler操作系统的鲲鹏处理器上使能vtimer中断透传特性以降低虚拟机timer中断注入时延。
 
 在传统虚拟化环境中，虚拟机timer中断的处理需要通过VMM（Virtual Machine Monitor）进行中断注入，该过程涉及虚拟机的陷入陷出，引入了额外的时延开销。对于对timer定时时延有极致要求的业务场景，这种开销会显著影响业务性能。
 
 vtimer中断透传特性允许虚拟机的timer中断直接注入，免去中断注入时的陷入陷出，从而减少中断注入时延，适用于鲲鹏920新型号及鲲鹏950处理器。
 
->由于实现原因，vtimer中断直通时不提供active、pending状态。若虚拟机内部依赖timer中断的active、pending状态做特殊处理，可通过在libvirt配置开启vtimer中断status状态模拟，该特性需要Guest OS支持。
+>由于实现原因，vtimer中断透传时不提供active、pending状态。若虚拟机内部依赖timer中断的active、pending状态做特殊处理，可通过在libvirt配置开启vtimer中断status状态模拟，该特性需要Guest OS支持。
 
 ### 可获得性<a name="ZH-CN_TOPIC_0000002105901570"></a>
 
@@ -21,7 +23,7 @@ vtimer中断透传特性允许虚拟机的timer中断直接注入，免去中断
 ### 约束与限制<a name="ZH-CN_TOPIC_0000002070341631"></a>
 
 - 仅支持鲲鹏920新型号及鲲鹏950处理器。
-- vtimer中断直通时不提供active、pending状态，若虚拟机内部依赖timer中断的active、pending状态做特殊处理，需开启vtimer中断status状态模拟。
+- vtimer中断透传时不提供active、pending状态，若虚拟机内部依赖timer中断的active、pending状态做特殊处理，需开启vtimer中断status状态模拟。
 - vtimer中断status状态模拟特性需要Guest OS支持。
 
 ### 应用场景<a name="ZH-CN_TOPIC_0000002105901594"></a>
@@ -53,7 +55,7 @@ vtimer中断透传特性允许虚拟机的timer中断直接注入，免去中断
 
 |项目|版本|获取方法|
 |--|--|--|
-|Host OS|openEuler 24.03 LTS SP4及以上版本|[获取链接](https://www.openeuler.openatom.cn/zh/download/?archive=true)|
+|Host OS|openEuler 24.03 LTS SP4及以上版本|[openEuler下载页面](https://www.openeuler.openatom.cn/zh/download/?archive=true)e=true)|
 |Guest OS|openEuler 24.03 LTS SP4及以上版本（开启vtimer中断status状态模拟时需要）|[获取链接](https://www.openeuler.openatom.cn/zh/download/?archive=true)|
 |libvirt|9.10.0及以上均可|yum install libvirt|
 |QEMU|8.2.0及以上均可|yum install qemu|
@@ -115,7 +117,7 @@ dmesg | grep vtimer
 
 若回显中包含`using pvtimer status`状态模拟相关的日志信息，说明特性已生效。
 
-![](./figures/vtimer.png)
+![dmesg | grep vtimer命令回显截图，日志中含using pvtimer status状态模拟信息](./figures/vtimer.png)
 
 ## 缩略语<a name="ZH-CN_TOPIC_0000002106021550"></a>
 
@@ -123,3 +125,9 @@ dmesg | grep vtimer
 |--|--|--|
 |VMM|Virtual Machine Monitor|虚拟机监视器|
 |vtimer|Virtual Timer|虚拟定时器|
+
+## 修订记录
+
+| 文档版本 | 发布日期 | 修改说明 |
+|--|--|--|
+|01 | 2026-06-30 | 第一次正式发布。 |

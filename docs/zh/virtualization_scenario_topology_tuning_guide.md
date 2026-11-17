@@ -1,5 +1,7 @@
 # 虚拟化场景拓扑调优指南
 
+本文档介绍基于KVM的虚拟化场景下的拓扑调优方法，通过将虚拟机vCPU与物理CPU核心绑定并优化Socket、Die、Cluster拓扑使虚拟机获得最佳性能，适用于在鲲鹏处理器上部署虚拟化环境的用户。
+
 ## 调优概述<a name="ZH-CN_TOPIC_0000002518687258"></a>
 
 本文针对基于KVM的虚拟化场景，指导用户对鲲鹏服务器的虚拟化参数配置进行适当调整，以实现虚拟化场景下的最佳性能表现。
@@ -37,7 +39,7 @@
 
 |项目|软件版本|获取方式|
 |--|--|--|
-|操作系统|openEuler 24.03 LTS SP1|[获取链接](https://mirrors.huaweicloud.com/openeuler/openEuler-24.03-LTS-SP1/ISO/aarch64/openEuler-24.03-LTS-SP1-everything-aarch64-dvd.iso)|
+|操作系统|openEuler 24.03 LTS SP1|[openEuler-24.03-LTS-SP1 everything aarch64 DVD镜像下载](https://mirrors.huaweicloud.com/openeuler/openEuler-24.03-LTS-SP1/ISO/aarch64/openEuler-24.03-LTS-SP1-everything-aarch64-dvd.iso)|
 |libvirt|9.10.0|yum源安装|
 |QEMU|8.2.0|yum源安装|
 
@@ -56,7 +58,7 @@
     virsh list --all
     ```
 
-    ![](figures/zh-cn_image_0000002518687260.png)
+    ![执行virsh list --all命令后终端输出的虚拟机列表截图，含Name与State列，用于确认目标虚拟机名称](figures/zh-cn_image_0000002518687260.png)
 
 2. 修改虚拟机xml。
 
@@ -115,7 +117,7 @@
      ...
       </cpu>
     ...
-    <domain>
+    </domain>
     ```
 
 ## 2个NUMA节点场景配置CPU调优<a name="ZH-CN_TOPIC_0000002550127095"></a>
@@ -124,7 +126,7 @@
 
 物理机设置成2个NUMA节点，需要对BIOS配置进行修改。
 
-在BIOS中开启One Numa Per Socket和Die交织选项，如[**表 1** 2个NUMA节点BIOS配置](#2个NUMA节点BIOS配置)所示：
+在BIOS中开启One Numa Per Socket和Die交织选项，如[**表 3** 2个NUMA节点BIOS配置](#2个NUMA节点BIOS配置)所示：
 
 **表 1** 2个NUMA节点BIOS配置<a id="2个NUMA节点BIOS配置"></a>
 
@@ -155,7 +157,7 @@
 
 物理机设置成2个NUMA节点后，每个NUMA节点中包含两个CPU Die。两个CPU Die之间的缓存与内存读写存在性能损失，因此建议在虚拟机vCPU绑定的物理CPU核心不能跨越Die。以鲲鹏920新型号处理器7270Z为例，该型号处理器一个CPU Die包含64个CPU核心。如下图所示，存在两个NUMA节点，其中CPU 0-127为NUMA 0节点。而NUMA 0节点包含两个CPU Die，0-63 CPU为第一个CPU Die的核心，64-127 CPU为第二个CPU Die的核心。
 
-![](figures/zh-cn_image_0000002518527342.png)
+![鲲鹏920双NUMA节点场景的CPU Die划分示意图，标注NUMA 0节点包含0-63与64-127两个CPU Die的核心编号范围](figures/zh-cn_image_0000002518527342.png)
 
 当虚拟机的规格小于64U时，虚拟机最佳性能的绑核配置为所有vCPU绑定在第一个Die或者第二个Die的物理CPU核心上，vCPU不能同时绑定在两个Die的物理CPU核心上。
 
@@ -213,7 +215,7 @@
 ...
   </cpu>
 ...
-<domain>
+</domain>
 ```
 
 ## 缩略语<a name="ZH-CN_TOPIC_0000002518687256"></a>

@@ -1,5 +1,7 @@
 # cluster感知 特性指南
 
+本文档介绍cluster感知特性，说明如何在使用openEuler操作系统的鲲鹏服务器上部署并使其生效，适用于1:1绑核场景下需要提升多线程应用CPU调度效率的用户。
+
 ## 特性描述<a name="ZH-CN_TOPIC_0000002105902629"></a>
 
 ### 简介<a name="ZH-CN_TOPIC_0000002105902621"></a>
@@ -9,7 +11,7 @@
 如[**图 1** Cluster与L3 cache结构图](#Cluster与L3-cache结构图)所示，Cluster是CPU的一个硬件单元，每个Cluster包含数个core。同一个Cluster内的core会共享同一块L3 cache Tag，一个core访问对应Cluster的共享L3 cache Tag的时间，比访问其他L3 cache或内存的时间更短。因此，当某个线程被调度到相同Cluster（而不是另一个Cluster，即跨Cluster调度）上的core执行时，便能复用该Cluster对应的L3 cache Tag，减少数据访问需要的时间。通过新增OS内核的Cluster任务调度优化选项，可以避免线程跨Cluster调度，复用L3 cache Tag资源，以提升多线程应用的CPU调度效率和内存带宽的利用效率。
 
 **图 1** Cluster与L3 cache结构图<a name="fig356644616414"></a><a id="Cluster与L3-cache结构图"></a>
-![](figures/Cluster与L3-cache结构图.png "Cluster与L3-cache结构图")
+![Cluster与L3 cache结构示意图，同一Cluster内的core共享一块L3 cache Tag](figures/Cluster与L3-cache结构图.png "Cluster与L3-cache结构图")
 
 通过这项优化，可以更好地利用硬件资源，提高系统的吞吐量和响应速度，从而提升系统的整体性能表现。在各种应用场景或测试场景中，尤其是在多核多线程的应用场景上，使能Cluster调度优化特性将获得比较好的性能提升效果，提升幅度可达2%～20%。
 
@@ -54,7 +56,7 @@
 
 |项目|版本|获取方法|
 |--|--|--|
-|OS|openEuler 22.03 LTS SP2及以上版本|[获取链接](https://mirrors.huaweicloud.com/openeuler/openEuler-22.03-LTS-SP4/ISO/aarch64/openEuler-22.03-LTS-SP4-everything-aarch64-dvd.iso)|
+|OS|openEuler 22.03 LTS SP2及以上版本|[openEuler 22.03 LTS SP4 ISO镜像下载页面](https://mirrors.huaweicloud.com/openeuler/openEuler-22.03-LTS-SP4/ISO/aarch64/openEuler-22.03-LTS-SP4-everything-aarch64-dvd.iso)|
 
 ### 使能与验证<a name="ZH-CN_TOPIC_0000002105902617"></a>
 
@@ -77,7 +79,7 @@
 
     运行上述命令后可看到类似下图的CPU调度组情况。
 
-    ![](figures/zh-cn_image_0000002239247897.png)
+    ![关闭cluster-aware调度器后cat /proc/schedstat回显的各vCPU初始调度组](figures/zh-cn_image_0000002239247897.png)
 
 3. 在Guest OS内设置命令使能cluster-aware调度器，并观察每个vCPU的调度组情况。
 
@@ -88,6 +90,12 @@
 
     运行上述命令后可看到类似下图的CPU调度组情况。
 
-    ![](figures/zh-cn_image_0000002239169217.png)
+    ![使能cluster-aware调度器后cat /proc/schedstat回显，每个vCPU调度组新增一层domain](figures/zh-cn_image_0000002239169217.png)
 
     可以观察到，与步骤2对比，特性使能后，每个vCPU均增加了一层调度组“domain”。
+
+## 修订记录
+
+| 文档版本 | 发布日期 | 修改说明 |
+|--|--|--|
+|01 | 2026-03-30 | 第一次正式发布。 |

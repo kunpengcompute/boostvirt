@@ -1,5 +1,7 @@
 # NUMA感知 特性指南
 
+本文档介绍NUMA感知特性，说明如何通过配置虚拟NUMA节点与vCPU绑定，使虚拟机感知宿主机的NUMA架构并优化性能，适用于1:1绑核场景下的虚拟化调优。
+
 ## 特性描述<a name="ZH-CN_TOPIC_0000002070343122"></a>
 
 **简介<a name="section117054563113"></a>**
@@ -10,11 +12,11 @@ NUMA架构将处理器和内存划分为多个节点，如下图node0和node1，
 
 **图 1** NUMA架构图<a name="fig1860217228139"></a><a id="NUMA架构图"></a>
 
-![](figures/NUMA架构图.png)
+![NUMA架构示意图：处理器和内存划分为node0与node1两个节点，各自包含本地内存与对应处理器](figures/NUMA架构图.png)
 
 通过为虚拟机配置Guest NUMA，虚拟机内部能够识别vCPU NUMA状态，以便于虚拟机根据Guest NUMA拓扑，优化内存资源使用。例如对于下图的VM7，其使用的宿主机CPU和内存分布于两个NUMA节点中，在无NUMA感知情况下，虚拟机内部便可能出现大量的跨NUMA节点的内存访问，影响性能。当配置Guest NUMA，将宿主机的NUMA拓扑结构传递给虚拟机时，便能减少跨NUMA节点的内存访问。
 
-![](figures/NUMA感知架构图.png)
+![Guest NUMA拓扑图：VM7的vCPU与内存分布到宿主机两个NUMA节点，配置后可避免跨节点访问](figures/NUMA感知架构图.png)
 
 **版本支持<a name="section160134962811"></a>**
 
@@ -141,10 +143,16 @@ numactl -H
 
 如下图，可查看到NUMA节点个数为2，node0包含cpu0-7，node1包含cpu8-15，与虚拟机XML配置一致。两个NUMA节点各自有4G左右的内存，由于系统本身占据部分内存，所以显示的内存大小会与虚拟机XML配置的不完全一致。
 
-![](figures/zh-cn_image_0000002111775489.png)
+![numactl -H回显截图：显示2个NUMA节点，node0含cpu0-7、node1含cpu8-15，各约4G内存](figures/zh-cn_image_0000002111775489.png)
 
 ## 缩略语<a name="ZH-CN_TOPIC_0000002105903033"></a>
 
 |**缩略语**|**英文全称**|**中文全称**|
 |--|--|--|
 |NUMA|Non-Uniform Memory Access|非统一内存访问|
+
+## 修订记录
+
+| 文档版本 | 发布日期 | 修改说明 |
+|--|--|--|
+|01 | 2026-03-30 | 第一次正式发布。 |
