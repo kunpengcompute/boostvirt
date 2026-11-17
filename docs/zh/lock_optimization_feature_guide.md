@@ -67,7 +67,7 @@
 
 |项目|版本|获取方法|
 |--|--|--|
-|OS|openEuler 20.03 LTS SP1<br>物理机、虚拟机均要求操作系统不低于以上版本|[openEuler-20.03-LTS-SP1代码仓库](https://mirrors.huaweicloud.com/openeuler/openEuler-20.03-LTS-SP1/ISO/aarch64/openEuler-20.03-LTS-SP1-aarch64-dvd.iso)|
+|OS|openEuler 20.03 LTS SP1<br>物理机、虚拟机均要求操作系统不低于以上版本|[openEuler-20.03-LTS-SP1 ISO镜像下载页面](https://mirrors.huaweicloud.com/openeuler/openEuler-20.03-LTS-SP1/ISO/aarch64/openEuler-20.03-LTS-SP1-aarch64-dvd.iso)|
 |libvirt|6.2.0及以上均可|利用Yum工具直接安装。|
 |QEMU|4.1.0及以上均可|利用Yum工具直接安装。|
 
@@ -79,8 +79,9 @@
 |2|KVM: arm64: Implement PV_SCHED_FEATURES call|[kernel代码仓库](https://gitee.com/openeuler/kernel/commit/a0b95bdf6a0b2d5a96a28b1f728a6abad51dbaec)|
 |3|KVM: arm64: Support pvsched preempted via shared structure|[kernel代码仓库](https://gitee.com/openeuler/kernel/commit/76732c97a3ecc07a4237f0348f661ccff6b9d3eb)|
 |4|KVM: arm64: Add interface to support vCPU preempted check|[kernel代码仓库](https://gitee.com/openeuler/kernel/commit/63042c58affca22fb14736455d38d2a6e97ca9dc)|
-|5|KVM: arm64: Support the vCPU preemption check|[kernel代码仓库](https://gitee.com/openeuler/kernel/commit/7a645f6e24eeda4736975b6e85dc797a57fe8900)|
-|7|KVM: arm64: Implement PV_SCHED_KICK_CPU call|[kernel代码仓库](https://gitee.com/openeuler/kernel/commit/493653466917a7e95868ec38bef41)|
+|5|KVM: arm64: Support the vCPU preemption check|[kernel代码仓库](https://gitee.com/openeuler/kernel/commit/cf6d95e33dfa0344abea230ed48a1fad69591f36)|
+|6|KVM: arm64: Add SMCCC PV-sched to kick cpu|[获取链kernel代码仓](https://gitee.com/openeuler/kernel/commit/7a645f6e24eeda4736975b6e85dc797a57fe8900)|
+|7|KVM: arm64: Implement PV_SCHED_KICK_CPU call|[kernel代码仓库](https://gitee.com/openeuler/kernel/commit/efed88dd593493653466917a7e95868ec38bef41)|
 |8|KVM: arm64: Add interface to support PV qspinlock|[kernel代码仓库](https://gitee.com/openeuler/kernel/commit/12e1ed766c347d47f85736fece113c7578ace94f)|
 
 >![](public_sys-resources/icon-notice.gif) **须知：** 

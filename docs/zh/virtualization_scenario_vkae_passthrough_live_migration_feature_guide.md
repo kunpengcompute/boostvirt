@@ -487,7 +487,7 @@ XML配置内容如下所示。
 1. 编译测试工具。
 
     ```shell
-    export LD_LIBRARY_PATH=/usr/local/kaezip/lib:$ LD_LIBRARY_PATH
+    export LD_LIBRARY_PATH=/usr/local/kaezip/lib:$LD_LIBRARY_PATH
     cd KAEZlib/test/perftest
     make
     ```

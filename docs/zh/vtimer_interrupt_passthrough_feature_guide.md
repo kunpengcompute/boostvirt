@@ -55,7 +55,7 @@ vtimer中断透传特性允许虚拟机的timer中断直接注入，免去中断
 
 |项目|版本|获取方法|
 |--|--|--|
-|Host OS|openEuler 24.03 LTS SP4及以上版本|[openEuler下载页面](https://www.openeuler.openatom.cn/zh/download/?archive=true)e=true)|
+|Host OS|openEuler 24.03 LTS SP4及以上版本|[openEuler下载页面](https://www.openeuler.openatom.cn/zh/download/?archive=true)|
 |Guest OS|openEuler 24.03 LTS SP4及以上版本（开启vtimer中断status状态模拟时需要）|[获取链接](https://www.openeuler.openatom.cn/zh/download/?archive=true)|
 |libvirt|9.10.0及以上均可|yum install libvirt|
 |QEMU|8.2.0及以上均可|yum install qemu|

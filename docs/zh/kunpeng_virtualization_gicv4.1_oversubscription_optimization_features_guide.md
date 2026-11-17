@@ -57,7 +57,7 @@ GICv4.1是ARM服务器中先进的通用中断控制器架构，支持虚拟中�
 
 |项目|版本|获取方法|
 |--|--|--|
-|OS|openEuler 24.03 LTS SP3|[openEuler-24.03-LTS-SP3代码仓库](https://mirrors.huaweicloud.com/openeuler/openEuler-24.03-LTS-SP3/ISO/aarch64/openEuler-24.03-LTS-SP3-everything-aarch64-dvd.iso)|
+|OS|openEuler 24.03 LTS SP3|[openEuler-24.03-LTS-SP3 ISO镜像下载页面](https://mirrors.huaweicloud.com/openeuler/openEuler-24.03-LTS-SP3/ISO/aarch64/openEuler-24.03-LTS-SP3-everything-aarch64-dvd.iso)|
 |kernel|OLK6.6|[kernel代码仓库](https://gitcode.com/openeuler/kernel)|
 |libvirt|9.10.0|在openEuler 24.03 LTS SP3系统上，确保网络畅通情况下，利用Yum工具直接安装。|
 |QEMU|8.2.0|[qemu代码仓库](https://gitlab.com/qemu-project/qemu)|

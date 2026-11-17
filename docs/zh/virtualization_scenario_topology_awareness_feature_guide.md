@@ -42,7 +42,7 @@
 
 |软件名称|版本|获取方法|
 |--|--|--|
-|物理机与虚拟机操作系统|已经验证的版本：openEuler 22.03 LTS SP4|[openEuler-22.03-LTS-SP4代码仓库](https://mirrors.huaweicloud.com/openeuler/openEuler-22.03-LTS-SP4/ISO/aarch64/openEuler-22.03-LTS-SP4-everything-aarch64-dvd.iso)|
+|物理机与虚拟机操作系统|已经验证的版本：openEuler 22.03 LTS SP4|[openEuler-22.03-LTS-SP4 ISO镜像下载页面](https://mirrors.huaweicloud.com/openeuler/openEuler-22.03-LTS-SP4/ISO/aarch64/openEuler-22.03-LTS-SP4-everything-aarch64-dvd.iso)|
 |QEMU|6.2.0|代码仓：[qemu仓库（openEuler-22.03-LTS-分支）](https://gitee.com/src-openeuler/qemu/tree/openEuler-22.03-LTS-SP4/)<br>补丁：[qemu代码仓库](https://gitee.com/openeuler/qemu/pulls/1449)|
 |libvirt|6.2.0|代码仓：[libvirt仓库（openEuler-22.03-LTS-分支）](https://gitee.com/src-openeuler/libvirt/tree/openEuler-22.03-LTS-SP4/)<br>补丁：[libvirt代码仓库](https://gitee.com/openeuler/libvirt/pulls/315)|
 

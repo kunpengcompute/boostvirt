@@ -74,7 +74,7 @@ NMI Watchdog是一种专门用于检测Linux系统中硬死锁（hard lockup）�
 
 |项目|版本|获取方法|
 |--|--|--|
-|OS|openEuler 22.03 LTS SP2（本特性对物理机、虚拟机的操作系统均要求以上版本）|[openEuler-22.03-LTS-SP2代码仓库](https://mirrors.pku.edu.cn/openeuler/openEuler-22.03-LTS-SP2/ISO/aarch64/openEuler-22.03-LTS-SP2-everything-aarch64-dvd.iso)|
+|OS|openEuler 22.03 LTS SP2（本特性对物理机、虚拟机的操作系统均要求以上版本）|[openEuler-22.03-LTS-SP2  ISO镜像下载页面](https://mirrors.pku.edu.cn/openeuler/openEuler-22.03-LTS-SP2/ISO/aarch64/openEuler-22.03-LTS-SP2-everything-aarch64-dvd.iso)|
 |libvirt|6.2.0及以上均可|利用Yum工具直接安装。|
 |QEMU|6.2.0及以上均可|利用Yum工具直接安装。|
 

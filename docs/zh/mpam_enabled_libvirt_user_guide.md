@@ -114,7 +114,7 @@ yum install -y libvirt
 
 **配置Cache<a name="section362983302918"></a>**
 
-Cache配置的XML如下所示，相关参数请参见[**表 1** 参数说明](#参数说明)。
+Cache配置的XML如下所示，相关参数请参见[**表 3** 参数说明](#参数说明)。
 
 ```xml
 <cputune>

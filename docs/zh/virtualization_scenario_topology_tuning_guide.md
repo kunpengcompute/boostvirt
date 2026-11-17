@@ -128,7 +128,7 @@
 
 在BIOS中开启One Numa Per Socket和Die交织选项，如[**表 3** 2个NUMA节点BIOS配置](#2个NUMA节点BIOS配置)所示：
 
-**表 1** 2个NUMA节点BIOS配置<a id="2个NUMA节点BIOS配置"></a>
+**表 3** 2个NUMA节点BIOS配置<a id="2个NUMA节点BIOS配置"></a>
 
 |选项|配置值|参数路径|
 |--|--|--|
