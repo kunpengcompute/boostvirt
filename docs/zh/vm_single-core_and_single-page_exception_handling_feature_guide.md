@@ -20,7 +20,9 @@
 **约束与限制<a name="section3897196125818"></a>**
 
 - 使用环境需满足软硬件环境要求。
-- 当前内存单页故障处理只支持物理机使用4K页的场景。
+- 当前内存单页故障处理只支持物理机使用4K页，以及开启共享的2M大页（hugetlbfs或memfd后端）。
+- 使用2M大页时，要求物理机有空闲大页存在。
+- 多页同时故障统一执行可控虚拟机exit。
 
 **应用场景<a name="section49961711506"></a>**
 
@@ -62,7 +64,7 @@
 |--|--|--|
 |OS|openEuler 24.03 LTS SP3|[获取链接](https://dl-cdn.openeuler.openatom.cn/openEuler-24.03-LTS-SP3/ISO/aarch64/)|
 |libvirt|9.10.0-26.oe2403sp3及以上|通过配置Yum源的方式安装|
-|QEMU|8.2.0|通过配置Yum源的方式安装|
+|QEMU|8.2.0|通过配置Yum源的方式安装（2M大页支持的版本需要编译安装）|
 |Nginx|1.24.0|通过配置Yum源的方式安装|
 |Wrk|4.2.0|通过配置Yum源的方式安装|
 
@@ -71,9 +73,34 @@
 修改BIOS仅为验证特性功能，正常使用过程建议保持默认配置。
 
 1. 重启物理机，进入BIOS界面。
-2. 设置“Advanced \> RAS Configuration”下的“Ce Report Policy”以及“Error Inject”为“Enabled”。
+2. 设置“Advanced \> RAS Configuration”下的“Ce Report Policy”以及“Error Inject”为“Enabled”（不同版本BIOS设置路径可能存在变化，以实际为准）。
 
     ![](figures/zh-cn_image_0000002545646137.png)
+
+### （可选）配置大页内存
+
+测试大页内存故障注入时，需要提前配置大页，有以下两种配置方式。
+
+1. 使用以下命令打开内核配置文件，修改host内核cmdline启动项，找到下图中对应内核的启动参数，在最后添加大页内存配置，内核版本与配置数量以实际为准。
+
+    ```shell
+    vim /etc/grub2-efi.cfg
+    ```
+
+    新增参数如下：
+
+    ```txt
+    default_hugepagesz=2M hugepagesz=2M hugepages=65536
+    ```
+
+    保存后执行reboot命令重启物理机生效。
+    ![](figures/boostvirt_ras_hugepage_cmdline.png)
+
+2. 除上述方式1，还可以通过执行以下命令动态配置大页数量，pages以实际情况为准。
+
+    ```shell
+    echo <pages> > /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages
+    ```
 
 ### 安装libvirt<a name="ZH-CN_TOPIC_0000002544424933"></a>
 
@@ -90,6 +117,54 @@
 ```shell
 yum install -y libvirt
 ```
+
+### （可选）编译安装qemu
+
+测试2M大页注错功能需要编译安装qemu。
+
+1. 拉取qemu源码。
+
+    ```shell
+    cd /home/
+    git clone https://gitcode.com/openeuler/qemu.git
+    ```
+
+2. 切换到基线。
+
+    ```shell
+    cd /home/qemu
+    git switch qemu-8.2.0
+    git checkout 287b581b3a2e209ca7f7db0bc9b16136c01c14df
+    ```
+
+3. 获取2M大页注错功能patch。
+
+    ```shell
+    cd /home
+    git clone https://gitcode.com/boostkit/cloud-virtual.git -b br-26.3.0-dev
+    ```
+
+4. 应用2M大页注错功能patch。
+
+    ```shell
+    cd /home/qemu
+    git apply -3 /home/cloud-virtual/qemu/qemu-8.2.0/2m-hugepage-ras/*.patch
+    ```
+
+5. 安装编译依赖。
+
+    ```shell
+    yum -y install rpm-build openssl-devel bc rsync gcc gcc-c++ flex bison m4 git glib2-devel spice-protocol zlib-devel libffi-devel libgcrypt-devel libnfs-devel libiscsi-devel libseccomp-devel libaio-devel libcap-ng-devel librados2-devel librbd1-devel libfdt-devel libpng-devel spice-server-devel numactl-devel dwarves elfutils-libelf-devel ncurses-devel cmake make liburing-devel ninja-build
+    ```
+
+6. 编译安装qemu。
+
+    ```shell
+    mkdir build
+    cd build
+    ../configure --prefix=/usr/local/qemu-8.2.0 --disable-werror --enable-spice --enable-spice-protocol --target-list=aarch64-softmmu --cc="gcc" --extra-cflags="-Wno-error" --disable-docs --enable-virtfs --enable-numa --enable-kvm
+    make -j && make install
+    ```
 
 ### 配置虚拟机XML<a name="ZH-CN_TOPIC_0000002544304941"></a>
 
@@ -115,7 +190,33 @@ yum install -y libvirt
     </domain>
     ```
 
-3. 按“Esc”键退出编辑模式，输入 **:wq!**，按“Enter”键保存并退出文件。
+3. （可选）在xml中为虚拟机配置大页，以4U8G虚拟机为例，qemu路径与编译安装路径保持一致。
+
+    ```xml
+    <domain type='kvm'>
+      ...
+      <memoryBacking>
+        <hugepages>
+          <page size='2048' unit='KiB'/>
+        </hugepages>
+      </memoryBacking>
+      ...
+      <devices>
+        ...
+        <emulator>/usr/local/qemu-8.2.0/bin/qemu-system-aarch64</emulator>
+        ...
+      </devices>
+      ...
+      <cpu mode='host-passthrough' check='none'>
+        <numa>
+          <cell id='0' cpus='0-3' memory='8388608' unit='KiB' memAccess='shared'/>
+        </numa>
+      </cpu>
+      ...
+    </domain>
+    ```
+
+4. 按“Esc”键退出编辑模式，输入 **:wq!**，按“Enter”键保存并退出文件。
 
 ## 功能测试<a name="ZH-CN_TOPIC_0000002544247337"></a>
 
@@ -243,9 +344,20 @@ yum install -y rasdaemon
 
 重新安装qemu软件。
 
-```shell
-yum reinstall qemu
-```
+1. yum源安装的qemu执行以下命令重新安装。
+
+    ```shell
+    yum reinstall qemu
+    ```
+
+2. 编译安装的qemu执行以下命令重新安装。
+
+    ```shell
+    cd /home/qemu/build
+    make clean
+    ../configure --prefix=/usr/local/qemu-8.2.0 --disable-werror --enable-spice --enable-spice-protocol --target-list=aarch64-softmmu --cc="gcc" --extra-cflags="-Wno-error" --disable-docs --enable-virtfs --enable-numa --enable-kvm
+    make -j && make install
+    ```
 
 #### 获取故障注入地址<a name="ZH-CN_TOPIC_0000002514439060"></a>
 
@@ -594,7 +706,7 @@ yum reinstall qemu
 
 #### 测试虚拟机内存UE故障<a name="ZH-CN_TOPIC_0000002546078353"></a>
 
-虚拟机内存UE故障注入使用hwpoison\_inject模块实现。
+虚拟机内存UE故障注入使用hwpoison\_inject模块实现，UE故障分为两类，同步故障（被访问的故障页）与异步故障（暂时没有访问的故障页）。
 
 1. 加载模块。
 
@@ -603,7 +715,7 @@ yum reinstall qemu
     ```
 
 2. 参见[获取故障注入地址](#获取故障注入地址)，将GPA翻译为物理机地址页号。
-3. （可选）注错地址为Nginx进程地址时，在物理机使用wrk对Nginx进行压测。
+3. （可选）注错地址为Nginx进程地址时，可在物理机使用wrk对Nginx进行压测，无压力情况下测试异步故障，有压力情况下测试同步故障。
 
     ```shell
     wrk -t4 -c64 -d60s http://<虚拟机IP>/
@@ -616,13 +728,19 @@ yum reinstall qemu
     ```
 
 5. 在虚拟机中观察结果。
-    - 注错地址为用户态地址时，执行**dmesg**命令，查看系统日志中是否存在给对应进程发送SIGBUS信号的记录。
+    - 注错地址为用户态地址，且内存故障是同步故障时，执行**dmesg**命令，查看系统日志中是否存在给对应进程发送SIGBUS信号的记录。
 
         ![](figures/zh-cn_image_0000002546664067.png)
 
-    - 注错地址为内核态地址时，内核将收到SEA（Synchronous External Abort）中断，并打印call trace，执行panic流程。
+    - 注错地址为用户态地址，且内存故障是异步故障时，执行**dmesg**命令，查看系统日志中是否存在将注错地址隔离的记录。当页面被访问到时，异步故障转为同步故障，执行**dmesg**命令，查看系统日志中是否存在给对应进程发送SIGBUS信号的记录。
+
+        ![](figures/boostvirt_ras_ao_inject_dmesg.png)
+
+    - 注错地址为内核态地址，且内存故障时同步故障时，内核将收到SEA（Synchronous External Abort）中断，并打印call trace，执行panic流程。
 
         ![](figures/zh-cn_image_0000002516458104.png)
+
+    - 注错地址为内核态地址，且内存故障是异步故障时，执行**dmesg**命令，查看系统日志中是否存在将注错地址隔离的记录，记录格式与用户态地址一致，此处不再额外展示。当页面被访问到时，异步故障转为同步故障，内核将收到SEA（Synchronous External Abort）中断，并打印call trace，执行panic流程。
 
 #### 测试虚拟机内存CE故障<a name="ZH-CN_TOPIC_0000002514438490"></a>
 
@@ -687,6 +805,6 @@ yum reinstall qemu
 
 ## 修订记录<a name="ZH-CN_TOPIC_0000002544287789"></a>
 
-|发布日期|修改说明|
-|--|--|
-|2026-03-30|第一次正式发布。|
+|文档版本|发布日期|修改说明|
+|--|--|--|
+|01|2026-12-30|第一次正式发布。|
