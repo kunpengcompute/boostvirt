@@ -1,10 +1,8 @@
 # vKAE直通热迁移 特性指南
 
-本文档介绍在使用openEuler操作系统的鲲鹏处理器上部署并使能虚拟化场景vKAE直通热迁移特性的方法，涵盖安装KAE、使能设备、配置虚拟机XML以及功能与性能测试，适用于有KAE设备使用和热迁移需求的用户。
-
-## 特性描述<a name="ZH-CN_TOPIC_0000002518686500"></a>
-
 本文主要介绍如何在使用openEuler操作系统的鲲鹏处理器上部署和使能虚拟化场景vKAE直通热迁移特性，以及如何进行功能与性能测试的操作指导。
+
+## 特性描述
 
 虚拟机热迁移是指在不中断虚拟机运行的情况下，将虚拟机从一个物理主机迁移到另一个物理主机，是一种重要的运维手段。vKAE直通热迁移是指虚拟机在配置KAE直通设备时，进行热迁移的能力，可以为KAE设备的使用提供更强的灵活性和业务不中断的保障。目前直通设备热迁移DMA标脏基于设备标脏特性，但很多设备不支持此特性，使得直通设备热迁移能力缺失。鲲鹏920新型号处理器SMMU支持HTTU硬件标脏特性，可以通过软件框架+硬件特性结合的方式构建直通设备热迁移硬件标脏特性，提高鲲鹏虚拟化竞争力。
 
@@ -50,7 +48,7 @@
 |软件名称|版本|获取方法|
 |--|--|--|
 |OS|openEuler 22.03 LTS SP4|[openEuler 22.03 LTS SP4操作系统镜像下载页面](https://mirrors.huaweicloud.com/openeuler/openEuler-22.03-LTS-SP4/ISO/aarch64/openEuler-22.03-LTS-SP4-everything-aarch64-dvd.iso)|
-|QEMU|6.2.0|代码仓：[qemu代码仓库（openEuler 22.03 LTS SP4分支）](https://gitee.com/src-openeuler/qemu/tree/openEuler-22.03-LTS-SP4/)|
+|QEMU|6.2.0|代码仓：[QEMU代码仓库（openEuler 22.03 LTS SP4分支）](https://gitee.com/src-openeuler/qemu/tree/openEuler-22.03-LTS-SP4/)|
 |libvirt|6.2.0|代码仓：[libvirt代码仓库（openEuler 22.03 LTS SP4分支）](https://gitee.com/src-openeuler/libvirt/tree/openEuler-22.03-LTS-SP4/)|
 |KAE|2.0|代码仓：[KAE代码仓库](https://gitcode.com/boostkit/KAE)|
 

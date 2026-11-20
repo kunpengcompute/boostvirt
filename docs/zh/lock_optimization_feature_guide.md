@@ -6,8 +6,6 @@
 
 ### 简介<a name="ZH-CN_TOPIC_0000002070181886"></a>
 
-本文介绍虚拟机锁优化特性的工作原理、适用场景、环境要求及特性使能详细步骤。
-
 虚拟机锁是一种保护机制，用于管理对虚拟机的访问和操作，确保虚拟机的资源在特定时间内只能被一个用户或进程独占。然而，在超分场景下，容易出现多个虚拟机抢占同一个虚拟机锁的情况，导致虚拟机性能下降。
 
 虚拟机锁优化特性对抢占过程中的锁机制进行了优化，以提升虚拟机在超分场景下的性能。虚拟机侧操作系统在申请锁时，可通过共享内存查询对应的vCPU是否已经被其他虚拟机抢占。如果vCPU已经被抢占，则退出锁等待；如果vCPU未抢占，则进入锁等待。
@@ -75,14 +73,14 @@
 
 |序号|补丁名称|获取方法|
 |--|--|--|
-|1|KVM: arm64: Document PV-sched interface|[kernel代码仓库](https://gitee.com/openeuler/kernel/commit/b74edaf629bdd6bb66d8852b783812560b29079c)|
-|2|KVM: arm64: Implement PV_SCHED_FEATURES call|[kernel代码仓库](https://gitee.com/openeuler/kernel/commit/a0b95bdf6a0b2d5a96a28b1f728a6abad51dbaec)|
-|3|KVM: arm64: Support pvsched preempted via shared structure|[kernel代码仓库](https://gitee.com/openeuler/kernel/commit/76732c97a3ecc07a4237f0348f661ccff6b9d3eb)|
-|4|KVM: arm64: Add interface to support vCPU preempted check|[kernel代码仓库](https://gitee.com/openeuler/kernel/commit/63042c58affca22fb14736455d38d2a6e97ca9dc)|
-|5|KVM: arm64: Support the vCPU preemption check|[kernel代码仓库](https://gitee.com/openeuler/kernel/commit/cf6d95e33dfa0344abea230ed48a1fad69591f36)|
-|6|KVM: arm64: Add SMCCC PV-sched to kick cpu|[获取链kernel代码仓](https://gitee.com/openeuler/kernel/commit/7a645f6e24eeda4736975b6e85dc797a57fe8900)|
-|7|KVM: arm64: Implement PV_SCHED_KICK_CPU call|[kernel代码仓库](https://gitee.com/openeuler/kernel/commit/efed88dd593493653466917a7e95868ec38bef41)|
-|8|KVM: arm64: Add interface to support PV qspinlock|[kernel代码仓库](https://gitee.com/openeuler/kernel/commit/12e1ed766c347d47f85736fece113c7578ace94f)|
+|1|KVM: arm64: Document PV-sched interface|[Document PV-sched interface补丁](https://gitee.com/openeuler/kernel/commit/b74edaf629bdd6bb66d8852b783812560b29079c)|
+|2|KVM: arm64: Implement PV_SCHED_FEATURES call|[Implement PV_SCHED_FEATURES call补丁](https://gitee.com/openeuler/kernel/commit/a0b95bdf6a0b2d5a96a28b1f728a6abad51dbaec)|
+|3|KVM: arm64: Support pvsched preempted via shared structure|[Support pvsched preempted via shared structure补丁](https://gitee.com/openeuler/kernel/commit/76732c97a3ecc07a4237f0348f661ccff6b9d3eb)|
+|4|KVM: arm64: Add interface to support vCPU preempted check|[Add interface to support vCPU preempted check补丁](https://gitee.com/openeuler/kernel/commit/63042c58affca22fb14736455d38d2a6e97ca9dc)|
+|5|KVM: arm64: Support the vCPU preemption check|[Support the vCPU preemption check补丁](https://gitee.com/openeuler/kernel/commit/cf6d95e33dfa0344abea230ed48a1fad69591f36)|
+|6|KVM: arm64: Add SMCCC PV-sched to kick cpu|[Add SMCCC PV-sched to kick cpu补丁](https://gitee.com/openeuler/kernel/commit/7a645f6e24eeda4736975b6e85dc797a57fe8900)|
+|7|KVM: arm64: Implement PV_SCHED_KICK_CPU call|[Implement PV_SCHED_KICK_CPU call补丁](https://gitee.com/openeuler/kernel/commit/efed88dd593493653466917a7e95868ec38bef41)|
+|8|KVM: arm64: Add interface to support PV qspinlock|[Add interface to support PV qspinlock补丁](https://gitee.com/openeuler/kernel/commit/12e1ed766c347d47f85736fece113c7578ace94f)|
 
 >![](public_sys-resources/icon-notice.gif) **须知：** 
 >本特性功能需要物理机、虚拟机侧都有相应功能支持。因此，要在非openEuler内核上使用该特性，则物理机、虚拟机上都要合入以上补丁。

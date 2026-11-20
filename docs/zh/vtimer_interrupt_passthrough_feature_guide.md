@@ -6,8 +6,6 @@
 
 ### 简介<a name="ZH-CN_TOPIC_0000002070181890"></a>
 
-本文主要介绍如何在使用openEuler操作系统的鲲鹏处理器上使能vtimer中断透传特性以降低虚拟机timer中断注入时延。
-
 在传统虚拟化环境中，虚拟机timer中断的处理需要通过VMM（Virtual Machine Monitor）进行中断注入，该过程涉及虚拟机的陷入陷出，引入了额外的时延开销。对于对timer定时时延有极致要求的业务场景，这种开销会显著影响业务性能。
 
 vtimer中断透传特性允许虚拟机的timer中断直接注入，免去中断注入时的陷入陷出，从而减少中断注入时延，适用于鲲鹏920新型号及鲲鹏950处理器。
@@ -56,7 +54,7 @@ vtimer中断透传特性允许虚拟机的timer中断直接注入，免去中断
 |项目|版本|获取方法|
 |--|--|--|
 |Host OS|openEuler 24.03 LTS SP4及以上版本|[openEuler下载页面](https://www.openeuler.openatom.cn/zh/download/?archive=true)|
-|Guest OS|openEuler 24.03 LTS SP4及以上版本（开启vtimer中断status状态模拟时需要）|[获取链接](https://www.openeuler.openatom.cn/zh/download/?archive=true)|
+|Guest OS|openEuler 24.03 LTS SP4及以上版本（开启vtimer中断status状态模拟时需要）|[openEuler下载页面](https://www.openeuler.openatom.cn/zh/download/?archive=true)|
 |libvirt|9.10.0及以上均可|yum install libvirt|
 |QEMU|8.2.0及以上均可|yum install qemu|
 
