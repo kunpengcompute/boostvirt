@@ -1,8 +1,8 @@
 # 虚拟机单核单页异常处理 特性指南
 
-## 特性描述<a name="ZH-CN_TOPIC_0000002544272171"></a>
+本文档介绍虚拟机单核单页异常处理特性，基于鲲鹏处理器硬件RAS能力实现单核CE故障在线隔离、单页内存UE故障仅影响虚拟机内一个进程，适用于在openEuler操作系统上安装、使用和测试该特性的用户。
 
-本文主要介绍如何在使用openEuler操作系统的鲲鹏服务器上安装、使用和测试虚拟机单核单页异常处理特性。
+## 特性描述<a name="ZH-CN_TOPIC_0000002544272171"></a>
 
 **简介<a name="section12837201416207"></a>**
 
@@ -60,7 +60,7 @@
 
 |项目|版本|获取方法|
 |--|--|--|
-|OS|openEuler 24.03 LTS SP3|[获取链接](https://dl-cdn.openeuler.openatom.cn/openEuler-24.03-LTS-SP3/ISO/aarch64/)|
+|OS|openEuler 24.03 LTS SP3|[openEuler 24.03 LTS SP3镜像下载页面](https://dl-cdn.openeuler.openatom.cn/openEuler-24.03-LTS-SP3/ISO/aarch64/)|
 |libvirt|9.10.0-26.oe2403sp3及以上|通过配置Yum源的方式安装|
 |QEMU|8.2.0|通过配置Yum源的方式安装|
 |Nginx|1.24.0|通过配置Yum源的方式安装|
@@ -73,7 +73,7 @@
 1. 重启物理机，进入BIOS界面。
 2. 设置“Advanced \> RAS Configuration”下的“Ce Report Policy”以及“Error Inject”为“Enabled”。
 
-    ![](figures/zh-cn_image_0000002545646137.png)
+    ![BIOS中Advanced下RAS Configuration界面，Ce Report Policy与Error Inject已设为Enabled](figures/zh-cn_image_0000002545646137.png)
 
 ### 安装libvirt<a name="ZH-CN_TOPIC_0000002544424933"></a>
 
@@ -209,7 +209,7 @@ yum install -y rasdaemon
 
 8. 观察Rasdaemon日志中是否记录到故障信息。有记录到故障信息，表示故障注入成功。没有记录到，则表示故障注入失败，建议重新注入。
 
-    ![](figures/zh-cn_image_0000002547893751.png)
+    ![Rasdaemon日志中记录到CE故障信息的输出片段，表示故障注入成功](figures/zh-cn_image_0000002547893751.png)
 
 9. 注错次数达到阈值后，执行以下命令，查看被注错核心是否下线，对应vCPU绑核是否发生改变。
 
@@ -217,13 +217,13 @@ yum install -y rasdaemon
     lscpu
     ```
 
-    ![](figures/zh-cn_image_0000002546157397.png)
+    ![执行lscpu命令的回显，显示被注错核心下线后的CPU列表](figures/zh-cn_image_0000002546157397.png)
 
     ```shell
     virsh vcpuinfo <vm name>
     ```
 
-    ![](figures/zh-cn_image_0000002514597452.png)
+    ![执行virsh vcpuinfo命令的回显，显示各vCPU绑核是否发生改变](figures/zh-cn_image_0000002514597452.png)
 
 10. 进入虚拟机查看Nginx运行状态。
 
@@ -237,7 +237,7 @@ yum install -y rasdaemon
 
 内存单页故障测试可能导致qemu二进制文件损坏，报错现象如下：
 
-![](figures/qemuerror.png)
+![qemu二进制文件损坏时虚拟机启动报错信息的回显](figures/qemuerror.png)
 
 解决方案参考如下：
 
@@ -265,7 +265,7 @@ yum reinstall qemu
     ps -ef | grep nginx
     ```
 
-    ![](figures/zh-cn_image_0000002547900433.png)
+    ![执行ps -ef查询Nginx进程号的回显，显示主进程与worker进程PID](figures/zh-cn_image_0000002547900433.png)
 
 3. 选择worker进程，获取进程地址空间，取地址空间中heap段的地址作为注错地址的GVA（Guest Virtual Address）。
 
@@ -273,7 +273,7 @@ yum reinstall qemu
     cat /proc/<pid>/maps
     ```
 
-    ![](figures/zh-cn_image_0000002516460534.png)
+    ![执行cat /proc/<pid>/maps的回显，heap段地址用于确定注错GVA](figures/zh-cn_image_0000002516460534.png)
 
 4. 编译并执行以下代码，将虚拟地址转换为物理地址。
 
@@ -490,7 +490,7 @@ yum reinstall qemu
     dmesg | tail
     ```
 
-    ![](figures/zh-cn_image_0000002516300630.png)
+    ![模块加载后dmesg打印的GVA、GPA与PFN信息](figures/zh-cn_image_0000002516300630.png)
 
 **虚拟机地址转换物理机地址<a name="section12404223103714"></a>**
 
@@ -618,11 +618,11 @@ yum reinstall qemu
 5. 在虚拟机中观察结果。
     - 注错地址为用户态地址时，执行**dmesg**命令，查看系统日志中是否存在给对应进程发送SIGBUS信号的记录。
 
-        ![](figures/zh-cn_image_0000002546664067.png)
+        ![虚拟机内dmesg日志中向用户态进程发送SIGBUS信号的记录](figures/zh-cn_image_0000002546664067.png)
 
     - 注错地址为内核态地址时，内核将收到SEA（Synchronous External Abort）中断，并打印call trace，执行panic流程。
 
-        ![](figures/zh-cn_image_0000002516458104.png)
+        ![内核态地址注错后打印的call trace与SEA中断触发的panic流程](figures/zh-cn_image_0000002516458104.png)
 
 #### 测试虚拟机内存CE故障<a name="ZH-CN_TOPIC_0000002514438490"></a>
 
@@ -670,7 +670,7 @@ yum reinstall qemu
 
 7. 在物理机中观察结果，Rasdaemon是否有CE（Corrected Error）故障日志更新。
 
-    ![](figures/zh-cn_image_0000002547978385.png)
+    ![物理机Rasdaemon日志中新增的CE故障日志记录](figures/zh-cn_image_0000002547978385.png)
 
 ## 缩略语<a name="ZH-CN_TOPIC_0000002516299116"></a>
 
@@ -685,8 +685,8 @@ yum reinstall qemu
 |HPA|Host Physical Address|物理机物理地址|
 |SEA|Synchronous External Abort|同步外部异常|
 
-## 修订记录<a name="ZH-CN_TOPIC_0000002544287789"></a>
+## 修订记录
 
-|发布日期|修改说明|
-|--|--|
-|2026-03-30|第一次正式发布。|
+| 文档版本 | 发布日期 | 修改说明 |
+|--|--|--|
+|01 | 2026-03-30 | 第一次正式发布。 |

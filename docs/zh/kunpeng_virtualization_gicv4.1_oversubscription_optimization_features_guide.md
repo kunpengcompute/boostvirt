@@ -1,12 +1,12 @@
 # GICv4.1超分优化 特性指南
 
+本文档介绍GICv4.1超分优化特性，说明如何在使用openEuler操作系统的鲲鹏处理器上部署和使能该特性，适用于开启GICv4.1的虚拟机超分场景。
+
 ## 特性描述
 
 ### 简介<a name="ZH-CN_TOPIC_0000002547452333"></a>
 
-本文主要介绍如何在使用openEuler操作系统的鲲鹏服务器上部署和使能GIC超分优化特性。
-
-GICv4.1是ARM服务器中先进的通用中断控制器架构，支持虚拟中断直通（vLPI）、硬件加速的虚拟机中断注入及中断优先级管理，显著提升虚拟化场景下的中断处理效率与可扩展性。而在物理机资源有限，虚拟机超分售卖时，GIC需要通过VMOVP指令维护vCPU和物理机CPU的映射关系，由于VMOVP指令在GIC硬件上串行执行，会导致虚拟机业务性能下降。
+GICv4.1是ARM服务器中先进的通用中断控制器架构，支持虚拟中断直通（vLPI）、硬件加速的虚拟机中断注入及中断优先级管理，显著提升虚拟化场景下的中断处理效率与可扩展性。而在物理机资源有限，虚拟机超分时，GIC需要通过VMOVP指令维护vCPU和物理机CPU的映射关系，由于VMOVP指令在GIC硬件上串行执行，会导致虚拟机业务性能下降。
 
 鲲鹏BoostKit推出GICv4.1超分优化方案，通过支持vCPU在共享同一个vpe表的CPU间迁移的时候可以跳过VMOVP指令，从而提高超分场景下的虚拟机业务性能。
 
@@ -55,11 +55,11 @@ GICv4.1是ARM服务器中先进的通用中断控制器架构，支持虚拟中�
 
 |项目|版本|获取方法|
 |--|--|--|
-|OS|openEuler 24.03 LTS SP3|[获取链接](https://mirrors.huaweicloud.com/openeuler/openEuler-24.03-LTS-SP3/ISO/aarch64/openEuler-24.03-LTS-SP3-everything-aarch64-dvd.iso)|
-|kernel|OLK6.6|[获取链接](https://gitcode.com/openeuler/kernel)|
+|OS|openEuler 24.03 LTS SP3|[openEuler-24.03-LTS-SP3 ISO镜像下载页面](https://mirrors.huaweicloud.com/openeuler/openEuler-24.03-LTS-SP3/ISO/aarch64/openEuler-24.03-LTS-SP3-everything-aarch64-dvd.iso)|
+|kernel|OLK6.6|[kernel代码仓库](https://gitcode.com/openeuler/kernel)|
 |libvirt|9.10.0|在openEuler 24.03 LTS SP3系统上，确保网络畅通情况下，利用Yum工具直接安装。|
-|QEMU|8.2.0|[获取链接](https://gitlab.com/qemu-project/qemu)|
-|0001-KVM-arm64-Optimize-VMOVP.patch|-|[获取链接](https://gitcode.com/boostkit/cloud-virtual/blob/master/kernel/kernel-6.6.0/[GICv4.1%20Oversubscription%20Optimization]0001-KVM-arm64-Optimize-VMOVP.patch)<br>打开链接后，在页面单击“克隆/下载”，即可获取补丁内容。|
+|QEMU|8.2.0|[qemu代码仓库](https://gitlab.com/qemu-project/qemu)|
+|0001-KVM-arm64-Optimize-VMOVP.patch|-|[cloud-virtual仓库文件](https://gitcode.com/boostkit/cloud-virtual/blob/master/kernel/kernel-6.6.0/[GICv4.1%20Oversubscription%20Optimization]0001-KVM-arm64-Optimize-VMOVP.patch)<br>打开链接后，在页面单击“克隆/下载”，即可获取补丁内容。|
 
 ## 安装和使用<a name="ZH-CN_TOPIC_0000002547372339"></a>
 
@@ -73,7 +73,7 @@ GICv4.1超分优化特性仅支持kernel 6.6版本。openEuler社区提供了6.6
 >![](public_sys-resources/icon-notice.gif) **须知：** 
 >因特性安装过程涉及到系统文件的修改，安装过程中的各操作默认由**root**用户执行，非**root**用户下进行相关操作应自行确保具有相关权限。
 
-1. 安装依赖
+1. 安装依赖。
 
     ```shell
     yum install rpm-build openssl-devel bc rsync gcc gcc-c++ flex bison m4 git glib2-devel spice-protocol zlib-devel libffi-devel libgcrypt-devel libnfs-devel libiscsi-devel libseccomp-devel libaio-devel libcap-ng-devel librados2-devel librbd1-devel libfdt-devel libpng-devel spice-server-devel numactl-devel dwarves elfutils-libelf-devel ncurses-devel cmake make
@@ -102,9 +102,9 @@ GICv4.1超分优化特性仅支持kernel 6.6版本。openEuler社区提供了6.6
 5. 打入内核补丁。
 
     ```shell
-    cp cloud-virtual/kernel/kernel-6.6.0/[GICv4.1 versubscription ptimization]0001-KVM-arm64-Optimize-VMOVP.patch kernel/
+    cp cloud-virtual/kernel/kernel-6.6.0/[GICv4.1 Oversubscription Optimization]0001-KVM-arm64-Optimize-VMOVP.patch kernel/
     cd kernel
-    git am --reject [GICv4.1 versubscription ptimization]0001-KVM-arm64-Optimize-VMOVP.patch
+    git am --reject [GICv4.1 Oversubscription Optimization]0001-KVM-arm64-Optimize-VMOVP.patch
     ```
 
 6. 编译内核。
@@ -132,11 +132,17 @@ GICv4.1超分优化特性仅支持kernel 6.6版本。openEuler社区提供了6.6
 
 1. 修改BIOS。  
    进入“BIOS->Advanced->Processor Configuration->GIC Version”，设置“GIC Version”为“4.1”。
-   ![](figures/zh-cn_image_gicv4.1_bios.png)
+   ![BIOS中Advanced-Processor Configuration菜单下将GIC Version选项设置为4.1的界面](figures/zh-cn_image_gicv4.1_bios.png)
 
 2. 修改cmdline启动参数。  
    在cmdline中增加"kvm-arm.vgic_v4_enable=1"。修改完cmdline后，需要重启服务器。
-   ![](figures/zh-cn_image_gicv4.1_cmdline.png)
+   ![在启动参数cmdline中新增kvm-arm.vgic_v4_enable=1后的配置回显](figures/zh-cn_image_gicv4.1_cmdline.png)
 
 3. 确认GICv4.1成功开启。  
-   ![](figures/zh-cn_image_gicv4.1_dmesg.png)
+   ![重启服务器后执行dmesg命令查看到的GICv4.1已成功开启回显](figures/zh-cn_image_gicv4.1_dmesg.png)
+
+## 修订记录
+
+| 文档版本 | 发布日期 | 修改说明 |
+|--|--|--|
+|01 | 2026-03-30 | 第一次正式发布。 |

@@ -1,10 +1,10 @@
 # vCPU热插拔 特性指南
 
+本文档介绍vCPU热插拔特性，说明如何在openEuler操作系统的鲲鹏处理器上配置虚拟机并使能该特性，并给出特性验证方法，适用于需要在不中断业务的情况下按负载动态调整虚拟机vCPU数量的用户。
+
 ## 特性描述<a name="ZH-CN_TOPIC_0000002518527652"></a>
 
 ### 简介<a name="ZH-CN_TOPIC_0000002550127409"></a>
-
-本文主要介绍如何在使用openEuler操作系统的鲲鹏服务器上部署并使能vCPU热插拔特性。
 
 vCPU热插拔技术可以在虚拟机运行状态下增加或减少vCPU数量，实现不中断业务条件下动态调整vCPU资源。
 
@@ -26,7 +26,7 @@ vCPU热插拔技术可以在虚拟机运行状态下增加或减少vCPU数量，
 - 特性增强：老版本（例如，openEuler-22.03-SP4）已具备vCPU热插能力，openEuler 24.03 LTS版本新增了对 vCPU热拔的支持，适应更多使用场景。相对老版本，热插拔协议发生了一些变化，新老版本的热插拔不能兼容运行。即Guest内核版本和主机侧QEMU版本需配套才能实现热插拔功能。
 - 热插拔规格约束
     - 为了满足QEMU的要求，虚拟机XML配置文件中必须包含**vcpu**节点。该节点的作用是指定虚拟机初次启动时的vCPU个数，以及能够通过vCPU热插所能达到的最大vCPU个数。
-    - vCPU热插同时受限于Hypervisor和GuestOS支持的最大CPU数目，具体约束项根据操作系统类型而定。
+    - vCPU热插同时受限于Hypervisor和Guest OS支持的最大CPU数目，具体约束项根据操作系统类型而定。
 
 ### 应用场景<a name="ZH-CN_TOPIC_0000002550007407"></a>
 
@@ -60,7 +60,7 @@ vCPU热插拔技术可以在虚拟机运行状态下增加或减少vCPU数量，
 
 |项目|版本|获取方法|
 |--|--|--|
-|OS|openEuler 24.03 LTS|[获取链接](https://mirrors.pku.edu.cn/openeuler/openEuler-24.03-LTS/ISO/aarch64/openEuler-24.03-LTS-everything-aarch64-dvd.iso)|
+|OS|openEuler 24.03 LTS|[openEuler-24.03-LTS的aarch64 everything DVD镜像下载](https://mirrors.pku.edu.cn/openeuler/openEuler-24.03-LTS/ISO/aarch64/openEuler-24.03-LTS-everything-aarch64-dvd.iso)|
 |libvirt|9.10.0|使用Yum工具直接安装。|
 |QEMU|8.2.0|使用Yum工具直接安装。|
 
@@ -75,7 +75,7 @@ vCPU热插拔技术可以在虚拟机运行状态下增加或减少vCPU数量，
 <os><type arch='aarch64' machine='virt-6.2'>hvm</type>
 </os>
 ...
-<domain>
+</domain>
 ```
 
 >![](public_sys-resources/icon-note.gif) **说明：** 
@@ -137,3 +137,9 @@ https://gitee.com/openeuler/kernel/pulls/9746
 |**缩略语**|**英文全称**|**中文全称**|
 |--|--|--|
 |RAS|Reliability, Availability and Serviceability|可靠性、可用性和可维护性|
+
+## 修订记录
+
+| 文档版本 | 发布日期 | 修改说明 |
+|--|--|--|
+|01 | 2025-03-30 | 第一次正式发布。 |

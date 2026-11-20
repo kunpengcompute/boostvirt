@@ -1,5 +1,7 @@
 # QEMU虚拟机内存热插 特性指南
 
+本文档介绍QEMU虚拟机内存热插特性，说明通过应用Patch扩展QEMU功能、支持启动NUMA配置中初始内存为0的虚拟机并动态热插内存，适用于在openEuler操作系统的鲲鹏处理器上部署和使能该特性的用户。
+
 ## 特性描述<a name="ZH-CN_TOPIC_0000002049134326"></a>
 
 ### 简介<a name="ZH-CN_TOPIC_0000002049292604"></a>
@@ -70,12 +72,12 @@ QEMU是一个快捷的跨平台开源计算模拟器，可以模拟许多硬件�
 
 |项目|版本|获取方法|
 |--|--|--|
-|OS|openEuler 22.03 LTS SP4|[获取链接](https://mirrors.huaweicloud.com/openeuler/openEuler-22.03-LTS-SP4/ISO/aarch64/openEuler-22.03-LTS-SP4-everything-aarch64-dvd.iso)|
+|OS|openEuler 22.03 LTS SP4|[openEuler 22.03 LTS SP4下载页面](https://mirrors.huaweicloud.com/openeuler/openEuler-22.03-LTS-SP4/ISO/aarch64/openEuler-22.03-LTS-SP4-everything-aarch64-dvd.iso)|
 |ninja-build|1.10.2-1.oe2203sp4|在openEuler 22.03 LTS SP4系统上，确保网络畅通情况下，利用Yum工具直接安装|
 |libcap-ng-devel|0.8.3-1.oe2203sp4|在openEuler 22.03 LTS SP4系统上，确保网络畅通情况下，利用Yum工具直接安装|
 |libvirt|6.2.0|在openEuler 22.03 LTS SP4系统上，确保网络畅通情况下，利用Yum工具直接安装|
-|QEMU|6.2.0|[获取链接](https://gitlab.com/qemu-project/qemu)|
-|Add-Support-for-numa-being-initialized-with-mem-0-an.patch|-|[获取链接](https://gitee.com/kunpengcompute/qemu/pulls/1)<br>打开链接后，在页面单击“克隆/下载”，选择“下载Email Patch”即可获取补丁内容。<br><br>针对openEuler 22.03 LTS SP4所配套的QEMU 6.2.0源码而形成的Patch文件，使得QEMU支持启动那些NUMA配置中初始内存设置为0的虚拟机。<br><br>建议在“下载Email Patch”上右键，将链接另存为补丁文件，并修改命名为“Add-Support-for-numa-being-initialized-with-mem-0-an.patch”，补丁具体应用方式请参见[编译QEMU并应用特性](#编译QEMU并应用特性)。|
+|QEMU|6.2.0|[QEMU 6.2.0源码仓库](https://gitlab.com/qemu-project/qemu)|
+|Add-Support-for-numa-being-initialized-with-mem-0-an.patch|-|[鲲鹏QEMU 6.2.0内存热插Patch下载页面](https://gitee.com/kunpengcompute/qemu/pulls/1)<br>打开链接后，在页面单击“克隆/下载”，选择“下载Email Patch”即可获取补丁内容。<br><br>针对openEuler 22.03 LTS SP4所配套的QEMU 6.2.0源码而形成的Patch文件，使得QEMU支持启动那些NUMA配置中初始内存设置为0的虚拟机。<br><br>建议在“下载Email Patch”上右键，将链接另存为补丁文件，并修改命名为“Add-Support-for-numa-being-initialized-with-mem-0-an.patch”，补丁具体应用方式请参见[编译QEMU并应用特性](#编译QEMU并应用特性)。|
 
 ### 安装并验证libvirt<a name="ZH-CN_TOPIC_0000002085251765"></a>
 
@@ -87,7 +89,7 @@ QEMU虚拟机内存热插特性仅支持libvirt 6.2.0版本。openEuler官网提
 1. 安装libvirt。
 
     ```shell
-    yum -y install audit-libs-devel cyrus-sasl-devel fuse-devel glusterfs-api-devel glusterfs-devel gnutls-devel libacl-devel libattr-devel libcap-ng-devel libcurl-devel libnl3-devel libcap-ng-devel libnl3-devel libpciaccess-devel librados2-devel librbd1-devel libtasn1-devel libtirpc-devel libwsman-devel libxml2-devel netcf-devel numactl-devel parted-devel readline-devel scrub systemd-devel  xfsprogs-devel yajl-devel device-mapper-devel libpcap-devel libgfapi-devel libgfapi0 ninja-build python3-docutils rpcgen libxslt dnsmasq git
+    yum -y install audit-libs-devel cyrus-sasl-devel fuse-devel glusterfs-api-devel glusterfs-devel gnutls-devel libacl-devel libattr-devel libcap-ng-devel libcurl-devel libnl3-devel libpciaccess-devel librados2-devel librbd1-devel libtasn1-devel libtirpc-devel libwsman-devel libxml2-devel netcf-devel numactl-devel parted-devel readline-devel scrub systemd-devel  xfsprogs-devel yajl-devel device-mapper-devel libpcap-devel libgfapi-devel libgfapi0 ninja-build python3-docutils rpcgen libxslt dnsmasq git
     yum -y install edk2* libvirt
     ```
 
@@ -195,6 +197,12 @@ QEMU虚拟机内存热插特性仅支持QEMU 6.2.0版本。获取QEMU 6.2.0源�
     >![](public_sys-resources/icon-note.gif) **说明：** 
     >利用XML文件定义虚拟机时，需要在该XML文件的 **<devices\>** 节点下新增 **<emulator\>** 节点，并将其路径指向刚刚安装的QEMU可执行文件。例如，在本例中，应新增如下内容。
 >
-    >```shell
+    >```xml
     ><emulator>/usr/local/bin/qemu-system-aarch64</emulator>
     >```
+
+## 修订记录
+
+| 文档版本 | 发布日期 | 修改说明 |
+|--|--|--|
+|01 | 2025-03-30 | 第一次正式发布。 |

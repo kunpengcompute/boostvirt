@@ -1,10 +1,10 @@
 # 虚拟化场景KAE加速热迁移 特性指南
 
+本文档介绍在openEuler操作系统的鲲鹏处理器上使用KAE压缩和解压缩功能加速虚拟机热迁移的方法，包括KAE License申请与安装、KAE软件安装、libvirt与QEMU配置、网桥搭建及热迁移测试，适用于需要降低热迁移耗时、提升迁移效率的人员。
+
 ## 特性描述<a name="ZH-CN_TOPIC_0000002550131443"></a>
 
 ### 简介<a name="ZH-CN_TOPIC_0000002518691586"></a>
-
-本文主要介绍如何在使用openEuler操作系统的鲲鹏服务器上使用KAE压缩和解压缩功能加速虚拟机热迁移。
 
 虚拟机热迁移是指在不中断虚拟机运行的情况下，将虚拟机从一台物理主机迁移到另一台物理主机。为了减少迁移过程中的数据传输量，通常会在源物理机使用压缩技术（如zlib库）对内存页进行压缩后传输，再在目标物理机中解压缩内存页，从而达到加速虚拟机热迁移速度的效果。
 
@@ -40,7 +40,7 @@
 
 ### 环境要求<a name="ZH-CN_TOPIC_0000002518691580"></a>
 
-本文基于openEuler操作系统提供指导，在正式操作前请确保目的端与源端物理机软硬件均满足要求。
+本文基于openEuler操作系统提供指导，在正式操作前请确保目标物理机与源物理机软硬件均满足要求。
 
 **硬件要求<a name="section26241127"></a>**
 
@@ -60,11 +60,11 @@
 
 |项目|版本|获取方法|
 |--|--|--|
-|OS|openEuler 22.03 LTS SP4<br>本特性支持openEuler 22.03 LTS SP1/SP2/SP3/SP4。<br>本文档基于openEuler 22.03 LTS SP4版本的操作系统进行使能和验证。|[获取链接](https://mirrors.huaweicloud.com/openeuler/openEuler-22.03-LTS-SP4/ISO/aarch64/openEuler-22.03-LTS-SP4-everything-aarch64-dvd.iso)|
-|libvirt|10.0.0及以上|[获取链接](https://gitee.com/openeuler/libvirt)|
-|QEMU|6.2.0|[获取链接](https://gitlab.com/qemu-project/qemu)|
-|Redis|6.0.20|[获取链接](http://download.redis.io/releases/redis-6.0.20.tar.gz)|
-|KAE|2.0|[获取链接](https://gitee.com/kunpengcompute/KAE)|
+|OS|openEuler 22.03 LTS SP4<br>本特性支持openEuler 22.03 LTS SP1/SP2/SP3/SP4。<br>本文档基于openEuler 22.03 LTS SP4版本的操作系统进行使能和验证。|[openEuler 22.03 LTS SP4 ISO镜像下载地址](https://mirrors.huaweicloud.com/openeuler/openEuler-22.03-LTS-SP4/ISO/aarch64/openEuler-22.03-LTS-SP4-everything-aarch64-dvd.iso)|
+|libvirt|10.0.0及以上|[libvirt源码仓库](https://gitee.com/openeuler/libvirt)|
+|QEMU|6.2.0|[QEMU源码仓库](https://gitlab.com/qemu-project/qemu)|
+|Redis|6.0.20|[Redis 6.0.20源码包下载地址](http://download.redis.io/releases/redis-6.0.20.tar.gz)|
+|KAE|2.0|[KAE源码仓库](https://gitee.com/kunpengcompute/KAE)|
 
 **iBMC和BIOS版本要求<a name="section4793193042413"></a>**
 
@@ -133,13 +133,13 @@ License申请和安装操作请参见《[华为服务器iBMC许可证 使用指�
 
 登录对应服务器的iBMC，若如图中所示已经安装了一个License，请先单击删除。然后单击安装，将下载的License文件上传，安装完成后就有如图所示的相关显示。加载完License需重启服务器。
 
-![](figures/zh-cn_image_0000002550131451.png)
+![iBMC许可证信息页面，显示已安装的一个License及删除、安装按钮](figures/zh-cn_image_0000002550131451.png)
 
 **验证KAE证书<a name="section5308183216347"></a>**
 
 若lspci回显出现以下信息，则说明License生效。
 
-```txt
+```output
 lspci | grep HPRE
 79:00.0 Network and computing encryption device: Huawei Technologies Co., Ltd. HiSilicon HPRE Engine (rev 21)
 b9:00.0 Network and computing encryption device: Huawei Technologies Co., Ltd. HiSilicon HPRE Engine (rev 21)
@@ -214,7 +214,7 @@ b6:00.0 Network and computing encryption device: Huawei Technologies Co., Ltd. H
 
         回显信息如下所示，表示驱动安装成功。
 
-        ![](figures/zh-cn_image_0000002550011445.png)
+        ![执行ll /sys/class/uacce/后的回显，列出hisi_zip等加速设备目录，表示驱动安装成功](figures/zh-cn_image_0000002550011445.png)
 
     2. 通过**lsmod**查看驱动安装情况来判断驱动是否安装成功。
 
@@ -224,7 +224,7 @@ b6:00.0 Network and computing encryption device: Huawei Technologies Co., Ltd. H
 
         回显信息如下所示，表示驱动安装成功。
 
-        ![](figures/zh-cn_image_0000002518531698.png)
+        ![执行lsmod | grep uacce后的回显，列出uacce内核模块信息，表示驱动安装成功](figures/zh-cn_image_0000002518531698.png)
 
     3. 查看UADK是否安装成功。
 
@@ -232,7 +232,7 @@ b6:00.0 Network and computing encryption device: Huawei Technologies Co., Ltd. H
         ll /usr/local/lib/libwd*
         ```
 
-        ![](figures/zh-cn_image_0000002550011443.png)
+        ![执行ll /usr/local/lib/libwd*后的回显，列出UADK的libwd相关库文件，表示UADK安装成功](figures/zh-cn_image_0000002550011443.png)
 
     4. 查看KAEZlib库是否安装成功。
 
@@ -240,13 +240,13 @@ b6:00.0 Network and computing encryption device: Huawei Technologies Co., Ltd. H
         ll /usr/local/kaezip/lib/
         ```
 
-        ![](figures/zh-cn_image_0000002550011447.png)
+        ![执行ll /usr/local/kaezip/lib/后的回显，列出KAEZlib库文件，表示库已安装](figures/zh-cn_image_0000002550011447.png)
 
         ```shell
         ldd /usr/local/kaezip/lib/libz.so.1.2.11
         ```
 
-        ![](figures/zh-cn_image_0000002518531696.png)
+        ![执行ldd查询libz.so.1.2.11依赖的回显，显示所依赖的wd库路径，表示链接正常](figures/zh-cn_image_0000002518531696.png)
 
     >![](public_sys-resources/icon-note.gif) **说明：** 
     >- 重启设备安装驱动后查询不到设备文件，可能是操作系统自带加速驱动导致，可以卸载驱动后重新加载；或者在启动脚本re.local中加上重新加载驱动命令。以hisi\_sec2为例。
@@ -271,7 +271,7 @@ b6:00.0 Network and computing encryption device: Huawei Technologies Co., Ltd. H
 
 修改/etc/libvirt/libvirtd.conf相关配置，以允许libvirt在虚拟机热迁移过程中监控虚拟机的状态。libvirt将通过TCP协议在所有网络接口上侦听16509端口。
 
-```txt
+```xml
 listen_tls = 0
 listen_tcp = 1
 tcp_port = "16509"
@@ -292,7 +292,7 @@ auth_tcp = "none"
     ll /sys/class/uacce/
     ```
 
-    ![](figures/zh-cn_image_0000002518691588.png)
+    ![执行ll /sys/class/uacce/后的回显，显示hisi_zip-xx设备型号，用于填写qemu.conf](figures/zh-cn_image_0000002518691588.png)
 
 2. 修改/etc/libvirt/qemu.conf配置。
 
@@ -365,7 +365,7 @@ KAE加速热迁移测试的网络环境是使用Linux网桥。
 
     若绑定成功，回显如下：
 
-    ![](figures/zh-cn_image_0000002518531694.png)
+    ![执行brctl show后的回显，显示网桥及其绑定的网卡接口，表示网桥绑定成功](figures/zh-cn_image_0000002518531694.png)
 
     >![](public_sys-resources/icon-notice.gif) **须知：** 
     >需要安装bridge-utils。
@@ -464,7 +464,7 @@ KAE加速热迁移测试的网络环境是使用Linux网桥。
     watch -n 0.1 "cat /sys/class/uacce/hisi_zip-*/available_instances"
     ```
 
-    ![](figures/zh-cn_image_0000002518691590.png)
+    ![执行watch查看available_instances的回显，KAE硬件队列数量减少，说明KAE被使用](figures/zh-cn_image_0000002518691590.png)
 
 3. 启动Redis服务器。
 
@@ -490,4 +490,10 @@ KAE加速热迁移测试的网络环境是使用Linux网桥。
 
     real指示的时间是虚拟机热迁移的总耗时。
 
-    ![](figures/zh-cn_image_0000002550131453.png)
+    ![执行热迁移命令后time统计的回显，real一行给出虚拟机热迁移总耗时](figures/zh-cn_image_0000002550131453.png)
+
+## 修订记录
+
+| 文档版本 | 发布日期 | 修改说明 |
+|--|--|--|
+|01 | 2025-03-30 | 第一次正式发布。 |

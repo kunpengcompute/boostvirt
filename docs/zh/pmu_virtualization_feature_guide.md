@@ -1,8 +1,8 @@
 # PMU虚拟化 特性指南
 
-## 特性描述<a name="ZH-CN_TOPIC_0000002278901521"></a>
+本文档介绍PMU虚拟化特性，说明如何在使用openEuler操作系统的鲲鹏920系列处理器上部署和使能该特性，并通过perf工具在虚拟机内部采集PMU事件进行性能分析与调优，适用于需要在虚拟机内进行性能调优的用户。
 
-本文主要介绍如何在使用openEuler操作系统的鲲鹏920系列处理器上部署和使能PMU虚拟化特性。
+## 特性描述<a name="ZH-CN_TOPIC_0000002278901521"></a>
 
 PMU（Performance Monitoring Unit，性能监控单元）是ARM处理器提供的一个硬件性能事件采集系统，用于记录和计数各种微架构事件。使能PMU虚拟化特性后，用户可以通过perf工具采集虚拟机内部的PMU事件，从而进行性能分析与调优。
 
@@ -36,9 +36,9 @@ PMU（Performance Monitoring Unit，性能监控单元）是ARM处理器提供�
 
 |软件名称|版本|获取方法|
 |--|--|--|
-|物理机与虚拟机操作系统|已经验证的版本：openEuler 22.03 LTS SP4openEuler 24.03 LTS SP1|openEuler 22.03 LTS SP4：[获取链接](https://mirrors.huaweicloud.com/openeuler/openEuler-22.03-LTS-SP4/ISO/aarch64/openEuler-22.03-LTS-SP4-everything-aarch64-dvd.iso)<br>openEuler 24.03 LTS SP1：[获取链接](https://mirrors.huaweicloud.com/openeuler/openEuler-24.03-LTS-SP1/ISO/aarch64/openEuler-24.03-LTS-SP1-everything-aarch64-dvd.iso)|
-|QEMU|openEuler 22.03 LTS SP4：6.2.0openEuler 24.03 LTS SP1：8.2.0|通过配置Yum源安装|
-|libvirt|openEuler 22.03 LTS SP4：6.2.0openEuler 24.03 LTS SP1：9.10.0|通过配置Yum源安装|
+|物理机与虚拟机操作系统|已经验证的版本：openEuler 22.03 LTS SP4<br>openEuler 24.03 LTS SP1|openEuler 22.03 LTS SP4：[openEuler 22.03 LTS SP4镜像下载地址](https://mirrors.huaweicloud.com/openeuler/openEuler-22.03-LTS-SP4/ISO/aarch64/openEuler-22.03-LTS-SP4-everything-aarch64-dvd.iso)<br>openEuler 24.03 LTS SP1：[openEuler 24.03 LTS SP1镜像下载地址](https://mirrors.huaweicloud.com/openeuler/openEuler-24.03-LTS-SP1/ISO/aarch64/openEuler-24.03-LTS-SP1-everything-aarch64-dvd.iso)|
+|QEMU|openEuler 22.03 LTS SP4：6.2.0<br>openEuler 24.03 LTS SP1：8.2.0|通过配置Yum源安装|
+|libvirt|openEuler 22.03 LTS SP4：6.2.0<br>openEuler 24.03 LTS SP1：9.10.0|通过配置Yum源安装|
 
 ### 使能与验证<a name="ZH-CN_TOPIC_0000002243756076"></a>
 
@@ -84,4 +84,10 @@ PMU（Performance Monitoring Unit，性能监控单元）是ARM处理器提供�
     perf stat -a sleep 10
     ```
 
-    ![](figures/zh-cn_image_0000002279062345.png)
+    ![在虚拟机内执行perf stat -a sleep 10命令后终端回显的PMU事件统计结果，表明PMU虚拟化特性已使能](figures/zh-cn_image_0000002279062345.png)
+
+## 修订记录
+
+| 文档版本 | 发布日期 | 修改说明 |
+|--|--|--|
+|01 | 2025-06-30 | 第一次正式发布。 |

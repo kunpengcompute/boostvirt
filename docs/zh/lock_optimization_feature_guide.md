@@ -1,10 +1,10 @@
 # 虚拟机锁优化 特性指南
 
+本文档介绍虚拟机锁优化特性的工作原理、适用场景、环境要求及特性使能详细步骤，说明该特性通过共享内存透传vCPU抢占状态提升超分场景性能的方式，适用于openEuler 20.03 LTS SP1及以上版本环境的用户。
+
 ## 特性描述<a name="ZH-CN_TOPIC_0000002106021525"></a>
 
 ### 简介<a name="ZH-CN_TOPIC_0000002070181886"></a>
-
-本文介绍虚拟机锁优化特性的工作原理、适用场景、环境要求及特性使能详细步骤。
 
 虚拟机锁是一种保护机制，用于管理对虚拟机的访问和操作，确保虚拟机的资源在特定时间内只能被一个用户或进程独占。然而，在超分场景下，容易出现多个虚拟机抢占同一个虚拟机锁的情况，导致虚拟机性能下降。
 
@@ -14,7 +14,7 @@
 
 **图 1** 虚拟机锁优化原理图<a name="fig2050617656"></a><a id="虚拟机锁优化原理图"></a>
 
-![](figures/虚拟机锁优化图.png "虚拟机锁优化原理图")
+![Hypervisor通过共享内存向虚拟机透传vCPU的preempted抢占状态，虚拟机vCPU申请锁时据此跳出自旋等待](figures/虚拟机锁优化图.png "虚拟机锁优化原理图")
 
 1. 虚拟机内核启动时，通过Hypercall将每个vCPU记录preempted状态的内存地址传递给Hypervisor。
 2. 当Hypervisor调度运行vCPU时，调用kvm\_arch\_vcpu\_load加载对应vCPU上下文，同时将其preempted状态设置为0。
@@ -65,7 +65,7 @@
 
 |项目|版本|获取方法|
 |--|--|--|
-|OS|openEuler 20.03 LTS SP1<br>物理机、虚拟机均要求操作系统不低于以上版本|[获取链接](https://mirrors.huaweicloud.com/openeuler/openEuler-20.03-LTS-SP1/ISO/aarch64/openEuler-20.03-LTS-SP1-aarch64-dvd.iso)|
+|OS|openEuler 20.03 LTS SP1<br>物理机、虚拟机均要求操作系统不低于以上版本|[openEuler-20.03-LTS-SP1 ISO镜像下载页面](https://mirrors.huaweicloud.com/openeuler/openEuler-20.03-LTS-SP1/ISO/aarch64/openEuler-20.03-LTS-SP1-aarch64-dvd.iso)|
 |libvirt|6.2.0及以上均可|利用Yum工具直接安装。|
 |QEMU|4.1.0及以上均可|利用Yum工具直接安装。|
 
@@ -73,14 +73,14 @@
 
 |序号|补丁名称|获取方法|
 |--|--|--|
-|1|KVM: arm64: Document PV-sched interface|[获取链接](https://gitee.com/openeuler/kernel/commit/b74edaf629bdd6bb66d8852b783812560b29079c)|
-|2|KVM: arm64: Implement PV_SCHED_FEATURES call|[获取链接](https://gitee.com/openeuler/kernel/commit/a0b95bdf6a0b2d5a96a28b1f728a6abad51dbaec)|
-|3|KVM: arm64: Support pvsched preempted via shared structure|[获取链接](https://gitee.com/openeuler/kernel/commit/76732c97a3ecc07a4237f0348f661ccff6b9d3eb)|
-|4|KVM: arm64: Add interface to support vCPU preempted check|[获取链接](https://gitee.com/openeuler/kernel/commit/63042c58affca22fb14736455d38d2a6e97ca9dc)|
-|5|KVM: arm64: Support the vCPU preemption check|[获取链接](https://gitee.com/openeuler/kernel/commit/cf6d95e33dfa0344abea230ed48a1fad69591f36)|
-|6|KVM: arm64: Add SMCCC PV-sched to kick cpu|[获取链接](https://gitee.com/openeuler/kernel/commit/7a645f6e24eeda4736975b6e85dc797a57fe8900)|
-|7|KVM: arm64: Implement PV_SCHED_KICK_CPU call|[获取链接](https://gitee.com/openeuler/kernel/commit/efed88dd593493653466917a7e95868ec38bef41)|
-|8|KVM: arm64: Add interface to support PV qspinlock|[获取链接](https://gitee.com/openeuler/kernel/commit/12e1ed766c347d47f85736fece113c7578ace94f)|
+|1|KVM: arm64: Document PV-sched interface|[Document PV-sched interface补丁](https://gitee.com/openeuler/kernel/commit/b74edaf629bdd6bb66d8852b783812560b29079c)|
+|2|KVM: arm64: Implement PV_SCHED_FEATURES call|[Implement PV_SCHED_FEATURES call补丁](https://gitee.com/openeuler/kernel/commit/a0b95bdf6a0b2d5a96a28b1f728a6abad51dbaec)|
+|3|KVM: arm64: Support pvsched preempted via shared structure|[Support pvsched preempted via shared structure补丁](https://gitee.com/openeuler/kernel/commit/76732c97a3ecc07a4237f0348f661ccff6b9d3eb)|
+|4|KVM: arm64: Add interface to support vCPU preempted check|[Add interface to support vCPU preempted check补丁](https://gitee.com/openeuler/kernel/commit/63042c58affca22fb14736455d38d2a6e97ca9dc)|
+|5|KVM: arm64: Support the vCPU preemption check|[Support the vCPU preemption check补丁](https://gitee.com/openeuler/kernel/commit/cf6d95e33dfa0344abea230ed48a1fad69591f36)|
+|6|KVM: arm64: Add SMCCC PV-sched to kick cpu|[Add SMCCC PV-sched to kick cpu补丁](https://gitee.com/openeuler/kernel/commit/7a645f6e24eeda4736975b6e85dc797a57fe8900)|
+|7|KVM: arm64: Implement PV_SCHED_KICK_CPU call|[Implement PV_SCHED_KICK_CPU call补丁](https://gitee.com/openeuler/kernel/commit/efed88dd593493653466917a7e95868ec38bef41)|
+|8|KVM: arm64: Add interface to support PV qspinlock|[Add interface to support PV qspinlock补丁](https://gitee.com/openeuler/kernel/commit/12e1ed766c347d47f85736fece113c7578ace94f)|
 
 >![](public_sys-resources/icon-notice.gif) **须知：** 
 >本特性功能需要物理机、虚拟机侧都有相应功能支持。因此，要在非openEuler内核上使用该特性，则物理机、虚拟机上都要合入以上补丁。
@@ -101,7 +101,7 @@ dmesg | grep PV
 
 如果特性运转正常，回显中将含有如下内容。
 
-```txt
+```output
 arm-pv: using PV sched preempted
 ```
 
@@ -112,3 +112,9 @@ arm-pv: using PV sched preempted
 |**缩略语**|**英文全称**|**中文全称**|
 |--|--|--|
 |KVM|Kernel-based Virtual Machine|内核虚拟机|
+
+## 修订记录
+
+| 文档版本 | 发布日期 | 修改说明 |
+|--|--|--|
+|01 | 2026-03-30 | 第一次正式发布。 |

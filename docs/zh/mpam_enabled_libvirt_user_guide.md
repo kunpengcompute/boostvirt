@@ -47,7 +47,7 @@ libvirt支持DDR bandwidth配置的应用场景主要包括虚拟机内存带宽
 
 |项目|版本|获取方法|
 |--|--|--|
-|OS|openEuler 24.03 LTS SP2<br>openEuler 24.03 LTS SP3|[获取链接](https://mirrors.huaweicloud.com/openeuler/openEuler-24.03-LTS-SP2/ISO/aarch64/openEuler-24.03-LTS-SP2-everything-aarch64-dvd.iso)<br>[获取链接](https://mirrors.huaweicloud.com/openeuler/openEuler-24.03-LTS-SP3/ISO/aarch64/openEuler-24.03-LTS-SP3-everything-aarch64-dvd.iso)|
+|OS|openEuler 24.03 LTS SP2<br>openEuler 24.03 LTS SP3|[openEuler 24.03 LTS SP2镜像下载地址](https://mirrors.huaweicloud.com/openeuler/openEuler-24.03-LTS-SP2/ISO/aarch64/openEuler-24.03-LTS-SP2-everything-aarch64-dvd.iso)<br>[openEuler 24.03 LTS SP3镜像下载地址](https://mirrors.huaweicloud.com/openeuler/openEuler-24.03-LTS-SP3/ISO/aarch64/openEuler-24.03-LTS-SP3-everything-aarch64-dvd.iso)|
 |libvirt|9.10.0|通过配置Yum源的方式安装|
 |QEMU|8.2.0|通过配置Yum源的方式安装|
 |lmbench|3-4|通过配置Yum源的方式安装|
@@ -65,7 +65,7 @@ libvirt支持DDR bandwidth配置的应用场景主要包括虚拟机内存带宽
 
     2. 按“i”进入编辑模式，为内核启动参数增加**arm64.mpam**。
 
-        ![](figures/zh-cn_image_0000002518525982.png)
+        ![编辑grub.cfg为内核启动参数增加arm64.mpam的界面](figures/zh-cn_image_0000002518525982.png)
 
     3. 按“Esc”键退出编辑模式，输入 **:wq!**，按“Enter”键保存并退出文件。
 
@@ -76,7 +76,7 @@ libvirt支持DDR bandwidth配置的应用场景主要包括虚拟机内存带宽
     ll /sys/fs/resctrl
     ```
 
-    ![](figures/zh-cn_image_0000002550125725.png)
+    ![重启物理机后执行ll /sys/fs/resctrl显示resctrl目录存在的命令回显](figures/zh-cn_image_0000002550125725.png)
 
 3. 执行挂载命令，挂载resctrl文件系统。
 
@@ -90,7 +90,7 @@ libvirt支持DDR bandwidth配置的应用场景主要包括虚拟机内存带宽
     ll /sys/fs/resctrl
     ```
 
-    ![](figures/zh-cn_image_0000002550005735.png)
+    ![挂载resctrl文件系统后执行ll /sys/fs/resctrl列出目录内容的回显](figures/zh-cn_image_0000002550005735.png)
 
 ### 安装libvirt<a name="ZH-CN_TOPIC_0000002550125719"></a>
 
@@ -114,7 +114,7 @@ yum install -y libvirt
 
 **配置Cache<a name="section362983302918"></a>**
 
-Cache配置的XML如下所示，相关参数请参见[**表 1** 参数说明](#参数说明)。
+Cache配置的XML如下所示，相关参数请参见[**表 3** 参数说明](#参数说明)。
 
 ```xml
 <cputune>
@@ -125,7 +125,7 @@ Cache配置的XML如下所示，相关参数请参见[**表 1** 参数说明](#�
 </cputune>
 ```
 
-**表 1** 参数说明<a id="参数说明"></a>
+**表 3** 参数说明<a id="参数说明"></a>
 
 |参数|说明|
 |--|--|
@@ -142,9 +142,9 @@ Cache配置的XML如下所示，相关参数请参见[**表 1** 参数说明](#�
 
 手动配置的Cache Line大小必须是物理机单条Cache Line大小的整数倍，物理机单条Cache Line大小可通过“/sys/fs/resctrl/size”文件中单NUMA节点L3大小除以“/sys/fs/resctrl/schemata”文件中单NUMA节点L3掩码位数得到。如下图所示，单个NUMA的L3大小为58720256字节，除以单个NUMA掩码二进制位数28，得到单条Cache Line大小为2097152字节，即2MiB。
 
-![](figures/zh-cn_image_0000002518685870.png)
+![/sys/fs/resctrl/size中单NUMA节点L3大小为58720256字节的回显](figures/zh-cn_image_0000002518685870.png)
 
-![](figures/zh-cn_image_0000002550125723.png)
+![/sys/fs/resctrl/schemata中单NUMA节点L3掩码位数为28的回显](figures/zh-cn_image_0000002550125723.png)
 
 **配置memory bandwidth<a name="section16870222133515"></a>**
 
@@ -226,7 +226,7 @@ yum install -y lmbench
         ll /sys/fs/resctrl
         ```
 
-        ![](figures/zh-cn_image_0000002550005737.png)
+        ![启动虚拟机后执行ll /sys/fs/resctrl显示新建MPAM控制组目录的回显](figures/zh-cn_image_0000002550005737.png)
 
     2. 查看对应控制组schemata文件内容是否与XML配置匹配。
 
@@ -234,7 +234,7 @@ yum install -y lmbench
         cat /sys/fs/resctrl/<group name>/schemata
         ```
 
-        ![](figures/zh-cn_image_0000002550005733.png)
+        ![执行cat查看控制组schemata内容与XML带宽配置一致的命令回显](figures/zh-cn_image_0000002550005733.png)
 
 5. 进入虚拟机使用lmbench测试带宽观察是否有对应变化。
 
@@ -266,7 +266,7 @@ yum install -y lmbench
         /opt/lmbench/bin/bw_mem -P 32 -N 5 512M rd
         ```
 
-        ![](figures/zh-cn_image_0000002518525984.png)
+        ![vCPU绑核NUMA 0且带宽设为50时bw_mem测得的带宽回显](figures/zh-cn_image_0000002518525984.png)
 
     2. 重复上述步骤将内存带宽修改为80，重启虚拟机，使用相同命令再次测试，观察带宽是否有明显上升。
 
@@ -275,7 +275,7 @@ yum install -y lmbench
         virsh start <vm name>
         ```
 
-        ![](figures/zh-cn_image_0000002518525986.png)
+        ![带宽改为80并重启虚拟机后bw_mem再次测得的带宽回显](figures/zh-cn_image_0000002518525986.png)
 
 **L3 Cache限制<a name="section46953561317"></a>**
 
@@ -322,7 +322,7 @@ yum install -y lmbench
         ll /sys/fs/resctrl
         ```
 
-        ![](figures/zh-cn_image_0000002518685874.png)
+        ![L3 Cache限制为4MiB后执行ll /sys/fs/resctrl显示新控制组的回显](figures/zh-cn_image_0000002518685874.png)
 
     2. 查看对应控制组schemata文件内容是否与XML配置匹配。
 
@@ -330,7 +330,7 @@ yum install -y lmbench
         cat /sys/fs/resctrl/<group name>/schemata
         ```
 
-        ![](figures/zh-cn_image_0000002518685872.png)
+        ![执行cat查看schemata中L3掩码与4MiB设置匹配的命令回显](figures/zh-cn_image_0000002518685872.png)
 
 6. 查看对应控制组的监控数据，观察限制是否生效，数据是否与XML设置的大小匹配，数据单位为Byte。
 
@@ -339,7 +339,7 @@ yum install -y lmbench
     watch -n 1 grep . *
     ```
 
-    ![](figures/zh-cn_image_0000002550125727.png)
+    ![在mon_data/mon_L3_01执行watch grep查看控制组L3监控数据的回显](figures/zh-cn_image_0000002550125727.png)
 
 ## 故障排除<a name="ZH-CN_TOPIC_0000002518525980"></a>
 
@@ -363,3 +363,9 @@ sudo pkill libvirtd
 sudo systemctl restart virtlogd.socket
 sudo systemctl restart libvirtd
 ```
+
+## 修订记录
+
+| 文档版本 | 发布日期 | 修改说明 |
+|--|--|--|
+|01 | 2025-09-30 | 第一次正式发布。 |

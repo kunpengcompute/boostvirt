@@ -1,8 +1,8 @@
 # 中断直通 特性指南
 
-## 特性描述<a name="ZH-CN_TOPIC_0000002043771628"></a>
+本文档介绍中断直通，在openEuler操作系统的鲲鹏920新型号处理器上使能GICv4.1中断直接注入虚拟机，降低中断响应时延，提升网络/IO密集型业务吞吐量，适用于需要加速虚拟机性能的用户。
 
-本文主要介绍如何在使用openEuler操作系统的鲲鹏服务器上使能中断直接注入虚拟机技术以辅助加速虚拟机的性能。
+## 特性描述<a name="ZH-CN_TOPIC_0000002043771628"></a>
 
 **简介<a name="section10479103292114"></a>**
 
@@ -57,7 +57,7 @@ GIC（General Interrupt Controller，通用中断控制器） v4.1是ARM通用�
 
 |项目|版本|获取方法|
 |--|--|--|
-|OS|openEuler 22.03 LTS SP3|[获取链接](https://mirrors.huaweicloud.com/openeuler/openEuler-22.03-LTS-SP3/ISO/aarch64/openEuler-22.03-LTS-SP3-everything-aarch64-dvd.iso)|
+|OS|openEuler 22.03 LTS SP3|[openEuler 22.03 LTS SP3安装镜像下载](https://mirrors.huaweicloud.com/openeuler/openEuler-22.03-LTS-SP3/ISO/aarch64/openEuler-22.03-LTS-SP3-everything-aarch64-dvd.iso)|
 |libvirt|6.2.0|利用Yum工具直接安装。|
 |QEMU|6.2.0|利用Yum工具直接安装。|
 
@@ -92,7 +92,7 @@ GIC（General Interrupt Controller，通用中断控制器） v4.1是ARM通用�
 
     观察到回显有如下信息说明GICv4.1已经使能。
 
-    ```txt
+    ```output
     kvm [1]: GICv4.1 support enabled
     ```
 
@@ -123,7 +123,7 @@ GIC（General Interrupt Controller，通用中断控制器） v4.1是ARM通用�
 
     观察到回显有如下信息说明GICv4.1已经使能。
 
-    ```txt
+    ```output
     kvm [1]: GICv4.1 support enabled
     ```
 
@@ -156,7 +156,7 @@ GIC（General Interrupt Controller，通用中断控制器） v4.1是ARM通用�
 
     观察到回显有如下信息说明GICv4.1已经使能。
 
-    ```txt
+    ```output
     kvm [1]: GICv4.1 support enabled
     ```
 
@@ -179,10 +179,10 @@ GIC（General Interrupt Controller，通用中断控制器） v4.1是ARM通用�
 
 **非openEuler内核使能补丁<a name="section1763194621512"></a>**
 
-该特性支持openEuler 22.03-LTS-SP3及以上的操作系统版本，非openEuler内核需要合入如下使能补丁。
+该特性支持openEuler 22.03 LTS SP3及以上的操作系统版本，非openEuler内核需要合入如下使能补丁。
 
 >![](public_sys-resources/icon-note.gif) **说明：** 
->由于非openEuler内核需要合入的使能补丁数量比较大，建议使用openEuler 22.03-LTS-SP3及以上的操作系统使能该特性。
+>由于非openEuler内核需要合入的使能补丁数量比较大，建议使用openEuler 22.03 LTS SP3及以上的操作系统使能该特性。
 
 ```txt
 https://lore.kernel.org/all/20191017113341.13778-1-ben.dooks@codethink.co.uk/
@@ -337,7 +337,7 @@ https://gitee.com/openeuler/kernel/commit/43c7519a5d563325b19210009d04643fedd962
 
 2. 若只提示applying成功信息，则补丁可用，回显信息如下。
 
-    ```txt
+    ```output
     Applying: KVM: Reinstall old memslots if arch preparation fails
     ```
 
@@ -351,3 +351,9 @@ https://gitee.com/openeuler/kernel/commit/43c7519a5d563325b19210009d04643fedd962
     ```
 
 4. 补丁合入并解决冲突后，重新编译安装内核。
+
+## 修订记录
+
+| 文档版本 | 发布日期 | 修改说明 |
+|--|--|--|
+|01 | 2026-03-30 | 第一次正式发布。|

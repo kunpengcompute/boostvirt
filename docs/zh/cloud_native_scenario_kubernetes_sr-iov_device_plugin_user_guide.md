@@ -1,5 +1,7 @@
 # K8s SR-IOV直通插件 用户指南
 
+本文档介绍K8s SR-IOV直通插件、SR-IOV-CNI网络直通插件和Bond-CNI插件的部署与使用，涵盖插件架构、编译、部署与卸载流程，适用于在openEuler操作系统的服务器上使用Kubernetes集群进行设备直通的用户。
+
 ## 介绍<a name="ZH-CN_TOPIC_0000002549765655"></a>
 
 ### 插件简介<a name="ZH-CN_TOPIC_0000002518405810"></a>
@@ -20,13 +22,13 @@ SR-IOV设备直通插件运行在K8s集群中的计算节点上，采用DaemonSe
 - 架构图中各模块功能如[**表 1** 各模块功能](#各模块功能)所示。
 
 **图 1** SR-IOV设备直通插件架构图<a name="fig3980193175810"></a><a id="SR-IOV设备直通插件架构图"></a><br>
-![](figures/SR-IOV设备直通插件架构图.png "SR-IOV设备直通插件架构图")
+![SR-IOV设备直通插件架构图：Kubelet经Device Plugin Manager调用SR-IOV Device Plugin，完成节点设备识别与容器分配](figures/SR-IOV设备直通插件架构图.png)
 
 **图 2** SR-IOV-CNI网络直通插件的软件架构图<a name="fig182891652499"></a><a id="SR-IOV-CNI网络直通插件的软件架构图"></a><br>
-![](figures/SR-IOV-CNI网络直通插件的软件架构图.png "SR-IOV-CNI网络直通插件的软件架构图")
+![SR-IOV-CNI网络直通插件架构图：Multus CNI由Kubelet调用，从物理网卡分配VF并配置Pod的SR-IOV网络接口](figures/SR-IOV-CNI网络直通插件的软件架构图.png)
 
 **图 3** Bond-CNI插件的软件架构图<a name="fig86021356104"></a><a id="Bond-CNI插件的软件架构图"></a><br>
-![](figures/Bond-CNI插件的软件架构图.png "Bond-CNI插件的软件架构图")
+![Bond-CNI插件架构图：在Pod的SR-IOV网络接口基础上，由Bond-CNI构建新的Bond网络接口并由Multus CNI管理](figures/Bond-CNI插件的软件架构图.png)
 
 **表 1** 各模块功能<a id="各模块功能"></a>
 
@@ -54,9 +56,9 @@ SR-IOV设备直通插件要求K8s集群使用Docker/Containerd作为容器运行
 
 |软件名|版本|获取地址|
 |--|--|--|
-|Kubernetes|1.28.4|[获取链接](https://github.com/kubernetes/kubernetes/archive/refs/tags/v1.28.4.tar.gz)|
-|Kubernetes|1.23.6|[获取链接](https://github.com/kubernetes/kubernetes/archive/refs/tags/v1.23.6.tar.gz)|
-|Containerd|1.7.14|[获取链接](https://github.com/containerd/containerd/releases/download/v1.7.14/containerd-1.7.14-linux-arm64.tar.gz)|
+|Kubernetes|1.28.4|[kubernetes源码包下载地址](https://github.com/kubernetes/kubernetes/archive/refs/tags/v1.28.4.tar.gz)|
+|Kubernetes|1.23.6|[kubernetes源码包下载地址](https://github.com/kubernetes/kubernetes/archive/refs/tags/v1.23.6.tar.gz)|
+|Containerd|1.7.14|[containerd 1.7.14 arm64压缩包下载地址](https://github.com/containerd/containerd/releases/download/v1.7.14/containerd-1.7.14-linux-arm64.tar.gz)|
 |Docker|20.10.14|从镜像源安装|
 
 ## 编译插件<a name="ZH-CN_TOPIC_0000002518245894"></a>
@@ -82,10 +84,10 @@ SR-IOV设备直通插件要求K8s集群使用Docker/Containerd作为容器运行
 
 |软件|版本|获取地址|
 |--|--|--|
-|OS|openEuler 22.03 LTS SP4|[获取链接](https://repo.openeuler.org/openEuler-22.03-LTS-SP4/ISO/aarch64/)|
-|OS|openEuler 20.03 LTS SP3|[获取链接](https://repo.openeuler.org/openEuler-20.03-LTS-SP3/ISO/aarch64/)|
-|OS|openEuler 24.03 LTS SP1|[获取链接](https://repo.openeuler.org/openEuler-24.03-LTS-SP1/ISO/aarch64/)|
-|Bond-CNI插件源码|-|[获取链接](https://github.com/k8snetworkplumbingwg/bond-cni)|
+|OS|openEuler 22.03 LTS SP4|[openEuler 22.03 LTS SP4 ISO下载页面](https://repo.openeuler.org/openEuler-22.03-LTS-SP4/ISO/aarch64/)|
+|OS|openEuler 20.03 LTS SP3|[openEuler 20.03 LTS SP3 ISO下载页面](https://repo.openeuler.org/openEuler-20.03-LTS-SP3/ISO/aarch64/)|
+|OS|openEuler 24.03 LTS SP1|[openEuler 24.03 LTS SP1 ISO下载页面](https://repo.openeuler.org/openEuler-24.03-LTS-SP1/ISO/aarch64/)|
+|Bond-CNI插件源码|-|[bond-cni代码仓库](https://github.com/k8snetworkplumbingwg/bond-cni)|
 |Docker|20.10.14|通过配置Yum源方式安装|
 |Golang|1.21+|通过[官网](https://golang.google.cn/dl/)安装|
 
@@ -109,7 +111,7 @@ docker pull ghcr.io/k8snetworkplumbingwg/whereabouts:latest
 
 编译Bond-CNI插件源码得到可执行文件。
 
-1. 获取[源代码](https://github.com/k8snetworkplumbingwg/bond-cni.git)。
+1. 获取[bond-cni代码仓库](https://github.com/k8snetworkplumbingwg/bond-cni.git)。
 
     ```shell
     git clone https://github.com/k8snetworkplumbingwg/bond-cni.git
@@ -149,18 +151,18 @@ docker pull ghcr.io/k8snetworkplumbingwg/whereabouts:latest
 
 |项目|版本|获取方式|
 |--|--|--|
-|OS|openEuler 22.03 LTS SP4|[获取链接](https://repo.openeuler.org/openEuler-22.03-LTS-SP4/ISO/aarch64/)|
-|OS|openEuler 20.03 LTS SP3|[获取链接](https://repo.openeuler.org/openEuler-20.03-LTS-SP3/ISO/aarch64/)|
-|OS|openEuler 24.03 LTS SP1|[获取链接](https://repo.openeuler.org/openEuler-24.03-LTS-SP1/ISO/aarch64/)|
-|Kubernetes|1.28.4|[获取链接](https://github.com/kubernetes/kubernetes/archive/refs/tags/v1.28.4.tar.gz)<br>请参考《[Kubernetes 部署指南（CentOS&openEuler）](https://www.hikunpeng.com/document/detail/zh/kunpengcpfs/ecosystemEnable/Kubernetes/kunpengk8s_04_0001.html)》进行下载部署。|
-|Kubernetes|1.23.6|[获取链接](https://github.com/kubernetes/kubernetes/archive/refs/tags/v1.23.6.tar.gz)<br>请参考《[Kubernetes 部署指南（CentOS&openEuler）](https://www.hikunpeng.com/document/detail/zh/kunpengcpfs/ecosystemEnable/Kubernetes/kunpengk8s_04_0001.html)》进行下载部署。|
-|Containerd|1.7.14|[获取链接](https://github.com/containerd/containerd/releases/download/v1.7.14/containerd-1.7.14-linux-arm64.tar.gz)<br>请参考《[Containerd 安装指南（CentOS 8.1&openEuler 20.03）](https://www.hikunpeng.com/document/detail/zh/kunpengcpfs/ecosystemEnable/Containerd/kunpengcontainerd_03_0003.html)》进行下载部署。|
+|OS|openEuler 22.03 LTS SP4|[openEuler 22.03 LTS SP4 ISO下载页面](https://repo.openeuler.org/openEuler-22.03-LTS-SP4/ISO/aarch64/)|
+|OS|openEuler 20.03 LTS SP3|[openEuler 20.03 LTS SP3 ISO下载页面](https://repo.openeuler.org/openEuler-20.03-LTS-SP3/ISO/aarch64/)|
+|OS|openEuler 24.03 LTS SP1|[openEuler 24.03 LTS SP1 ISO下载页面](https://repo.openeuler.org/openEuler-24.03-LTS-SP1/ISO/aarch64/)|
+|Kubernetes|1.28.4|[kubernetes源码包下载地址](https://github.com/kubernetes/kubernetes/archive/refs/tags/v1.28.4.tar.gz)<br>请参考《[Kubernetes 部署指南（CentOS&openEuler）](https://www.hikunpeng.com/document/detail/zh/kunpengcpfs/ecosystemEnable/Kubernetes/kunpengk8s_04_0001.html)》进行下载部署。|
+|Kubernetes|1.23.6|[kubernetes源码包下载地址](https://github.com/kubernetes/kubernetes/archive/refs/tags/v1.23.6.tar.gz)<br>请参考《[Kubernetes 部署指南（CentOS&openEuler）](https://www.hikunpeng.com/document/detail/zh/kunpengcpfs/ecosystemEnable/Kubernetes/kunpengk8s_04_0001.html)》进行下载部署。|
+|Containerd|1.7.14|[containerd 1.7.14 arm64压缩包下载地址](https://github.com/containerd/containerd/releases/download/v1.7.14/containerd-1.7.14-linux-arm64.tar.gz)<br>请参考《[Containerd 安装指南（CentOS 8.1&openEuler 20.03）](https://www.hikunpeng.com/document/detail/zh/kunpengcpfs/ecosystemEnable/Containerd/kunpengcontainerd_03_0003.html)》进行下载部署。|
 |Docker|20.10.14|从镜像源安装|
-|SR-IOV Device Plugin|v3.9.0|[获取链接](https://github.com/k8snetworkplumbingwg/sriov-network-device-plugin.git)|
-|Multus CNI|v4.2.0|[获取链接](https://github.com/k8snetworkplumbingwg/multus-cni.git)|
-|SR-IOV-CNI网络直通插件|v2.9.0|[获取链接](https://github.com/k8snetworkplumbingwg/sriov-cni.git)|
-|Bond-CNI插件|master|[获取链接](https://github.com/k8snetworkplumbingwg/bond-cni.git)|
-|whereabouts|v0.9.0|[获取链接](https://github.com/k8snetworkplumbingwg/whereabouts)|
+|SR-IOV Device Plugin|v3.9.0|[sriov-network-device-plugin代码仓库](https://github.com/k8snetworkplumbingwg/sriov-network-device-plugin.git)|
+|Multus CNI|v4.2.0|[multus-cni代码仓库](https://github.com/k8snetworkplumbingwg/multus-cni.git)|
+|SR-IOV-CNI网络直通插件|v2.9.0|[sriov-cni代码仓库](https://github.com/k8snetworkplumbingwg/sriov-cni.git)|
+|Bond-CNI插件|master|[bond-cni代码仓库](https://github.com/k8snetworkplumbingwg/bond-cni.git)|
+|whereabouts|v0.9.0|[whereabouts代码仓库](https://github.com/k8snetworkplumbingwg/whereabouts)|
 
 ### 部署SR-IOV-CNI网络直通插件<a name="ZH-CN_TOPIC_0000002549765647"></a>
 
@@ -184,7 +186,7 @@ Multus插件是K8s网络插件的管理器，根据Pod的配置，调用不同�
 
     multus-ds应当处于Running状态，示例如下。
 
-    ```txt
+    ```output
     NAME                             READY   STATUS    RESTARTS      AGE
     kube-multus-ds-ds26q             1/1     Running   0             20d
     kube-multus-ds-pp6mh             1/1     Running   0             20d
@@ -213,7 +215,7 @@ data:
                     "vendors": ["19e5"],
                     "devices": ["375e"],
                     "drivers": ["hinic"],
-                    "pfNames" : [ensp133s0]
+                    "pfNames": ["ensp133s0"]
                 },
             },
             {
@@ -247,7 +249,7 @@ data:
     lspci | grep Ethernet
     ```
 
-    ![](figures/zh-cn_image_0000002549765659.png)
+    ![在节点执行lspci命令后网卡设备的回显，用于确认待直通网卡VF的PCI地址](figures/zh-cn_image_0000002549765659.png)
 
     >![](public_sys-resources/icon-note.gif) **说明：** 
     >实际使用时创建的网卡设备的VF可能不只一个，选择其中一个VF的PCI地址查找即可，因为所有VF的“vendors”、“devices”、“drivers”都是一样。
@@ -260,7 +262,7 @@ data:
     lspci -n | grep 85
     ```
 
-    ![](figures/zh-cn_image_0000002549885661.png)
+    ![执行lspci -n命令查看85开头设备后的回显，可读出vendors为19e5、devices为375e](figures/zh-cn_image_0000002549885661.png)
 
 3. <a id="li14503133373"></a>确认设备对应的驱动“drivers”。
 
@@ -270,10 +272,10 @@ data:
     lspci -k
     ```
 
-    ![](figures/zh-cn_image_0000002518405816.png)
+    ![执行lspci -k命令后按PCI地址85:00.1查到的驱动名称回显，用于填写drivers参数](figures/zh-cn_image_0000002518405816.png)
 
 4. 得到“vendors”、“devices”、“drivers”的信息后，填写到configMap.yaml文件中，每一个SR-IOV设备对应resourceList中的一项。
-5. 通过sriovdp-daemonset.yaml部署文件，在集群中以Daemonset形式部署SR-IOV设备直通插件。
+5. 通过sriovdp-daemonset.yaml部署文件，在集群中以DaemonSet形式部署SR-IOV设备直通插件。
 
     ```shell
     git clone https://gitee.com/kunpeng_compute/sriov-network-device-plugin.git
@@ -290,7 +292,7 @@ data:
 
     如果部署成功，回显示例如下。kube-sriov-device-plugin的数量与集群节点的数量保持一致。
 
-    ```txt
+    ```output
     NAME                             READY   STATUS              RESTARTS          AGE
     kube-sriov-device-plugin-wkmrd   1/1     Running             0                 14d
     kube-sriov-device-plugin-xvcs3   1/1     Running             0                 14d
@@ -401,7 +403,7 @@ data:
 
     显示示例应当如下，部署的容器都处于Running状态，否则请重新查看错误。
 
-    ```txt
+    ```output
     kube-multus-ds-qhqp4             1/1     Running   0             22h    10.175.119.147   compute01   <none>           <none>
     kube-sriov-cni-ds-4kks2          1/1     Running   0             168m   10.244.1.20      compute01   <none>           <none>
     kube-sriov-device-plugin-bnvg9   1/1     Running   0             20h    10.175.119.147   compute01   <none>           <none>
@@ -571,7 +573,7 @@ Bond-CNI需要与其他的多网卡和直通插件集成，在Pod内部完成虚
     3. “links”部分定义将用于创建绑定的接口。默认情况下，Multus将附加的接口命名为"net"，再加上一个连续的数字。
     4. 对于“balance-rr”或“balance-xor”模式，必须为SR-IOV VF将“trust”模式设置为“on”。
 
-        方式一：在“sriov-crd-01.yaml”和“sriov-crd-02.yaml”配置文件中添加“"trust": on”
+        方式一：在“sriov-crd-01.yaml”和“sriov-crd-02.yaml”配置文件中添加“"trust": "on"”
 
         ```yaml
         apiVersion: "k8s.cni.cncf.io/v1"
@@ -775,3 +777,9 @@ spec:
     ```
 
     不存在multus，sriov-cni和sriov-device等Pod则表示成功删除。
+
+## 修订记录
+
+| 文档版本 | 发布日期 | 修改说明 |
+|--|--|--|
+|01 | 2025-12-30 | 第一次正式发布。 |

@@ -1,8 +1,8 @@
 # vKAE直通热迁移 特性指南
 
-## 特性描述<a name="ZH-CN_TOPIC_0000002518686500"></a>
+本文主要介绍如何在使用openEuler操作系统的鲲鹏处理器上部署和使能虚拟化场景vKAE直通热迁移特性，以及如何进行功能与性能测试的操作指导。
 
-本文主要介绍如何在使用openEuler操作系统的鲲鹏服务器上部署和使能虚拟化场景vKAE直通热迁移特性，以及如何进行功能与性能测试的操作指导。
+## 特性描述
 
 虚拟机热迁移是指在不中断虚拟机运行的情况下，将虚拟机从一个物理主机迁移到另一个物理主机，是一种重要的运维手段。vKAE直通热迁移是指虚拟机在配置KAE直通设备时，进行热迁移的能力，可以为KAE设备的使用提供更强的灵活性和业务不中断的保障。目前直通设备热迁移DMA标脏基于设备标脏特性，但很多设备不支持此特性，使得直通设备热迁移能力缺失。鲲鹏920新型号处理器SMMU支持HTTU硬件标脏特性，可以通过软件框架+硬件特性结合的方式构建直通设备热迁移硬件标脏特性，提高鲲鹏虚拟化竞争力。
 
@@ -47,19 +47,19 @@
 
 |软件名称|版本|获取方法|
 |--|--|--|
-|OS|openEuler 22.03 LTS SP4|[获取链接](https://mirrors.huaweicloud.com/openeuler/openEuler-22.03-LTS-SP4/ISO/aarch64/openEuler-22.03-LTS-SP4-everything-aarch64-dvd.iso)|
-|QEMU|6.2.0|代码仓：[获取链接](https://gitee.com/src-openeuler/qemu/tree/openEuler-22.03-LTS-SP4/)|
-|libvirt|6.2.0|代码仓：[获取链接](https://gitee.com/src-openeuler/libvirt/tree/openEuler-22.03-LTS-SP4/)|
-|KAE|2.0|代码仓：[获取链接](https://gitcode.com/boostkit/KAE)|
+|OS|openEuler 22.03 LTS SP4|[openEuler 22.03 LTS SP4操作系统镜像下载页面](https://mirrors.huaweicloud.com/openeuler/openEuler-22.03-LTS-SP4/ISO/aarch64/openEuler-22.03-LTS-SP4-everything-aarch64-dvd.iso)|
+|QEMU|6.2.0|代码仓：[QEMU代码仓库（openEuler 22.03 LTS SP4分支）](https://gitee.com/src-openeuler/qemu/tree/openEuler-22.03-LTS-SP4/)|
+|libvirt|6.2.0|代码仓：[libvirt代码仓库（openEuler 22.03 LTS SP4分支）](https://gitee.com/src-openeuler/libvirt/tree/openEuler-22.03-LTS-SP4/)|
+|KAE|2.0|代码仓：[KAE代码仓库](https://gitcode.com/boostkit/KAE)|
 
-**表 3** 已验证操作系统与软件要求<a id="已验证操作系统与软件要求_1"></a>
+**表 3** openEuler 24.03 LTS SP3已验证操作系统与软件要求<a id="已验证操作系统与软件要求_1"></a>
 
 |软件名称|版本|获取方法|
 |--|--|--|
-|OS|openEuler 24.03 LTS SP3|[获取链接](https://mirrors.huaweicloud.com/openeuler/openEuler-24.03-LTS-SP3/ISO/aarch64/openEuler-24.03-LTS-SP3-everything-aarch64-dvd.iso)|
+|OS|openEuler 24.03 LTS SP3|[openEuler 24.03 LTS SP3操作系统镜像下载页面](https://mirrors.huaweicloud.com/openeuler/openEuler-24.03-LTS-SP3/ISO/aarch64/openEuler-24.03-LTS-SP3-everything-aarch64-dvd.iso)|
 |QEMU|8.2.0|通过配置Yum源的方式安装|
 |libvirt|9.10.0|通过配置Yum源的方式安装|
-|KAE|2.0|代码仓：[获取链接](https://gitcode.com/boostkit/KAE)|
+|KAE|2.0|代码仓：[KAE代码仓库](https://gitcode.com/boostkit/KAE)|
 
 ### 安装KAE<a name="ZH-CN_TOPIC_0000002550006357" id="安装KAE"></a>
 
@@ -104,7 +104,7 @@ KAE2.0源码包中包含KAEKernelDriver内核驱动、UADK框架、KAEOpensslEng
 
     回显信息如下所示，表示驱动安装成功。
 
-    ```text
+    ```output
     lrwxrwxrwx. 1 root root 0 Aug 22 17:14 hisi_hpre-2 -> ../../devices/pci0000:78/0000:78:00.0/0000:79:00.0/uacce/hisi_hpre-2
     lrwxrwxrwx. 1 root root 0 Aug 22 17:14 hisi_hpre-3 -> ../../devices/pci0000:b8/0000:b8:00.0/0000:b9:00.0/uacce/hisi_hpre-3
     lrwxrwxrwx. 1 root root 0 Aug 22 17:14 hisi_sec2-0 -> ../../devices/pci0000:74/0000:74:01.0/0000:76:00.0/uacce/hisi_sec2-0
@@ -133,7 +133,7 @@ KAE2.0源码包中包含KAEKernelDriver内核驱动、UADK框架、KAEOpensslEng
 
         回显信息如下，表示安装成功。
 
-        ```txt
+        ```output
         -rwxr-xr-x. 1 root root     961 Aug 22 17:23 /usr/local/lib/libwd_comp.la
         lrwxrwxrwx. 1 root root      19 Aug 22 17:23 /usr/local/lib/libwd_comp.so -> libwd_comp.so.2.5.0
         lrwxrwxrwx. 1 root root      19 Aug 22 17:23 /usr/local/lib/libwd_comp.so.2 -> libwd_comp.so.2.5.0
@@ -213,7 +213,7 @@ KAE2.0源码包中包含KAEKernelDriver内核驱动、UADK框架、KAEOpensslEng
 
     回显信息如下，表示安装成功。
 
-    ```txt
+    ```output
     total 5644
     -rw-r--r--. 1 root root 3846524 Aug 22 17:28 kae.a
     -rwxr-xr-x. 1 root root     995 Aug 22 17:28 kae.la
@@ -243,7 +243,7 @@ KAE2.0源码包中包含KAEKernelDriver内核驱动、UADK框架、KAEOpensslEng
 
         回显信息如下所示，表示安装成功。
 
-        ```txt
+        ```output
         lrwxrwxrwx. 1 root root     40 Aug 29 10:20 libkaezip.so -> /usr/local/kaezip/lib/libkaezip.so.2.0.0
         lrwxrwxrwx. 1 root root     40 Aug 29 10:20 libkaezip.so.0 -> /usr/local/kaezip/lib/libkaezip.so.2.0.0
         -rwxr-xr-x. 1 root root 148096 Aug 29 10:20 libkaezip.so.2.0.0
@@ -270,7 +270,7 @@ KAE2.0源码包中包含KAEKernelDriver内核驱动、UADK框架、KAEOpensslEng
 
         回显信息如下所示，表示安装成功。
 
-        ```txt
+        ```output
         [root@localhost /]# ldd /usr/local/kaegzip/gzip 
          linux-vdso.so.1 (0x0000ffff7fbc1000)
          libz.so.1 => /usr/local/kaezip/lib/libz.so.1 (0x0000ffff7fb50000)
@@ -311,7 +311,7 @@ KAE2.0源码包中包含KAEKernelDriver内核驱动、UADK框架、KAEOpensslEng
     lspci | grep ZIP
     ```
 
-    ![](figures/zh-cn_image_0000002550006359.png)
+    ![查询ZIP设备bdf号的操作回显截图，显示lspci | grep ZIP命令输出的ZIP设备PCI地址](figures/zh-cn_image_0000002550006359.png)
 
 3. （可选）确认ZIP设备所在NUMA节点。
 
@@ -319,7 +319,7 @@ KAE2.0源码包中包含KAEKernelDriver内核驱动、UADK框架、KAEOpensslEng
     lspci -s 31:00.0 -v
     ```
 
-    ![](figures/zh-cn_image_0000002518526596.png)
+    ![确认ZIP设备所在NUMA节点的回显截图，显示lspci -s 31:00.0 -v命令输出的设备NUMA节点信息](figures/zh-cn_image_0000002518526596.png)
 
     >![](public_sys-resources/icon-note.gif) **说明：** 
     >虚拟机内直通的KAE设备位于同一NUMA节点上时性能最佳。
@@ -407,7 +407,7 @@ XML配置内容如下所示。
 2. 编译测试工具。
 
     ```shell
-    export LD_LIBRARY_PATH=/usr/local/kaezip/lib:$ LD_LIBRARY_PATH
+    export LD_LIBRARY_PATH=/usr/local/kaezip/lib:$LD_LIBRARY_PATH
     cd KAEZlib/test/perftest
     make
     ```
@@ -429,7 +429,7 @@ XML配置内容如下所示。
 
 5. 迁移完成后，由目的端物理机进入虚拟机，等待并查看KAE压缩任务是否完成并成功打印。
 
-    ![](figures/zh-cn_image_0000002550126363.png)
+    ![迁移完成后目的端虚拟机内KAE压缩任务成功打印的回显截图，显示kaezip_perf任务完成状态](figures/zh-cn_image_0000002550126363.png)
 
 ### 性能测试<a name="ZH-CN_TOPIC_0000002518686502"></a>
 
@@ -440,7 +440,7 @@ XML配置内容如下所示。
 1. 打开文件。
 
     ```shell
-    virsh edit <虚拟机名>
+    virsh edit <虚拟机名称>
     ```
 
 2. 按“i”进入编辑模式，在XML末尾增加**qemu:commandline**标签，打开“all\_vcpus\_paused”和“all\_vcpus\_prepared”两个trace事件。
@@ -485,7 +485,7 @@ XML配置内容如下所示。
 1. 编译测试工具。
 
     ```shell
-    export LD_LIBRARY_PATH=/usr/local/kaezip/lib:$ LD_LIBRARY_PATH
+    export LD_LIBRARY_PATH=/usr/local/kaezip/lib:$LD_LIBRARY_PATH
     cd KAEZlib/test/perftest
     make
     ```
@@ -521,9 +521,9 @@ XML配置内容如下所示。
     less /var/log/libvirt/qemu/<虚拟机名称>.log
     ```
 
-    ![](figures/zh-cn_image_0000002518686508.png)
+    ![源端物理机libvirt日志截图，显示all_vcpus_paused事件的时间戳打印](figures/zh-cn_image_0000002518686508.png)
 
-    ![](figures/zh-cn_image_0000002550126365.png)
+    ![目的端物理机libvirt日志截图，显示all_vcpus_prepared事件的时间戳打印](figures/zh-cn_image_0000002550126365.png)
 
 ## 故障排除<a name="ZH-CN_TOPIC_0000002550126357"></a>
 
@@ -564,3 +564,9 @@ openEuler 24.03 LTS SP3操作系统自带的加速驱动不兼容导致。
 rmmod hisi_sec2
 insmod /lib/modules/`uname -r`/extra/hisi_sec2.ko
 ```
+
+## 修订记录
+
+| 文档版本 | 发布日期 | 修改说明 |
+|--|--|--|
+|01 | 2025-12-30 | 第一次正式发布。 |
